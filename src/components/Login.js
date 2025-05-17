@@ -27,15 +27,34 @@ function Login() {
     }
   };
 
+  const handleClear = () => {
+    setForm({ username: "", password: "" });
+    setMessage("");
+  };
+
   return (
     <div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" onChange={handleChange} />
-        <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+        <input
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+        />
         <button type="submit">Login</button>
+        <button type="button" onClick={handleClear} style={{ marginLeft: "10px" }}>
+          Clear
+        </button>
       </form>
-      <p>{message}</p> {/* ✅ Shows success or error */}
+      <p>{message}</p>
     </div>
   );
 }
