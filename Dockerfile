@@ -4,19 +4,19 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy dependency files and install
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy source files and build
+# Copy the rest of the app and build it
 COPY . .
 RUN npm run build
 
-# Install 'serve' globally to serve the build folder
+# Install 'serve' globally
 RUN npm install -g serve
 
-# Expose the default port used by 'serve'
+# Expose port that 'serve' will use
 EXPOSE 3000
 
-# Run the app using 'serve'
+# Start the static file server
 CMD ["serve", "-s", "build", "-l", "3000"]
