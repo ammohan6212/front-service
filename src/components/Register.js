@@ -26,16 +26,40 @@ function Register() {
     }
   };
 
+  const handleClear = () => {
+    setForm({ username: "", email: "", password: "" });
+    setMessage("");
+  };
+
   return (
     <div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" onChange={handleChange} />
-        <input name="email" placeholder="Email" onChange={handleChange} />
-        <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+        <input
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+        />
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+        />
         <button type="submit">Register</button>
+        <button type="button" onClick={handleClear} style={{ marginLeft: "10px" }}>
+          Clear
+        </button>
       </form>
-      <p>{message}</p> {/* ✅ Shows success or error */}
+      <p>{message}</p>
     </div>
   );
 }
