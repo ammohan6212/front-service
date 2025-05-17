@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
@@ -20,7 +20,7 @@ function Login() {
     const data = await response.json();
 
     if (response.ok) {
-      setMessage(data.message); // ✅ "Login successful"
+      setMessage(data.message || "Login successful");
       localStorage.setItem("token", data.access_token);
     } else {
       setMessage(data.detail || "Login failed");
@@ -28,7 +28,7 @@ function Login() {
   };
 
   const handleClear = () => {
-    setForm({ username: "", password: "" });
+    setForm({ email: "", password: "" });
     setMessage("");
   };
 
@@ -37,9 +37,9 @@ function Login() {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
-          name="username"
-          placeholder="Username"
-          value={form.username}
+          name="email"
+          placeholder="Email"
+          value={form.email}
           onChange={handleChange}
         />
         <input
