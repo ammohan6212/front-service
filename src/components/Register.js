@@ -26,7 +26,7 @@ function Register() {
     }
   };
 
-  const handleClear = () => {zz
+  const handleClear = () => {
     setForm({ username: "", email: "", password: "" });
     setMessage("");
   };
