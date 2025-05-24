@@ -1,3 +1,0 @@
-[submodule "jenkins-common"]
-	path = jenkins-common
-	url = https://github.com/ammohan6212/jenkins-common.git
