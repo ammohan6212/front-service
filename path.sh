@@ -3,6 +3,9 @@
 # Push your main repo changes
 git push origin $(git rev-parse --abbrev-ref HEAD)
 
+git submodule add https://github.com/your-org/jenkins-pipeline-templates.git jenkins-common
+
+
 # Update or clone the submodule (assumes it's already configured)
 git submodule update --init --remote --recursive
 
