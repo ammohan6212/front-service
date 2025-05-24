@@ -843,7 +843,6 @@ pipeline {
                 }
             }
         }
-        }
         stage("deploying the application into prod"){
             when {
                 branch 'main' // Or 'master'
@@ -1058,13 +1057,10 @@ pipeline {
                         }
                     }
                 }
-
-
-
             }
 
         }
-
+    
     // Post-build actions for notification
     post {
         always {
@@ -1083,4 +1079,5 @@ pipeline {
             sendEmailNotification('ABORTED', env.RECIPIENTS)
         }
     }
+
 }
