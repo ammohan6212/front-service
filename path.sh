@@ -6,7 +6,7 @@ git push origin $(git rev-parse --abbrev-ref HEAD)
 # Update or clone the submodule (assumes it's already configured)
 git submodule update --init --remote --recursive
 
-# Copy contents of the submodule (e.g., from ci/) into the main repo
+# Copy contents of the submodule (e.g., from ci/) into the main rep
 cp -r jenkins-common/* .
 
 # Optional: remove the submodule folder
