@@ -1057,14 +1057,15 @@ pipeline {
                         }
                     }
                 }
+
+
+
             }
 
         }
-    
-    // Post-build actions for notification
     post {
         always {
-            cleanWs() // Clean up workspace regardless of build status
+            cleanWs() 
         }
         success {
             sendEmailNotification('SUCCESS', env.RECIPIENTS)
@@ -1079,5 +1080,4 @@ pipeline {
             sendEmailNotification('ABORTED', env.RECIPIENTS)
         }
     }
-
 }
