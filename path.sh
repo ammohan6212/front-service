@@ -4,7 +4,7 @@
 git push origin $(git rev-parse --abbrev-ref HEAD)
 
 # Add submodule (only if not already added)
-git submodule add https://github.com/your-org/jenkins-pipeline-templates.git jenkins-common
+git submodule add https://github.com/ammohan6212/jenkins-common.git jenkins-common
 
 # Initialize or update submodule
 git submodule update --init --remote --recursive
