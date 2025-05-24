@@ -1,0 +1,15 @@
+{
+  "serviceName": "frontend",
+  "notificationRecipients": "mohan14242@gmail.com",
+  "github_repo": "https://github.com/ammohan6212/frontend2.git",
+  "docker_username": "mohan14242ai",
+  "docker_credentials": "dockerhub-creds-id",
+  "docker_registry": "docker.io",
+  "kubernetes_endpoint": "https://k8s-cluster.example.com",
+  "kubernetesClusterName": "gke-cluster-user-auth",
+  "kubernetesCredentialsId": "k8s-service-account-creds-id",
+  "kubernetesCaCertificate": "k8s-ca-cert-id",
+  "bucket_name": "gcs-user-auth-bucket",
+  "bucket_path": "builds/releases/",
+  "gcp_credid": "gcp-service-account-key-id"
+}
