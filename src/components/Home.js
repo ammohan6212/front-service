@@ -10,7 +10,7 @@ function Home() {
     {
       name: "Apple iPhone",
       category: "Mobiles",
-      image: "https://via.placeholder.com/150x150?text=iPhone",
+      image: "https://unsplash.com/photos/silver-iphone-6-on-blue-surface-Wzs4-QEmCUQ",
     },
     {
       name: "Samsung Galaxy",
