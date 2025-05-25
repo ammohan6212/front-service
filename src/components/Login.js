@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,8 +22,6 @@ function Login() {
     if (response.ok) {
       setMessage(data.message); // ✅ "Login successful"
       localStorage.setItem("token", data.access_token);
-      // Redirect to products page
-      navigate("/products");
     } else {
       setMessage(data.detail || "Login failed");
     }
