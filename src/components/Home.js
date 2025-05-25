@@ -3,6 +3,7 @@ import React, { useState } from "react";
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const data = [
     "Apple iPhone",
@@ -42,31 +43,48 @@ function Home() {
       {/* Sidebar */}
       <aside
         style={{
-          width: "240px",
+          width: menuOpen ? "240px" : "80px",
           backgroundColor: "#1e1e2f",
           color: "#fff",
-          padding: "30px 20px",
+          padding: "20px",
+          transition: "width 0.3s ease",
           display: "flex",
           flexDirection: "column",
         }}
       >
-        <h2 style={{ marginBottom: "30px", fontSize: "22px" }}>Menu</h2>
-        <nav style={{ flex: 1 }}>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {["Dashboard", "Products", "Orders", "Profile", "Settings", "Logout"].map((item, index) => (
-              <li
-                key={index}
-                style={{
-                  padding: "12px 0",
-                  borderBottom: "1px solid #333",
-                  cursor: "pointer",
-                }}
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{
+            background: "none",
+            color: "#fff",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "20px",
+            marginBottom: "20px",
+            textAlign: "left",
+          }}
+        >
+          {menuOpen ? "☰ Close" : "☰ Menu"}
+        </button>
+
+        {menuOpen && (
+          <nav>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              {["Dashboard", "Products", "Orders", "Cart", "Profile", "Settings", "Logout"].map((item, index) => (
+                <li
+                  key={index}
+                  style={{
+                    padding: "12px 0",
+                    borderBottom: "1px solid #333",
+                    cursor: "pointer",
+                  }}
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </aside>
 
       {/* Main Content */}
