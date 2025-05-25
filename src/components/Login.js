@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // Get the navigate function
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,6 +24,7 @@ function Login() {
     if (response.ok) {
       setMessage(data.message); // ✅ "Login successful"
       localStorage.setItem("token", data.access_token);
+      navigate('/home'); // Navigate to the homepage
     } else {
       setMessage(data.detail || "Login failed");
     }
@@ -55,6 +58,12 @@ function Login() {
         </button>
       </form>
       <p>{message}</p>
+      <p>
+        Already have an account?
+        <button onClick={() => navigate('/')} style={{ marginLeft: "5px" }}>
+          Login here
+        </button>
+      </p>
     </div>
   );
 }

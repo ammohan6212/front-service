@@ -60,6 +60,12 @@ function Register() {
         </button>
       </form>
       <p>{message}</p>
+      <p>
+        Don't have an account?
+        <button onClick={() => navigate('/register')} style={{ marginLeft: "5px" }}>
+          Register here
+        </button>
+      </p>
     </div>
   );
 }

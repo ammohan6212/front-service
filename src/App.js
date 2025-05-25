@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
+import Home from './components/Home';
 import './App.css';
 
 function App() {
-  const [isLogin, setIsLogin] = useState(true);
-
   return (
-    <div className="auth-container">
-      <h2>{isLogin ? 'Login' : 'Register'}</h2>
-      {isLogin ? <Login /> : <Register />}
-      <p>
-        {isLogin ? "Don't have an account?" : 'Already have an account?'}
-        <button onClick={() => setIsLogin(!isLogin)}>
-          {isLogin ? 'Register here' : 'Login here'}
-        </button>
-      </p>
-    </div>
+    <Router>
+      <div className="auth-container">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<Home />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
