@@ -59,9 +59,9 @@ function Login() {
       </form>
       <p>{message}</p>
       <p>
-        Already have an account?
-        <button onClick={() => navigate('/')} style={{ marginLeft: "5px" }}>
-          Login here
+        Don't have an account?
+        <button onClick={() => navigate('/register')} style={{ marginLeft: "5px" }}>
+          Register here
         </button>
       </p>
     </div>
