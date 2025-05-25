@@ -28,7 +28,17 @@ function Home() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "Segoe UI, sans-serif" }}>
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        width: "100vw",
+        margin: 0,
+        padding: 0,
+        fontFamily: "Segoe UI, sans-serif",
+        overflow: "hidden",
+      }}
+    >
       {/* Sidebar */}
       <aside
         style={{
@@ -36,19 +46,20 @@ function Home() {
           backgroundColor: "#1e1e2f",
           color: "#fff",
           padding: "30px 20px",
-          boxShadow: "2px 0 5px rgba(0,0,0,0.1)"
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <h2 style={{ marginBottom: "30px", fontSize: "22px" }}>Menu</h2>
-        <nav>
-          <ul style={{ listStyle: "none", padding: 0 }}>
+        <nav style={{ flex: 1 }}>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {["Dashboard", "Products", "Orders", "Profile", "Settings", "Logout"].map((item, index) => (
               <li
                 key={index}
                 style={{
                   padding: "12px 0",
                   borderBottom: "1px solid #333",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               >
                 {item}
@@ -59,7 +70,14 @@ function Home() {
       </aside>
 
       {/* Main Content */}
-      <main style={{ flex: 1, padding: "50px 40px" }}>
+      <main
+        style={{
+          flex: 1,
+          padding: "50px 40px",
+          overflowY: "auto",
+          backgroundColor: "#f8f9fa",
+        }}
+      >
         <h1 style={{ marginBottom: "10px", fontSize: "32px" }}>🏠 Home Page</h1>
         <p style={{ marginBottom: "30px", fontSize: "16px" }}>
           Welcome! You are now logged in.
@@ -79,7 +97,7 @@ function Home() {
             borderRadius: "8px",
             border: "1px solid #ccc",
             marginBottom: "25px",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.05)"
+            boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
           }}
         />
 
@@ -88,7 +106,9 @@ function Home() {
           {searchTerm && results.length > 0 && (
             <ul style={{ paddingLeft: "20px", fontSize: "16px" }}>
               {results.map((item, index) => (
-                <li key={index} style={{ padding: "6px 0" }}>{item}</li>
+                <li key={index} style={{ padding: "6px 0" }}>
+                  {item}
+                </li>
               ))}
             </ul>
           )}
