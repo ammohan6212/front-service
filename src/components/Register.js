@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom'; // ✅ Add this import
 
 function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // ✅ Add this line
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,7 +22,7 @@ function Register() {
     const data = await response.json();
 
     if (response.ok) {
-      setMessage(data.message); // ✅ "Registration successful"
+      setMessage(data.message);
     } else {
       setMessage(data.detail || "Registration failed");
     }
@@ -61,9 +63,9 @@ function Register() {
       </form>
       <p>{message}</p>
       <p>
-        Don't have an account?
-        <button onClick={() => navigate('/register')} style={{ marginLeft: "5px" }}>
-          Register here
+        Already have an account?
+        <button onClick={() => navigate('/')} style={{ marginLeft: "5px" }}>
+          Login here
         </button>
       </p>
     </div>
