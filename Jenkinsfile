@@ -71,6 +71,7 @@ pipeline {
                     }
                 }
                 stage("Secrets Detection") {
+                    
                     steps {
                         performSecretsDetection('.') // Scan the entire workspace
                     }
