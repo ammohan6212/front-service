@@ -23,7 +23,7 @@ function Home() {
         ]);
 
         // Convert all category names to trimmed strings to ensure uniqueness
-        const rawCategoryNames = categoryRes.data.map((cat) => String(cat.Name).trim());
+        const rawCategoryNames = categoryRes.data.map((cat) => String(cat.Name).trim()).filter((name) => isNaN(Number(name))); // ✅ Filter out numeric-only categories
         const uniqueCategories = ["All", ...new Set(rawCategoryNames)];
 
         setCategories(uniqueCategories);
