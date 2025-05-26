@@ -18,8 +18,8 @@ function Home() {
 
       try {
         const [categoryRes, productRes] = await Promise.all([
-          axios.get("/back/back/categories"),
-          axios.get("/back//back/products"),
+          axios.get("/back/categories"),
+          axios.get("/back/products"),
         ]);
 
         // Convert all category names to trimmed strings to ensure uniqueness
