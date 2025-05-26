@@ -52,7 +52,7 @@ function Home() {
     let filtered = products;
 
     if (category !== "All") {
-      filtered = filtered.filter((item) => item.category === category);
+      filtered = filtered.filter((item) => item.category?.name === category);
     }
 
     if (search.trim() !== "") {
