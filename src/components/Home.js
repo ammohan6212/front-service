@@ -1,60 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [categories, setCategories] = useState(["All"]);
+  const [products, setProducts] = useState([]);
 
-  const products = [
-    {
-      name: "Apple iPhone",
-      category: "Mobiles",
-      image: "https://unsplash.com/photos/silver-iphone-6-on-blue-surface-Wzs4-QEmCUQ",
-    },
-    {
-      name: "Samsung Galaxy",
-      category: "Mobiles",
-      image: "https://via.placeholder.com/150x150?text=Galaxy",
-    },
-    {
-      name: "Google Pixel",
-      category: "Mobiles",
-      image: "https://via.placeholder.com/150x150?text=Pixel",
-    },
-    {
-      name: "Sony Headphones",
-      category: "Electronics",
-      image: "https://via.placeholder.com/150x150?text=Headphones",
-    },
-    {
-      name: "Dell Laptop",
-      category: "Electronics",
-      image: "https://via.placeholder.com/150x150?text=Dell+Laptop",
-    },
-    {
-      name: "Leather Jacket",
-      category: "Fashion",
-      image: "https://via.placeholder.com/150x150?text=Jacket",
-    },
-    {
-      name: "Smartwatch",
-      category: "Fashion",
-      image: "https://via.placeholder.com/150x150?text=Watch",
-    },
-    {
-      name: "Vacuum Cleaner",
-      category: "Home Gadgets",
-      image: "https://via.placeholder.com/150x150?text=Vacuum",
-    },
-    {
-      name: "Smart Bulb",
-      category: "Home Gadgets",
-      image: "https://via.placeholder.com/150x150?text=Smart+Bulb",
-    },
-  ];
+  useEffect(() => {
+    // Fetch categories and products
+    const fetchData = async () => {
+      try {
+        const categoryRes = await axios.get("/categories");
+        const productRes = await axios.get("/products");
 
-  const categories = ["All", "Mobiles", "Fashion", "Home Gadgets", "Electronics"];
+        // Deduplicate categories by name
+        const categoryMap = {};
+        categoryRes.data.forEach((cat) => {
+          if (!categoryMap[cat.Name]) {
+            categoryMap[cat.Name] = cat;
+          }
+        });
+
+        const uniqueCategories = ["All", ...Object.keys(categoryMap)];
+
+        setCategories(uniqueCategories);
+        setProducts(productRes.data);
+        setResults(productRes.data); // Initially display all
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -85,7 +66,6 @@ function Home() {
 
   const handleProductClick = (product) => {
     alert(`You clicked on ${product.name}`);
-    // Navigate to product page if needed
   };
 
   const displayedProducts =
@@ -96,17 +76,7 @@ function Home() {
       : products;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        width: "100vw",
-        margin: 0,
-        padding: 0,
-        fontFamily: "Segoe UI, sans-serif",
-        overflow: "hidden",
-      }}
-    >
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden" }}>
       {/* Sidebar */}
       <aside
         style={{
@@ -115,8 +85,6 @@ function Home() {
           color: "#fff",
           padding: "20px",
           transition: "width 0.3s ease",
-          display: "flex",
-          flexDirection: "column",
         }}
       >
         <button
@@ -128,7 +96,6 @@ function Home() {
             cursor: "pointer",
             fontSize: "20px",
             marginBottom: "20px",
-            textAlign: "left",
           }}
         >
           {menuOpen ? "☰ Close" : "☰ Menu"}
@@ -137,38 +104,27 @@ function Home() {
         {menuOpen && (
           <nav>
             <ul style={{ listStyle: "none", padding: 0 }}>
-              {["Dashboard", "Products", "Orders", "Cart", "Profile", "Settings", "Logout"].map((item, index) => (
-                <li
-                  key={index}
-                  style={{
-                    padding: "12px 0",
-                    borderBottom: "1px solid #333",
-                    cursor: "pointer",
-                  }}
-                >
-                  {item}
-                </li>
-              ))}
+              {["Dashboard", "Products", "Orders", "Cart", "Profile", "Settings", "Logout"].map(
+                (item, index) => (
+                  <li
+                    key={index}
+                    style={{ padding: "12px 0", borderBottom: "1px solid #333", cursor: "pointer" }}
+                  >
+                    {item}
+                  </li>
+                )
+              )}
             </ul>
           </nav>
         )}
       </aside>
 
-      {/* Main Content */}
-      <main
-        style={{
-          flex: 1,
-          padding: "50px 40px",
-          overflowY: "auto",
-          backgroundColor: "#f8f9fa",
-        }}
-      >
-        <h1 style={{ marginBottom: "10px", fontSize: "32px" }}>🏠 Home Page</h1>
-        <p style={{ marginBottom: "30px", fontSize: "16px" }}>
-          Welcome! You are now logged in.
-        </p>
+      {/* Main */}
+      <main style={{ flex: 1, padding: "50px 40px", backgroundColor: "#f8f9fa", overflowY: "auto" }}>
+        <h1>🏠 Home Page</h1>
+        <p>Welcome! You are now logged in.</p>
 
-        {/* Search Bar */}
+        {/* Search */}
         <input
           type="text"
           placeholder="🔍 Search products..."
@@ -178,23 +134,13 @@ function Home() {
             padding: "12px 18px",
             width: "100%",
             maxWidth: "400px",
-            fontSize: "16px",
             borderRadius: "8px",
-            border: "1px solid #ccc",
             marginBottom: "20px",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
           }}
         />
 
-        {/* Product Categories */}
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            flexWrap: "wrap",
-            marginBottom: "30px",
-          }}
-        >
+        {/* Category Buttons */}
+        <div style={{ display: "flex", gap: "10px", marginBottom: "30px", flexWrap: "wrap" }}>
           {categories.map((category, index) => (
             <button
               key={index}
@@ -206,7 +152,6 @@ function Home() {
                 border: "none",
                 borderRadius: "6px",
                 cursor: "pointer",
-                fontSize: "14px",
               }}
             >
               {category}
@@ -231,7 +176,6 @@ function Home() {
                 borderRadius: "10px",
                 padding: "12px",
                 cursor: "pointer",
-                textAlign: "center",
                 backgroundColor: "#fff",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
               }}
@@ -244,16 +188,14 @@ function Home() {
                   height: "150px",
                   objectFit: "cover",
                   borderRadius: "8px",
-                  marginBottom: "10px",
                 }}
               />
-              <strong style={{ fontSize: "16px" }}>{product.name}</strong>
-              <p style={{ color: "#666", fontSize: "14px" }}>{product.category}</p>
+              <strong>{product.name}</strong>
+              <p style={{ color: "#666" }}>{product.category}</p>
             </div>
           ))}
         </div>
 
-        {/* No results */}
         {displayedProducts.length === 0 && (
           <p style={{ marginTop: "20px", color: "#888" }}>
             No products found for "{searchTerm}" in "{activeCategory}".
