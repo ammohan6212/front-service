@@ -38,40 +38,40 @@ services:
     networks:
       - app-network
 
-  # db1:
-  #   image: postgres:15
-  #   container_name: frontend2-db1-1
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: yourpassword
-  #     POSTGRES_DB: mydatabase
-  #   ports:
-  #     - "5433:5432"  # ✅ Changed host port to avoid conflict
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - app-network
+  db1:
+    image: postgres:15
+    container_name: frontend2-db1-1
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5433:5432"  # ✅ Changed host port to avoid conflict
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
-  # app:
-  #   image: go:1.0
-  #   container_name: frontend2-app-1
-  #   depends_on:
-  #     - db1
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     DB_HOST: db1  # ✅ Connect to db1 by service name
-  #     DB_PORT: 5432
-  #     DB_USER: postgres
-  #     DB_PASSWORD: yourpassword
-  #     DB_NAME: mydatabase
-  #   networks:
-  #     - app-network
+  app:
+    image: go:1.0
+    container_name: frontend2-app-1
+    depends_on:
+      - db1
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db1  # ✅ Connect to db1 by service name
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: yourpassword
+      DB_NAME: mydatabase
+    networks:
+      - app-network
 
 volumes:
   pgdata:
-  # postgres_data:
+  postgres_data:
 
 networks:
   app-network:
