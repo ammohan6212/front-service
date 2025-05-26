@@ -14,8 +14,8 @@ function Home() {
     async function fetchData() {
       try {
         const [prodRes, catRes] = await Promise.all([
-          fetch("http://localhost:8080/categories"),
-          fetch("http://localhost:8080/products")
+          fetch("/back/categories"),
+          fetch("/back/products")
         ]);
 
         const productData = await prodRes.json();
