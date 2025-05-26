@@ -13,8 +13,8 @@ function Home() {
     // Fetch categories and products
     const fetchData = async () => {
       try {
-        const categoryRes = await axios.get("/categories");
-        const productRes = await axios.get("/products");
+        const categoryRes = await axios.get("/back/categories");
+        const productRes = await axios.get("/back/products");
 
         // Deduplicate categories by name
         const categoryMap = {};
