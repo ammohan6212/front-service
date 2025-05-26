@@ -97,7 +97,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   app:
-    build: .
+    image: go:1.0
     depends_on:
       - db
     ports:
