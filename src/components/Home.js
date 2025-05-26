@@ -8,29 +8,33 @@ function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [categories, setCategories] = useState(["All"]);
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch categories and products
     const fetchData = async () => {
+      setLoading(true);
+      setError("");
+
       try {
-        const categoryRes = await axios.get("/back/categories");
-        const productRes = await axios.get("/back/products");
+        const [categoryRes, productRes] = await Promise.all([
+          axios.get("/back/categories"),
+          axios.get("/back/products"),
+        ]);
 
-        // Deduplicate categories by name
-        const categoryMap = {};
-        categoryRes.data.forEach((cat) => {
-          if (!categoryMap[cat.Name]) {
-            categoryMap[cat.Name] = cat;
-          }
-        });
-
-        const uniqueCategories = ["All", ...Object.keys(categoryMap)];
+        const uniqueCategories = [
+          "All",
+          ...new Set(categoryRes.data.map((cat) => cat.Name)),
+        ];
 
         setCategories(uniqueCategories);
         setProducts(productRes.data);
-        setResults(productRes.data); // Initially display all
-      } catch (error) {
-        console.error("Error fetching data", error);
+        setResults(productRes.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("❌ Failed to load data. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -57,7 +61,7 @@ function Home() {
 
     if (search.trim() !== "") {
       filtered = filtered.filter((item) =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.name?.toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -69,11 +73,7 @@ function Home() {
   };
 
   const displayedProducts =
-    (searchTerm || activeCategory !== "All") && results.length > 0
-      ? results
-      : (searchTerm || activeCategory !== "All") && results.length === 0
-      ? []
-      : products;
+    searchTerm || activeCategory !== "All" ? results : products;
 
   return (
     <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden" }}>
@@ -124,6 +124,8 @@ function Home() {
         <h1>🏠 Home Page</h1>
         <p>Welcome! You are now logged in.</p>
 
+        {error && <p style={{ color: "red", marginBottom: "20px" }}>{error}</p>}
+
         {/* Search */}
         <input
           type="text"
@@ -159,47 +161,54 @@ function Home() {
           ))}
         </div>
 
-        {/* Product Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          {displayedProducts.map((product, index) => (
+        {/* Loading */}
+        {loading ? (
+          <p>Loading products...</p>
+        ) : (
+          <>
+            {/* Product Grid */}
             <div
-              key={index}
-              onClick={() => handleProductClick(product)}
               style={{
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                padding: "12px",
-                cursor: "pointer",
-                backgroundColor: "#fff",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+                gap: "20px",
               }}
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                style={{
-                  width: "100%",
-                  height: "150px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
-              <strong>{product.name}</strong>
-              <p style={{ color: "#666" }}>{product.category}</p>
+              {displayedProducts.map((product, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleProductClick(product)}
+                  style={{
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "12px",
+                    cursor: "pointer",
+                    backgroundColor: "#fff",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <img
+                    src={product.image || "https://via.placeholder.com/150"}
+                    alt={product.name || "Product Image"}
+                    style={{
+                      width: "100%",
+                      height: "150px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <strong>{product.name || "Unnamed Product"}</strong>
+                  <p style={{ color: "#666" }}>{product.category || "Uncategorized"}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {displayedProducts.length === 0 && (
-          <p style={{ marginTop: "20px", color: "#888" }}>
-            No products found for "{searchTerm}" in "{activeCategory}".
-          </p>
+            {displayedProducts.length === 0 && (
+              <p style={{ marginTop: "20px", color: "#888" }}>
+                No products found for "{searchTerm}" in "{activeCategory}".
+              </p>
+            )}
+          </>
         )}
       </main>
     </div>
