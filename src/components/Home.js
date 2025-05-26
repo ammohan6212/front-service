@@ -22,10 +22,9 @@ function Home() {
           axios.get("/back/products"),
         ]);
 
-        const uniqueCategories = [
-          "All",
-          ...new Set(categoryRes.data.map((cat) => cat.Name)),
-        ];
+        // Convert all category names to trimmed strings to ensure uniqueness
+        const rawCategoryNames = categoryRes.data.map((cat) => String(cat.Name).trim());
+        const uniqueCategories = ["All", ...new Set(rawCategoryNames)];
 
         setCategories(uniqueCategories);
         setProducts(productRes.data);
@@ -56,7 +55,7 @@ function Home() {
     let filtered = products;
 
     if (category !== "All") {
-      filtered = filtered.filter((item) => item.category === category);
+      filtered = filtered.filter((item) => String(item.category).trim() === category);
     }
 
     if (search.trim() !== "") {
