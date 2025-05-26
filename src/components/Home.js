@@ -77,6 +77,7 @@ function Home() {
     if (search.trim() !== "") {
       filtered = filtered.filter((item) =>
         item.name.toLowerCase().includes(search.toLowerCase())
+        item.name.toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -133,7 +134,6 @@ function Home() {
         >
           {menuOpen ? "☰ Close" : "☰ Menu"}
         </button>
-
         {menuOpen && (
           <nav>
             <ul style={{ listStyle: "none", padding: 0 }}>
@@ -253,6 +253,11 @@ function Home() {
           ))}
         </div>
 
+        {/* No results */}
+        {displayedProducts.length === 0 && (
+          <p style={{ marginTop: "20px", color: "#888" }}>
+            No products found for "{searchTerm}" in "{activeCategory}".
+          </p>
         {/* No results */}
         {displayedProducts.length === 0 && (
           <p style={{ marginTop: "20px", color: "#888" }}>
