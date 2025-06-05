@@ -1,21 +1,26 @@
 #!/bin/bash
 
-# Push your main repo changes
-git push origin $(git rev-parse --abbrev-ref HEAD)
+# Set variables
+SUBMODULE_NAME="jenkins-common"
+SUBMODULE_URL="https://github.com/ammohan6212/jenkins-common.git"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-git submodule add https://github.com/ammohan6212/jenkins-common.git jenkins-common
+echo "🔄 Cleaning up old submodule if it exists..."
+git submodule deinit -f $SUBMODULE_NAME
+rm -rf .git/modules/$SUBMODULE_NAME
+rm -rf $SUBMODULE_NAME
 
+echo "➕ Adding submodule..."
+git submodule add --force $SUBMODULE_URL $SUBMODULE_NAME
 
-# Update or clone the submodule (assumes it's already configured)
+echo "⬇️ Initializing and updating submodule..."
 git submodule update --init --remote --recursive
 
-# Copy contents of the submodule (e.g., from ci/) into the main rep
-cp -r jenkins-common/* .
+echo "📁 Copying submodule contents to root directory..."
+cp -r $SUBMODULE_NAME/* .
 
-# Optional: remove the submodule folder
-rm -rf jenkins-common
+echo "🧹 Removing submodule directory and metadata..."
+rm -rf $SUBMODULE_NAME
+git rm --cached $SUBMODULE_NAME
+rm -f .gitmodules
 
-# Optional: unstage deleted submodule folder and add the copied files
-git add -A
-git commit -m "Flatten submodule into main directory"
-git push origin $(git rev-parse --abbrev-ref HEAD)

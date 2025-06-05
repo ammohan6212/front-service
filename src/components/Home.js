@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // 👈 import for navigation
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -6,52 +7,18 @@ function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
 
+  const navigate = useNavigate(); // 👈 initialize navigator
+
   const products = [
-    {
-      name: "Apple iPhone",
-      category: "Mobiles",
-      image: "https://unsplash.com/photos/silver-iphone-6-on-blue-surface-Wzs4-QEmCUQ",
-    },
-    {
-      name: "Samsung Galaxy",
-      category: "Mobiles",
-      image: "https://via.placeholder.com/150x150?text=Galaxy",
-    },
-    {
-      name: "Google Pixel",
-      category: "Mobiles",
-      image: "https://via.placeholder.com/150x150?text=Pixel",
-    },
-    {
-      name: "Sony Headphones",
-      category: "Electronics",
-      image: "https://via.placeholder.com/150x150?text=Headphones",
-    },
-    {
-      name: "Dell Laptop",
-      category: "Electronics",
-      image: "https://via.placeholder.com/150x150?text=Dell+Laptop",
-    },
-    {
-      name: "Leather Jacket",
-      category: "Fashion",
-      image: "https://via.placeholder.com/150x150?text=Jacket",
-    },
-    {
-      name: "Smartwatch",
-      category: "Fashion",
-      image: "https://via.placeholder.com/150x150?text=Watch",
-    },
-    {
-      name: "Vacuum Cleaner",
-      category: "Home Gadgets",
-      image: "https://via.placeholder.com/150x150?text=Vacuum",
-    },
-    {
-      name: "Smart Bulb",
-      category: "Home Gadgets",
-      image: "https://via.placeholder.com/150x150?text=Smart+Bulb",
-    },
+    { name: "Apple iPhone", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=iPhone" },
+    { name: "Samsung Galaxy", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=Galaxy" },
+    { name: "Google Pixel", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=Pixel" },
+    { name: "Sony Headphones", category: "Electronics", image: "https://via.placeholder.com/150x150?text=Headphones" },
+    { name: "Dell Laptop", category: "Electronics", image: "https://via.placeholder.com/150x150?text=Dell+Laptop" },
+    { name: "Leather Jacket", category: "Fashion", image: "https://via.placeholder.com/150x150?text=Jacket" },
+    { name: "Smartwatch", category: "Fashion", image: "https://via.placeholder.com/150x150?text=Watch" },
+    { name: "Vacuum Cleaner", category: "Home Gadgets", image: "https://via.placeholder.com/150x150?text=Vacuum" },
+    { name: "Smart Bulb", category: "Home Gadgets", image: "https://via.placeholder.com/150x150?text=Smart+Bulb" },
   ];
 
   const categories = ["All", "Mobiles", "Fashion", "Home Gadgets", "Electronics"];
@@ -85,7 +52,14 @@ function Home() {
 
   const handleProductClick = (product) => {
     alert(`You clicked on ${product.name}`);
-    // Navigate to product page if needed
+  };
+
+  const handleMenuClick = (item) => {
+    if (item === "Cart") {
+      navigate("/cart"); // 👈 navigate to Cart page
+    } else {
+      alert(`You clicked on ${item}`);
+    }
   };
 
   const displayedProducts =
@@ -96,17 +70,7 @@ function Home() {
       : products;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        width: "100vw",
-        margin: 0,
-        padding: 0,
-        fontFamily: "Segoe UI, sans-serif",
-        overflow: "hidden",
-      }}
-    >
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden" }}>
       {/* Sidebar */}
       <aside
         style={{
@@ -139,6 +103,7 @@ function Home() {
               {["Dashboard", "Products", "Orders", "Cart", "Profile", "Settings", "Logout"].map((item, index) => (
                 <li
                   key={index}
+                  onClick={() => handleMenuClick(item)} // 👈 updated for routing
                   style={{
                     padding: "12px 0",
                     borderBottom: "1px solid #333",
@@ -162,7 +127,7 @@ function Home() {
           backgroundColor: "#f8f9fa",
         }}
       >
-        <h1 style={{ marginBottom: "10px", fontSize: "32px" }}>🏠 Home Page</h1>
+        <h1 style={{ fontSize: "32px" }}>🏠 Home Page</h1>
         <p style={{ marginBottom: "30px", fontSize: "16px" }}>
           Welcome! You are now logged in.
         </p>
@@ -181,19 +146,11 @@ function Home() {
             borderRadius: "8px",
             border: "1px solid #ccc",
             marginBottom: "20px",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
           }}
         />
 
-        {/* Product Categories */}
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            flexWrap: "wrap",
-            marginBottom: "30px",
-          }}
-        >
+        {/* Categories */}
+        <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", marginBottom: "30px" }}>
           {categories.map((category, index) => (
             <button
               key={index}
@@ -214,13 +171,7 @@ function Home() {
         </div>
 
         {/* Product Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-            gap: "20px",
-          }}
-        >
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: "20px" }}>
           {displayedProducts.map((product, index) => (
             <div
               key={index}
@@ -252,7 +203,7 @@ function Home() {
           ))}
         </div>
 
-        {/* No results */}
+        {/* No Results */}
         {displayedProducts.length === 0 && (
           <p style={{ marginTop: "20px", color: "#888" }}>
             No products found for "{searchTerm}" in "{activeCategory}".
