@@ -16,7 +16,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={<Home />} />
           <Route path="/cart" element={<Cart />} /> {/* ✅ Add Cart route */}
-          <Route path="/orders" element={<Orders />} /> {/* ✅ Add this */}
+          <Route path="/order" element={<Orders />} /> {/* ✅ Add this */}
         </Routes>
       </div>
     </Router>
