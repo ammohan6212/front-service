@@ -60,7 +60,7 @@ function Home() {
       navigate("/cart");
       break;
     case "Orders":
-      navigate("/orders"); // 👈 navigate to orders page
+      navigate("/order"); // 👈 navigate to orders page
       break;
     default:
       alert(`You clicked on ${item}`);
