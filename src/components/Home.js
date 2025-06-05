@@ -55,18 +55,12 @@ function Home() {
   };
 
   const handleMenuClick = (item) => {
-  switch (item) {
-    case "Cart":
-      navigate("/cart");
-      break;
-    case "Orders":
-      navigate("/orders"); // 👈 navigate to orders page
-      break;
-    default:
+    if (item === "Cart") {
+      navigate("/cart"); // 👈 navigate to Cart page
+    } else {
       alert(`You clicked on ${item}`);
-  }
-};
-
+    }
+  };
   
 
   const displayedProducts =

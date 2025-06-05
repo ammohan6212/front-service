@@ -4,7 +4,6 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
 import Cart from './components/Cart'; // ✅ Import Cart
-import Orders from './components/Orders';
 import './App.css';
 
 function App() {
@@ -16,7 +15,6 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={<Home />} />
           <Route path="/cart" element={<Cart />} /> {/* ✅ Add Cart route */}
-          <Route path="/order" element={<Orders />} /> {/* ✅ Add this */}
         </Routes>
       </div>
     </Router>
