@@ -36,7 +36,7 @@ services:
 
   payment:
     image: payment:1.0 # Adjust this to the path where Dockerfile and src/ exist
-    container_name: payment
+    container_name: payment-service
     ports:
       - "8081:8081"
     networks:
