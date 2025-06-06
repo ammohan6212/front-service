@@ -5,7 +5,7 @@ import Register from './components/Register';
 import Home from './components/Home';
 import Cart from './components/Cart'; // ✅ Import Cart
 import Orders from './components/Orders';
-import Payment from ".components/Payment";
+import Payment from './components/Payment';
 import './App.css';
 
 function App() {
