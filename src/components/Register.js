@@ -23,6 +23,7 @@ function Register() {
 
     if (response.ok) {
       setMessage(data.message);
+      navigate('/');
     } else {
       setMessage(data.detail || "Registration failed");
     }
