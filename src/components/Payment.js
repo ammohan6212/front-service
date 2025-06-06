@@ -7,7 +7,7 @@ function Payment() {
   useEffect(() => {
     axios
       .get("/pay/payment") // Example API endpoint, adjust if needed
-      .then((res) => setMessage(res.data.message))
+      .then((res) => setMessage(res.data))
       .catch((err) => {
         console.error("Error fetching payment message:", err);
         setMessage("❌ Failed to load payment message.");
