@@ -6,7 +6,7 @@ function Payment() {
 
   useEffect(() => {
     axios
-      .get("/payment") // Example API endpoint, adjust if needed
+      .get("/payment/payment") // Example API endpoint, adjust if needed
       .then((res) => setMessage(res.data.message))
       .catch((err) => {
         console.error("Error fetching payment message:", err);
