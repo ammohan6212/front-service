@@ -45,6 +45,13 @@ function SellerRegister() {
           onChange={handleChange}
         />
         <input
+          name="Email"
+          type="Email"
+          placeholder="Email"
+          value={form.Email}
+          onChange={handleChange}
+        />
+        <input
           name="password"
           type="password"
           placeholder="Password"
