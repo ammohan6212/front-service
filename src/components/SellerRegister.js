@@ -57,6 +57,13 @@ function SellerRegister() {
         </button>
       </form>
       <p>{message}</p>
+
+      <p>
+        Already have a seller account?
+        <button onClick={() => navigate('/seller-login')} style={{ marginLeft: "5px" }}>
+          Login here
+        </button>
+      </p>
     </div>
   );
 }
