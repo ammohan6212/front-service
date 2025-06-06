@@ -28,9 +28,30 @@ function Cart() {
       <p>{message}</p>
 
       {/* Pay button */}
-      <button onClick={handlePayClick} style={{ padding: "10px 20px", fontSize: "16px" }}>
-        Click here to Pay
-      </button>
+      <button
+      onClick={handlePayClick}
+      style={{
+        padding: "12px 24px",
+        fontSize: "16px",
+        fontWeight: "bold",
+        color: "#fff", // text color
+        background: "linear-gradient(90deg, #ff7e5f, #feb47b)", // gradient background
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        transition: "transform 0.2s ease-in-out",
+      }}
+      onMouseOver={(e) => {
+        e.target.style.transform = "scale(1.05)";
+      }}
+      onMouseOut={(e) => {
+        e.target.style.transform = "scale(1)";
+      }}
+    >
+      Click here to Pay
+    </button>
+
     </div>
   );
 }
