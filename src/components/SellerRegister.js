@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function SellerRegister() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -13,7 +13,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/login", {
+    const response = await fetch("/api/seller-register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -22,11 +22,10 @@ function Login() {
     const data = await response.json();
 
     if (response.ok) {
-      setMessage(data.message); // ✅ "Login successful"
-      localStorage.setItem("token", data.access_token);
-      navigate('/home'); // Navigate to the homepage
+      setMessage(data.message); // ✅ Registration successful
+      navigate('/seller-login'); // Go back to seller login
     } else {
-      setMessage(data.detail || "Login failed");
+      setMessage(data.detail || "Registration failed");
     }
   };
 
@@ -37,7 +36,7 @@ function Login() {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Seller Registration</h2>
       <form onSubmit={handleSubmit}>
         <input
           name="username"
@@ -52,28 +51,14 @@ function Login() {
           value={form.password}
           onChange={handleChange}
         />
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
         <button type="button" onClick={handleClear} style={{ marginLeft: "10px" }}>
           Clear
         </button>
       </form>
       <p>{message}</p>
-      
-      <p>
-        Don't have an account?
-        <button onClick={() => navigate('/register')} style={{ marginLeft: "5px" }}>
-          Register here
-        </button>
-      </p>
-
-      <p>
-        Are you a seller?
-        <button onClick={() => navigate('/seller-login')} style={{ marginLeft: "5px" }}>
-          Seller Login
-        </button>
-      </p>
     </div>
   );
 }
 
-export default Login;
+export default SellerRegister;

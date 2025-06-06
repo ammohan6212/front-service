@@ -6,6 +6,9 @@ import Home from './components/Home';
 import Cart from './components/Cart'; // ✅ Import Cart
 import Orders from './components/Orders';
 import Payment from './components/Payment';
+import SellerLogin from './components/SellerLogin';
+import SellerRegister from './components/SellerRegister';
+import SellerHome from './components/SellerHome';
 import './App.css';
 
 function App() {
@@ -18,7 +21,11 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/cart" element={<Cart />} /> {/* ✅ Add Cart route */}
           <Route path="/order" element={<Orders />} /> {/* ✅ Add this */}
-           <Route path="/payment" element={<Payment />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/seller-login" element={<SellerLogin />} />
+          <Route path="/seller-register" element={<SellerRegister />} />
+          <Route path="/seller-home" element={<SellerHome />} />
+
         </Routes>
       </div>
     </Router>

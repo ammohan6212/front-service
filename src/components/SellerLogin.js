@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function SellerLogin() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -13,7 +13,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/login", {
+    const response = await fetch("/api/seller-login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -23,8 +23,8 @@ function Login() {
 
     if (response.ok) {
       setMessage(data.message); // ✅ "Login successful"
-      localStorage.setItem("token", data.access_token);
-      navigate('/home'); // Navigate to the homepage
+      localStorage.setItem("seller_token", data.access_token);
+      navigate('/seller-home'); // Navigate to seller home page
     } else {
       setMessage(data.detail || "Login failed");
     }
@@ -37,7 +37,7 @@ function Login() {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Seller Login</h2>
       <form onSubmit={handleSubmit}>
         <input
           name="username"
@@ -58,22 +58,15 @@ function Login() {
         </button>
       </form>
       <p>{message}</p>
-      
-      <p>
-        Don't have an account?
-        <button onClick={() => navigate('/register')} style={{ marginLeft: "5px" }}>
-          Register here
-        </button>
-      </p>
 
       <p>
-        Are you a seller?
-        <button onClick={() => navigate('/seller-login')} style={{ marginLeft: "5px" }}>
-          Seller Login
+        Don't have a seller account?
+        <button onClick={() => navigate('/seller-register')} style={{ marginLeft: "5px" }}>
+          Register here
         </button>
       </p>
     </div>
   );
 }
 
-export default Login;
+export default SellerLogin;
