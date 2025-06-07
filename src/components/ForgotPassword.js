@@ -6,7 +6,12 @@ function ForgotPassword() {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [timer, setTimer] = useState(0); // in seconds
+  const [timer, setTimer] = useState(() => {
+    // Optional: persist timer across reloads
+    const savedTimer = localStorage.getItem("otp_timer_remaining");
+    return savedTimer ? parseInt(savedTimer, 10) : 0;
+  });
+
   const navigate = useNavigate();
 
   // Timer effect
@@ -14,10 +19,15 @@ function ForgotPassword() {
     let interval = null;
     if (otpSent && timer > 0) {
       interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
+        setTimer((prevTimer) => {
+          const newTime = prevTimer - 1;
+          localStorage.setItem("otp_timer_remaining", newTime);
+          return newTime;
+        });
       }, 1000);
     } else if (timer === 0) {
       clearInterval(interval);
+      localStorage.removeItem("otp_timer_remaining");
     }
     return () => clearInterval(interval);
   }, [otpSent, timer]);
@@ -25,7 +35,7 @@ function ForgotPassword() {
   const handleSendOtp = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/forgot-password", {
+    const response = await fetch("/verify-otp" /* Correct this if using /api/verify-otp */, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -36,8 +46,9 @@ function ForgotPassword() {
     if (response.ok) {
       setMessage("OTP sent to your email. Please enter it below.");
       setOtpSent(true);
-      setTimer(5 * 60); // 5 minutes = 300 seconds
+      setTimer(5 * 60); // 5 minutes
       localStorage.setItem("user_reset_email", email);
+      localStorage.setItem("otp_timer_remaining", 5 * 60);
     } else {
       setMessage(data.detail || "Failed to send OTP.");
     }
@@ -58,9 +69,9 @@ function ForgotPassword() {
       return;
     }
 
-    console.log("Sending to /verify-otp:", { email: storedEmail, otp }); // debug line
+    console.log("Verify OTP request body:", { email: storedEmail, otp });
 
-    const response = await fetch("/api/verify-otp", {
+    const response = await fetch("/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: storedEmail, otp }),
@@ -69,9 +80,11 @@ function ForgotPassword() {
     const data = await response.json();
 
     if (response.ok) {
-      // Optional: Clear localStorage after success
+      // Cleanup after success
       localStorage.removeItem("user_reset_email");
-      navigate('/reset-password'); // Navigate to ResetPassword page
+      localStorage.removeItem("otp_timer_remaining");
+      setMessage("OTP verified successfully!");
+      navigate('/reset-password');
     } else {
       setMessage(data.detail || "Invalid OTP.");
     }
@@ -85,7 +98,7 @@ function ForgotPassword() {
       return;
     }
 
-    const response = await fetch("/api/forgot-password", {
+    const response = await fetch("/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: storedEmail }),
@@ -95,13 +108,13 @@ function ForgotPassword() {
 
     if (response.ok) {
       setMessage("New OTP sent to your email.");
-      setTimer(5 * 60); // reset timer
+      setTimer(5 * 60);
+      localStorage.setItem("otp_timer_remaining", 5 * 60);
     } else {
       setMessage(data.detail || "Failed to resend OTP.");
     }
   };
 
-  // Helper function to format timer MM:SS
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -112,7 +125,6 @@ function ForgotPassword() {
     <div style={{ maxWidth: "400px", margin: "auto", padding: "20px", border: "1px solid #ccc", borderRadius: "8px" }}>
       <h2>User Forgot Password</h2>
 
-      {/* Email Form */}
       {!otpSent && (
         <form onSubmit={handleSendOtp}>
           <input
@@ -129,7 +141,6 @@ function ForgotPassword() {
         </form>
       )}
 
-      {/* OTP Form */}
       {otpSent && (
         <div style={{ marginTop: "20px" }}>
           <p>Email: {localStorage.getItem("user_reset_email")}</p>
@@ -141,7 +152,7 @@ function ForgotPassword() {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
-              disabled={timer === 0} // disable if expired
+              disabled={timer === 0}
               style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
             />
             <button type="submit" style={{ width: "100%", padding: "8px" }} disabled={timer === 0}>
@@ -149,10 +160,8 @@ function ForgotPassword() {
             </button>
           </form>
 
-          {/* Countdown Timer */}
           <p>Time Remaining: {formatTime(timer)}</p>
 
-          {/* Resend OTP button */}
           {timer === 0 && (
             <button onClick={handleResendOtp} style={{ marginTop: "10px", width: "100%", padding: "8px" }}>
               Resend OTP
