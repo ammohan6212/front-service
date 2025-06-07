@@ -92,7 +92,7 @@ function ForgotPassword() {
 
   return (
     <div>
-      <h2>Seller Forgot Password</h2>
+      <h2>User Forgot Password</h2>
 
       {/* Email Form */}
       {!otpSent && (
