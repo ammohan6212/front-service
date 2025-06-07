@@ -17,7 +17,7 @@ function ResetPassword() {
 
     const email = localStorage.getItem("seller_reset_email");
 
-    const response = await fetch("/api/reset-password", {
+    const response = await fetch("/api/reset-user-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, new_password: password }),

@@ -46,7 +46,7 @@ function SellerRegister() {
     setMessage(""); // Clear any previous messages
 
     try {
-      const response = await fetch("/api/start-registration", {
+      const response = await fetch("/api/start-seller-registration", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -91,7 +91,7 @@ function SellerRegister() {
     setMessage(""); // Clear previous message
 
     try {
-      const response = await fetch("/api/verify-otp", {
+      const response = await fetch("/api/verify-seller-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

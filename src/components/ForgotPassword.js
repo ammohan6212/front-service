@@ -35,7 +35,7 @@ function ForgotPassword() {
   const handleSendOtp = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/verify-user-otp" /* Correct this if using /api/verify-otp */, {
+    const response = await fetch("/api/verify-user-otp" /* Correct this if using /api/verify-otp */, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -71,7 +71,7 @@ function ForgotPassword() {
 
     console.log("Verify OTP request body:", { email: storedEmail, otp });
 
-    const response = await fetch("/verify-otp", {
+    const response = await fetch("/api/verify-user-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: storedEmail, otp }),
@@ -98,7 +98,7 @@ function ForgotPassword() {
       return;
     }
 
-    const response = await fetch("/forgot-password", {
+    const response = await fetch("/api/forgot-user-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: storedEmail }),
