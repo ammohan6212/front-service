@@ -65,6 +65,15 @@ function SellerLogin() {
           Register here
         </button>
       </p>
+      <p>
+      <button 
+        type="button" 
+        onClick={() => navigate('/seller-forgot-password')} 
+        style={{ marginTop: "10px", background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
+      >
+        Forgot Password?
+      </button>
+      </p>
     </div>
   );
 }
