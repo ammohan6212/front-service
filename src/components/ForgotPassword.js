@@ -35,7 +35,7 @@ function ForgotPassword() {
   const handleSendOtp = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/verify-otp" /* Correct this if using /api/verify-otp */, {
+    const response = await fetch("/verify-user-otp" /* Correct this if using /api/verify-otp */, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
