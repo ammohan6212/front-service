@@ -34,8 +34,7 @@ function App() {
           <Route path="/seller-reset-password" element={<SellerResetPassword />} />
           <Route path="/reset" element={<Reset />} />
           <Route path="/forgot-password" element={<Forgot />} />
-          
-          
+        
 
         </Routes>
       </div>
