@@ -46,13 +46,19 @@ function ForgotPassword() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
 
+    const storedEmail = localStorage.getItem("user_reset_email");
+
+    if (!storedEmail) {
+      setMessage("Email not found in session. Please resend OTP.");
+      return;
+    }
+
     if (timer === 0) {
       setMessage("OTP expired. Please resend OTP.");
       return;
     }
 
-    const storedEmail = localStorage.getItem("user_reset_email");
-    console.log("Sending to /verify-otp:", { email: storedEmail, otp }); // debug line (optional)
+    console.log("Sending to /verify-otp:", { email: storedEmail, otp }); // debug line
 
     const response = await fetch("/api/verify-otp", {
       method: "POST",
@@ -63,6 +69,8 @@ function ForgotPassword() {
     const data = await response.json();
 
     if (response.ok) {
+      // Optional: Clear localStorage after success
+      localStorage.removeItem("user_reset_email");
       navigate('/reset-password'); // Navigate to ResetPassword page
     } else {
       setMessage(data.detail || "Invalid OTP.");
@@ -71,6 +79,11 @@ function ForgotPassword() {
 
   const handleResendOtp = async () => {
     const storedEmail = localStorage.getItem("user_reset_email");
+
+    if (!storedEmail) {
+      setMessage("Email not found in session. Please start again.");
+      return;
+    }
 
     const response = await fetch("/api/forgot-password", {
       method: "POST",
@@ -96,7 +109,7 @@ function ForgotPassword() {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px", border: "1px solid #ccc", borderRadius: "8px" }}>
       <h2>User Forgot Password</h2>
 
       {/* Email Form */}
@@ -108,8 +121,9 @@ function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
           />
-          <button type="submit" style={{ marginLeft: "10px" }}>
+          <button type="submit" style={{ width: "100%", padding: "8px" }}>
             Send OTP
           </button>
         </form>
@@ -118,6 +132,8 @@ function ForgotPassword() {
       {/* OTP Form */}
       {otpSent && (
         <div style={{ marginTop: "20px" }}>
+          <p>Email: {localStorage.getItem("user_reset_email")}</p>
+
           <form onSubmit={handleVerifyOtp}>
             <input
               type="text"
@@ -126,8 +142,9 @@ function ForgotPassword() {
               onChange={(e) => setOtp(e.target.value)}
               required
               disabled={timer === 0} // disable if expired
+              style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
             />
-            <button type="submit" style={{ marginLeft: "10px" }} disabled={timer === 0}>
+            <button type="submit" style={{ width: "100%", padding: "8px" }} disabled={timer === 0}>
               Verify OTP
             </button>
           </form>
@@ -137,14 +154,14 @@ function ForgotPassword() {
 
           {/* Resend OTP button */}
           {timer === 0 && (
-            <button onClick={handleResendOtp} style={{ marginTop: "10px" }}>
+            <button onClick={handleResendOtp} style={{ marginTop: "10px", width: "100%", padding: "8px" }}>
               Resend OTP
             </button>
           )}
         </div>
       )}
 
-      <p>{message}</p>
+      <p style={{ color: "red", marginTop: "20px" }}>{message}</p>
     </div>
   );
 }
