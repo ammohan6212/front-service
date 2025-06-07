@@ -20,8 +20,7 @@ const isPasswordStrong = (validationStatus) => {
     validationStatus.specialChar
   );
 };
-
-function Register() {
+function SellerRegister() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -38,13 +37,8 @@ function Register() {
   };
 
   const handleSendOtp = async () => {
-    if (!form.email || !form.username) {
-      setMessage("Please enter username and email first.");
-      return;
-    }
-
-    if (!isPasswordStrong(getPasswordValidationStatus(form.password))) {
-      setMessage("Password does not meet the required criteria.");
+    if (!form.email) {
+      setMessage("Please enter your email first.");
       return;
     }
 
@@ -52,23 +46,24 @@ function Register() {
     setMessage(""); // Clear any previous messages
 
     try {
-      const response = await fetch("/api/start-user-registration", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: form.username,
-          email: form.email
-        }),
+      const response = await fetch("/api/start-registration", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+              username: form.username,
+              email: form.email
+          }),
       });
+
 
       const data = await response.json();
 
       if (response.ok) {
         setMessage(data.message || "OTP sent to your email.");
         setOtpSent(true);
-        setCountdown(OTP_VALIDITY_SECONDS);
+        setCountdown(OTP_VALIDITY_SECONDS); // Reset countdown
       } else if (response.status === 409) {
-        setMessage(data.detail);
+        setMessage(data.detail)
       } else {
         setMessage(data.detail || "Failed to send OTP.");
       }
@@ -93,10 +88,10 @@ function Register() {
     }
 
     setVerifyingOtp(true);
-    setMessage("");
+    setMessage(""); // Clear previous message
 
     try {
-      const response = await fetch("/api/verify-user-otp", {
+      const response = await fetch("/api/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -111,16 +106,17 @@ function Register() {
 
       if (response.ok) {
         setMessage(data.message || "Registration successful.");
-        navigate('/');
-      } else {
+        navigate('/seller-login');
+    } else {
         if (response.status === 401) {
-          setMessage("OTP is incorrect or expired. Please try again.");
+            setMessage("OTP is incorrect or expired. Please try again.");
         } else if (response.status === 409) {
-          setMessage(data.detail);
+            // Backend sends: Username already registered OR Email already registered
+            setMessage(data.detail);
         } else {
-          setMessage(data.detail || "OTP verification failed.");
+            setMessage(data.detail || "OTP verification failed.");
         }
-      }
+    }
     } catch (error) {
       setMessage("Network error while verifying OTP.");
     } finally {
@@ -136,6 +132,7 @@ function Register() {
     setMessage("");
   };
 
+  // Countdown timer effect
   useEffect(() => {
     if (countdown <= 0) return;
 
@@ -154,7 +151,7 @@ function Register() {
 
   return (
     <div>
-      <h2>User Registration (with OTP)</h2>
+      <h2>Seller Registration (with OTP)</h2>
       <form onSubmit={handleVerifyOtpAndRegister}>
         <input
           name="username"
@@ -210,6 +207,7 @@ function Register() {
           ) : null;
         })()}
 
+
         {!otpSent && (
           <button
             type="button"
@@ -239,7 +237,8 @@ function Register() {
             </button>
 
             <div style={{ marginTop: "10px" }}>
-              OTP valid for: <strong>{formatTime(countdown)}</strong>
+              OTP valid for:{" "}
+              <strong>{formatTime(countdown)}</strong>
             </div>
 
             {otpSent && countdown === 0 && (
@@ -271,8 +270,8 @@ function Register() {
       <p style={{ marginTop: "10px", color: "blue" }}>{message}</p>
 
       <p style={{ marginTop: "20px" }}>
-        Already have an account?
-        <button onClick={() => navigate('/')} style={{ marginLeft: "5px" }}>
+        Already have a seller account?
+        <button onClick={() => navigate('/seller-login')} style={{ marginLeft: "5px" }}>
           Login here
         </button>
       </p>
@@ -280,4 +279,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default SellerRegister;
