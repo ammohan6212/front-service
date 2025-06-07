@@ -6,11 +6,12 @@ function SellerRegister() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [message, setMessage] = useState("");
-  const [countdown, setCountdown] = useState(0); // seconds
+  const [countdown, setCountdown] = useState(0);
   const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const navigate = useNavigate();
 
-  const OTP_VALIDITY_SECONDS = 300; // 5 minutes = 300 seconds
+  const OTP_VALIDITY_SECONDS = 300; // 5 minutes
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,25 +23,30 @@ function SellerRegister() {
       return;
     }
 
-    setSendingOtp(true); // Disable button while sending
+    setSendingOtp(true);
+    setMessage(""); // Clear any previous messages
 
-    const response = await fetch("/api/start-registration", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: form.email }),
-    });
+    try {
+      const response = await fetch("/api/start-registration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      setMessage(data.message || "OTP sent to your email.");
-      setOtpSent(true);
-      setCountdown(OTP_VALIDITY_SECONDS); // restart countdown
-    } else {
-      setMessage(data.detail || "Failed to send OTP.");
+      if (response.ok) {
+        setMessage(data.message || "OTP sent to your email.");
+        setOtpSent(true);
+        setCountdown(OTP_VALIDITY_SECONDS); // Reset countdown
+      } else {
+        setMessage(data.detail || "Failed to send OTP.");
+      }
+    } catch (error) {
+      setMessage("Network error while sending OTP.");
+    } finally {
+      setSendingOtp(false);
     }
-
-    setSendingOtp(false); // Re-enable button
   };
 
   const handleVerifyOtpAndRegister = async (e) => {
@@ -51,24 +57,42 @@ function SellerRegister() {
       return;
     }
 
-    const response = await fetch("/api/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: form.username,
-        email: form.email,
-        password: form.password,
-        otp: otp,
-      }),
-    });
+    if (!otp) {
+      setMessage("Please enter OTP.");
+      return;
+    }
 
-    const data = await response.json();
+    setVerifyingOtp(true);
+    setMessage(""); // Clear previous message
 
-    if (response.ok) {
-      setMessage(data.message || "Registration successful.");
-      navigate('/seller-login');
-    } else {
-      setMessage(data.detail || "OTP verification failed.");
+    try {
+      const response = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: form.username,
+          email: form.email,
+          password: form.password,
+          otp: otp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message || "Registration successful.");
+        navigate('/seller-login');
+      } else {
+        if (response.status === 400) {
+          setMessage("OTP is incorrect or expired. Please try again.");
+        } else {
+          setMessage(data.detail || "OTP verification failed.");
+        }
+      }
+    } catch (error) {
+      setMessage("Network error while verifying OTP.");
+    } finally {
+      setVerifyingOtp(false);
     }
   };
 
@@ -85,13 +109,12 @@ function SellerRegister() {
     if (countdown <= 0) return;
 
     const timerId = setInterval(() => {
-      setCountdown(prev => prev - 1);
+      setCountdown((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timerId);
   }, [countdown]);
 
-  // Helper to format countdown MM:SS
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
@@ -128,8 +151,9 @@ function SellerRegister() {
             type="button"
             onClick={handleSendOtp}
             style={{ marginTop: "10px" }}
+            disabled={sendingOtp}
           >
-            Send OTP
+            {sendingOtp ? "Sending OTP..." : "Send OTP"}
           </button>
         )}
 
@@ -142,8 +166,12 @@ function SellerRegister() {
               onChange={(e) => setOtp(e.target.value)}
               style={{ display: "block", marginTop: "10px" }}
             />
-            <button type="submit" style={{ marginTop: "10px" }}>
-              Verify OTP & Register
+            <button
+              type="submit"
+              style={{ marginTop: "10px" }}
+              disabled={verifyingOtp}
+            >
+              {verifyingOtp ? "Verifying..." : "Verify OTP & Register"}
             </button>
 
             <div style={{ marginTop: "10px" }}>
@@ -177,9 +205,9 @@ function SellerRegister() {
         </button>
       </form>
 
-      <p>{message}</p>
+      <p style={{ marginTop: "10px", color: "blue" }}>{message}</p>
 
-      <p>
+      <p style={{ marginTop: "20px" }}>
         Already have a seller account?
         <button onClick={() => navigate('/seller-login')} style={{ marginLeft: "5px" }}>
           Login here
