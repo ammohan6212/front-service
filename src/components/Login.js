@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,9 +22,9 @@ function Login() {
     const data = await response.json();
 
     if (response.ok) {
-      setMessage(data.message); // ✅ "Login successful"
+      setMessage(data.message);
       localStorage.setItem("token", data.access_token);
-      navigate('/home'); // Navigate to the homepage
+      navigate('/home');
     } else {
       setMessage(data.detail || "Login failed");
     }
@@ -58,7 +58,7 @@ function Login() {
         </button>
       </form>
       <p>{message}</p>
-      
+
       <p>
         Don't have an account?
         <button onClick={() => navigate('/register')} style={{ marginLeft: "5px" }}>
@@ -70,6 +70,17 @@ function Login() {
         Are you a seller?
         <button onClick={() => navigate('/seller-login')} style={{ marginLeft: "5px" }}>
           Seller Login
+        </button>
+      </p>
+
+      <p>
+        Forgot your password?
+        <button
+          type="button"
+          onClick={() => navigate('/forgot-password')}
+          style={{ marginLeft: "5px", background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
+        >
+          Click here
         </button>
       </p>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
-function SellerForgotPassword() {
+function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
@@ -25,7 +25,7 @@ function SellerForgotPassword() {
   const handleSendOtp = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/seller-forgot-password", {
+    const response = await fetch("/api/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -51,7 +51,7 @@ function SellerForgotPassword() {
       return;
     }
 
-    const response = await fetch("/api/seller-verify-otp", {
+    const response = await fetch("/api/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
@@ -60,14 +60,14 @@ function SellerForgotPassword() {
     const data = await response.json();
 
     if (response.ok) {
-      navigate('/seller-reset-password');
+      navigate('/reset');
     } else {
       setMessage(data.detail || "Invalid OTP.");
     }
   };
 
   const handleResendOtp = async () => {
-    const response = await fetch("/api/seller-forgot-password", {
+    const response = await fetch("/api/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -144,4 +144,4 @@ function SellerForgotPassword() {
   );
 }
 
-export default SellerForgotPassword;
+export default ForgotPassword;

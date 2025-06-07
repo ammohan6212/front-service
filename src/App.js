@@ -10,6 +10,10 @@ import SellerLogin from './components/SellerLogin';
 import SellerRegister from './components/SellerRegister';
 import SellerHome from './components/SellerHome';
 import SellerForgotPassword from './components/SellerForgotPassword'
+import SellerResetPassword from './components/SellerResetPassword'
+import Forgot from './components/ForgotPassword';
+import Reset from './components/ResetPassword';
+
 import './App.css';
 
 function App() {
@@ -27,7 +31,11 @@ function App() {
           <Route path="/seller-register" element={<SellerRegister />} />
           <Route path="/seller-home" element={<SellerHome />} />
           <Route path="/seller-forgot-password" element={<SellerForgotPassword />} />
-
+          <Route path="/seller-reset-password" element={<SellerResetPassword />} />
+          <Route path="/reset" element={<Reset />} />
+          <Route path="/forgot-password" element={<Forgot />} />
+          
+          
 
         </Routes>
       </div>
