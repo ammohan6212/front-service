@@ -15,7 +15,7 @@ function ResetPassword() {
       return;
     }
 
-    const email = localStorage.getItem("seller_reset_email");
+    const email = localStorage.getItem("user_reset_email");
 
     const response = await fetch("/api/reset-user-password", {
       method: "POST",
