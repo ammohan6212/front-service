@@ -1,6 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
+const getPasswordValidationStatus = (password) => {
+  return {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    digit: /\d/.test(password),
+    specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  };
+};
+
+const isPasswordStrong = (validationStatus) => {
+  return (
+    validationStatus.length &&
+    validationStatus.uppercase &&
+    validationStatus.lowercase &&
+    validationStatus.digit &&
+    validationStatus.specialChar
+  );
+};
 function SellerRegister() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [otp, setOtp] = useState("");
@@ -39,6 +58,8 @@ function SellerRegister() {
         setMessage(data.message || "OTP sent to your email.");
         setOtpSent(true);
         setCountdown(OTP_VALIDITY_SECONDS); // Reset countdown
+      } else if (response.status === 409) {
+        setMessage(data.detail)
       } else {
         setMessage(data.detail || "Failed to send OTP.");
       }
@@ -82,13 +103,16 @@ function SellerRegister() {
       if (response.ok) {
         setMessage(data.message || "Registration successful.");
         navigate('/seller-login');
-      } else {
-        if (response.status === 400) {
-          setMessage("OTP is incorrect or expired. Please try again.");
+    } else {
+        if (response.status === 401) {
+            setMessage("OTP is incorrect or expired. Please try again.");
+        } else if (response.status === 409) {
+            // Backend sends: Username already registered OR Email already registered
+            setMessage(data.detail);
         } else {
-          setMessage(data.detail || "OTP verification failed.");
+            setMessage(data.detail || "OTP verification failed.");
         }
-      }
+    }
     } catch (error) {
       setMessage("Network error while verifying OTP.");
     } finally {
@@ -145,6 +169,40 @@ function SellerRegister() {
           value={form.password}
           onChange={handleChange}
         />
+        {/* Password validation block */}
+        {form.password && (() => {
+          const validationStatus = getPasswordValidationStatus(form.password);
+          const anyFailed = Object.values(validationStatus).some((v) => !v);
+
+          return !isPasswordStrong(validationStatus) ? (
+            <div
+              style={{
+                marginTop: "10px",
+                color: anyFailed ? "red" : "green",
+                border: anyFailed ? "1px solid red" : "1px solid green",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              <p style={{ margin: "0 0 5px 0" }}>Password must:</p>
+              {Object.entries(validationStatus).map(([key, valid]) => {
+                let label = "";
+                if (key === "length") label = "At least 8 characters";
+                if (key === "uppercase") label = "At least 1 uppercase letter";
+                if (key === "lowercase") label = "At least 1 lowercase letter";
+                if (key === "digit") label = "At least 1 digit";
+                if (key === "specialChar") label = "At least 1 special character";
+
+                return (
+                  <div key={key}>
+                    {valid ? "✅" : "❌"} {label}
+                  </div>
+                );
+              })}
+            </div>
+          ) : null;
+        })()}
+
 
         {!otpSent && (
           <button
