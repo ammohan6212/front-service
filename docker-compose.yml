@@ -8,8 +8,10 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/mydb
+      REDIS_URL: redis://redis:6379/0  # Add this if your backend uses REDIS_URL env
     depends_on:
       - db
+      - redis  # Add redis dependency
     networks:
       - app-network
 
@@ -27,7 +29,7 @@ services:
       - app-network
 
   cart:
-    image: cart:1.0 # Adjust this to the path where Dockerfile and src/ exist
+    image: cart:1.0
     container_name: cart-backend
     ports:
       - "5000:5000"
@@ -35,16 +37,15 @@ services:
       - app-network
 
   payment:
-    image: payment:1.0 # Adjust this to the path where Dockerfile and src/ exist
+    image: payment:1.0
     container_name: payment-service
     ports:
       - "8081:8081"
     networks:
       - app-network
 
-
   order:
-    image: order:1.0      # Folder containing Dockerfile and pom.xml
+    image: order:1.0
     container_name: order-service
     ports:
       - "8080:8080"
@@ -65,6 +66,15 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.2 # You can pick latest redis version or stable
+    container_name: redis-cache
+    restart: always
+    ports:
+      - "6379:6379"
     networks:
       - app-network
 
