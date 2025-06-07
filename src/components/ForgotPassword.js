@@ -37,7 +37,7 @@ function ForgotPassword() {
       setMessage("OTP sent to your email. Please enter it below.");
       setOtpSent(true);
       setTimer(5 * 60); // 5 minutes = 300 seconds
-      localStorage.setItem("seller_reset_email", email);
+      localStorage.setItem("user_reset_email", email);
     } else {
       setMessage(data.detail || "Failed to send OTP.");
     }
@@ -60,7 +60,7 @@ function ForgotPassword() {
     const data = await response.json();
 
     if (response.ok) {
-      navigate('/reset');
+      navigate('/reset-password'); // Navigate to ResetPassword page
     } else {
       setMessage(data.detail || "Invalid OTP.");
     }
