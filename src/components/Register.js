@@ -96,7 +96,7 @@ function Register() {
     setMessage("");
 
     try {
-      const response = await fetch("/api/verify-user-otp", {
+      const response = await fetch("/api/user-register-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
