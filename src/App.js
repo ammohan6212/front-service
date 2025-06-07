@@ -9,6 +9,7 @@ import Payment from './components/Payment';
 import SellerLogin from './components/SellerLogin';
 import SellerRegister from './components/SellerRegister';
 import SellerHome from './components/SellerHome';
+import SellerForgotPassword from './components/SellerForgotPassword'
 import './App.css';
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
           <Route path="/seller-login" element={<SellerLogin />} />
           <Route path="/seller-register" element={<SellerRegister />} />
           <Route path="/seller-home" element={<SellerHome />} />
+          <Route path="/seller-forgot-password" element={<SellerForgotPassword />} />
+
 
         </Routes>
       </div>
