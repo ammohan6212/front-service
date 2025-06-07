@@ -42,7 +42,6 @@ function ForgotPassword() {
       setMessage(data.detail || "Failed to send OTP.");
     }
   };
-  const storedEmail = localStorage.getItem("user_reset_email");
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
@@ -51,6 +50,9 @@ function ForgotPassword() {
       setMessage("OTP expired. Please resend OTP.");
       return;
     }
+
+    const storedEmail = localStorage.getItem("user_reset_email");
+    console.log("Sending to /verify-otp:", { email: storedEmail, otp }); // debug line (optional)
 
     const response = await fetch("/api/verify-otp", {
       method: "POST",
@@ -68,10 +70,12 @@ function ForgotPassword() {
   };
 
   const handleResendOtp = async () => {
+    const storedEmail = localStorage.getItem("user_reset_email");
+
     const response = await fetch("/api/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email: storedEmail }),
     });
 
     const data = await response.json();
