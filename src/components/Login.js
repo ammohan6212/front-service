@@ -37,7 +37,12 @@ function Login() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.wave}></div>
+      {/* Waves Background */}
+      <div className="ocean">
+        <div className="wave"></div>
+        <div className="wave"></div>
+      </div>
+
       <div style={styles.container}>
         <h2 style={styles.heading}>Login</h2>
         <form onSubmit={handleSubmit} style={styles.form}>
@@ -101,21 +106,12 @@ const styles = {
   page: {
     position: "relative",
     minHeight: "100vh",
-    background: "linear-gradient(to bottom, #1e3c72, #2a5298)",
+    background: "linear-gradient(to bottom, #00c6ff, #0072ff)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-  },
-  wave: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    width: "100%",
-    height: "120px",
-    background: "url('https://svgshare.com/i/uNq.svg') repeat-x",
-    animation: "wave 10s linear infinite",
-    opacity: 0.8,
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
   container: {
     position: "relative",
@@ -123,9 +119,8 @@ const styles = {
     maxWidth: "400px",
     padding: "20px",
     borderRadius: "12px",
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     boxShadow: "0 8px 16px rgba(0,0,0,0.3)",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
   heading: {
     textAlign: "center",
@@ -156,7 +151,6 @@ const styles = {
     cursor: "pointer",
     marginRight: "10px",
     fontSize: "16px",
-    transition: "background 0.3s",
   },
   secondaryButton: {
     flex: "1",
@@ -167,7 +161,6 @@ const styles = {
     borderRadius: "6px",
     cursor: "pointer",
     fontSize: "16px",
-    transition: "background 0.3s",
   },
   message: {
     marginTop: "15px",
@@ -190,14 +183,5 @@ const styles = {
     padding: "0",
   },
 };
-
-// Add CSS keyframes to animate wave
-const styleSheet = document.styleSheets[0];
-const keyframes =
-  `@keyframes wave {
-    0% { background-position-x: 0; }
-    100% { background-position-x: 1000px; }
-  }`;
-styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
 
 export default Login;
