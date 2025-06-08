@@ -1,20 +1,38 @@
+name: CI/CD Pipeline with Approval Step for Main
+
 on:
   push:
     branches:
-      - '**'    # All branches
-  pull_request:
-    branches:
-      - '**'
+      - main    # Only main branch
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build step
+        run: echo "Building the app..."
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tests
+        run: echo "Running tests..."
+
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref_name == 'main'   # 👈 Only deploy if main branch!
+    needs: test
     environment:
-      name: production  # 👈 Triggers manual approval
+      name: production  # 👈 THIS triggers manual approval before deploy starts
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Deploy step
-        run: echo "Deploying main branch to Production..."
+        run: echo "Deploying to Production..."
