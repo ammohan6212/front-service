@@ -28,7 +28,7 @@ function ResetPassword() {
     if (response.ok) {
       setMessage("Password reset successful. Redirecting to login...");
       setTimeout(() => {
-        localStorage.removeItem("seller_reset_email");
+        localStorage.removeItem("user_reset_email");
         navigate('/');
       }, 2000);
     } else {
