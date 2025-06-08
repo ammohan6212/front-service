@@ -75,34 +75,38 @@ function Home() {
       : products;
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", fontFamily: "Arial, sans-serif" }}>
+    <div style={{
+      display: "flex",
+      height: "100vh",
+      width: "100vw",
+      overflow: "hidden"
+    }}>
+      
       {/* Sidebar */}
       <aside
         style={{
-          width: menuOpen ? "240px" : "80px",
-          backgroundColor: "#2c3e50",
-          color: "#ecf0f1",
-          padding: "20px",
+          width: menuOpen ? "220px" : "70px",
+          backgroundColor: "#1e1e2f",
+          color: "#fff",
+          padding: "15px",
           transition: "width 0.3s ease",
           display: "flex",
           flexDirection: "column",
-          boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
         }}
       >
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
             background: "none",
-            color: "#ecf0f1",
+            color: "#fff",
             border: "none",
             cursor: "pointer",
             fontSize: "22px",
-            marginBottom: "30px",
+            marginBottom: "20px",
             textAlign: "left",
-            outline: "none",
           }}
         >
-          {menuOpen ? "☰ Close" : "☰"}
+          {menuOpen ? "☰ Close" : "☰ Menu"}
         </button>
         {menuOpen && (
           <nav>
@@ -113,12 +117,9 @@ function Home() {
                   onClick={() => handleMenuClick(item)}
                   style={{
                     padding: "12px 0",
-                    borderBottom: "1px solid #34495e",
+                    borderBottom: "1px solid #333",
                     cursor: "pointer",
-                    transition: "background-color 0.2s ease",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#34495e")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   {item}
                 </li>
@@ -132,13 +133,15 @@ function Home() {
       <main
         style={{
           flex: 1,
-          padding: "50px 40px",
+          display: "flex",
+          flexDirection: "column",
+          padding: "30px",
           overflowY: "auto",
-          background: "linear-gradient(to bottom right, #f5f7fa, #c3cfe2)",
+          backgroundColor: "#f8f9fa",
         }}
       >
-        <h1 style={{ fontSize: "32px", color: "#2c3e50" }}>🏠 Home Page</h1>
-        <p style={{ marginBottom: "30px", fontSize: "16px", color: "#34495e" }}>
+        <h1 style={{ fontSize: "28px", marginBottom: "10px" }}>🏠 Home Page</h1>
+        <p style={{ marginBottom: "25px", fontSize: "16px" }}>
           Welcome! You are now logged in.
         </p>
 
@@ -149,35 +152,35 @@ function Home() {
           value={searchTerm}
           onChange={handleSearch}
           style={{
-            padding: "14px 18px",
+            padding: "12px 18px",
             width: "100%",
-            maxWidth: "500px",
+            maxWidth: "400px",
             fontSize: "16px",
             borderRadius: "8px",
             border: "1px solid #ccc",
-            marginBottom: "30px",
-            display: "block",
-            marginLeft: "auto",
-            marginRight: "auto",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+            marginBottom: "20px",
           }}
         />
 
         {/* Categories */}
-        <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", justifyContent: "center", marginBottom: "40px" }}>
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "12px",
+          marginBottom: "25px"
+        }}>
           {categories.map((category, index) => (
             <button
               key={index}
               onClick={() => handleCategoryClick(category)}
               style={{
-                padding: "10px 20px",
-                backgroundColor: activeCategory === category ? "#2980b9" : "#3498db",
+                padding: "10px 14px",
+                backgroundColor: activeCategory === category ? "#0056b3" : "#007bff",
                 color: "#fff",
                 border: "none",
-                borderRadius: "20px",
+                borderRadius: "5px",
                 cursor: "pointer",
                 fontSize: "14px",
-                transition: "background-color 0.3s ease",
               }}
             >
               {category}
@@ -186,44 +189,49 @@ function Home() {
         </div>
 
         {/* Product Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "20px" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+          gap: "18px",
+          flex: 1, // grow to fill available space
+        }}>
           {displayedProducts.map((product, index) => (
             <div
               key={index}
               onClick={() => handleProductClick(product)}
               style={{
                 border: "1px solid #ddd",
-                borderRadius: "12px",
-                padding: "15px",
+                borderRadius: "8px",
+                padding: "10px",
                 cursor: "pointer",
                 textAlign: "center",
                 backgroundColor: "#fff",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                transition: "transform 0.2s ease",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                transition: "transform 0.2s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+              onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.03)"}
+              onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
             >
               <img
                 src={product.image}
                 alt={product.name}
                 style={{
                   width: "100%",
-                  height: "150px",
+                  height: "140px",
                   objectFit: "cover",
-                  borderRadius: "10px",
-                  marginBottom: "12px",
+                  borderRadius: "6px",
+                  marginBottom: "8px",
                 }}
               />
-              <strong style={{ fontSize: "16px", color: "#2c3e50" }}>{product.name}</strong>
-              <p style={{ color: "#7f8c8d", fontSize: "14px" }}>{product.category}</p>
+              <strong style={{ fontSize: "15px" }}>{product.name}</strong>
+              <p style={{ color: "#666", fontSize: "13px" }}>{product.category}</p>
             </div>
           ))}
         </div>
 
         {/* No Results */}
         {displayedProducts.length === 0 && (
-          <p style={{ marginTop: "20px", color: "#888", textAlign: "center" }}>
+          <p style={{ marginTop: "20px", color: "#888" }}>
             No products found for "{searchTerm}" in "{activeCategory}".
           </p>
         )}
