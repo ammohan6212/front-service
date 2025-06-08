@@ -36,14 +36,16 @@ function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+    <div style={styles.container}>
+      <h2 style={styles.heading}>Login</h2>
+      <form onSubmit={handleSubmit} style={styles.form}>
         <input
           name="username"
           placeholder="Username"
           value={form.username}
           onChange={handleChange}
+          style={styles.input}
+          required
         />
         <input
           name="password"
@@ -51,40 +53,118 @@ function Login() {
           placeholder="Password"
           value={form.password}
           onChange={handleChange}
+          style={styles.input}
+          required
         />
-        <button type="submit">Login</button>
-        <button type="button" onClick={handleClear} style={{ marginLeft: "10px" }}>
-          Clear
-        </button>
+        <div style={styles.buttonGroup}>
+          <button type="submit" style={styles.primaryButton}>Login</button>
+          <button type="button" onClick={handleClear} style={styles.secondaryButton}>Clear</button>
+        </div>
       </form>
-      <p>{message}</p>
 
-      <p>
-        Don't have an account?
-        <button onClick={() => navigate('/register')} style={{ marginLeft: "5px" }}>
-          Register here
-        </button>
-      </p>
+      {message && <p style={styles.message}>{message}</p>}
 
-      <p>
-        Are you a seller?
-        <button onClick={() => navigate('/seller-login')} style={{ marginLeft: "5px" }}>
-          Seller Login
-        </button>
-      </p>
+      <div style={styles.links}>
+        <p>
+          Don't have an account?
+          <button onClick={() => navigate('/register')} style={styles.linkButton}>
+            Register here
+          </button>
+        </p>
 
-      <p>
-        Forgot your password?
-        <button
-          type="button"
-          onClick={() => navigate('/forgot-password')}
-          style={{ marginLeft: "5px", background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
-        >
-          Click here
-        </button>
-      </p>
+        <p>
+          Are you a seller?
+          <button onClick={() => navigate('/seller-login')} style={styles.linkButton}>
+            Seller Login
+          </button>
+        </p>
+
+        <p>
+          Forgot your password?
+          <button
+            type="button"
+            onClick={() => navigate('/forgot-password')}
+            style={styles.linkButton}
+          >
+            Click here
+          </button>
+        </p>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: "400px",
+    margin: "50px auto",
+    padding: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    backgroundColor: "#f9f9f9",
+  },
+  heading: {
+    textAlign: "center",
+    color: "#333",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  input: {
+    padding: "10px",
+    marginBottom: "15px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    fontSize: "16px",
+  },
+  buttonGroup: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  primaryButton: {
+    flex: "1",
+    padding: "10px",
+    backgroundColor: "#4CAF50",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    marginRight: "10px",
+    fontSize: "16px",
+  },
+  secondaryButton: {
+    flex: "1",
+    padding: "10px",
+    backgroundColor: "#f44336",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "16px",
+  },
+  message: {
+    marginTop: "15px",
+    textAlign: "center",
+    color: "red",
+    fontWeight: "bold",
+  },
+  links: {
+    marginTop: "20px",
+    textAlign: "center",
+  },
+  linkButton: {
+    marginLeft: "5px",
+    background: "none",
+    border: "none",
+    color: "#1E90FF",
+    textDecoration: "underline",
+    cursor: "pointer",
+    fontSize: "14px",
+    padding: "0",
+  },
+};
 
 export default Login;
