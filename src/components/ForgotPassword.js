@@ -80,8 +80,7 @@ function ForgotPassword() {
     const data = await response.json();
 
     if (response.ok) {
-      // Cleanup after success
-      localStorage.removeItem("user_reset_email");
+      setMessage("Password reset successful. Redirecting to login...");
       localStorage.removeItem("otp_timer_remaining");
       setMessage("OTP verified successfully!");
       navigate('/reset-password');
