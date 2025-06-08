@@ -2,52 +2,29 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* No scrollbars */
-}
-
-.auth-container {
-  position: relative;
-  z-index: 10; /* On top of ocean */
-  max-width: 400px;
-  margin: 100px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-
-input {
-  display: block;
-  width: 100%;
-  margin: 12px 0;
-  padding: 10px;
-  font-size: 1rem;
-}
-
-button {
-  padding: 10px 15px;
-  font-size: 1rem;
-  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ocean {
-  position: fixed; /* Full screen fixed */
+  position: fixed; /* Full screen */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
   z-index: 1;
-  background: linear-gradient(to bottom, #00aaff, #004488); /* Base ocean color */
+  background: linear-gradient(to bottom, #00aaff, #004488);
 }
 
 .wave {
   position: absolute;
-  top: 0; /* Start at top */
+  top: 0;
   left: 0;
   width: 300%;
-  height: 300%; /* Large enough to fill screen */
+  height: 300%;
   background: url("https://svgshare.com/i/uR5.svg") repeat-x;
   background-size: cover;
   opacity: 0.4;
@@ -71,4 +48,31 @@ button {
   100% {
     transform: translateX(-50%);
   }
+}
+
+.auth-container {
+  position: relative;
+  z-index: 10; /* Above ocean */
+  max-width: 400px;
+  width: 90%; /* Responsive */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  text-align: center; /* Center text inside */
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
 }
