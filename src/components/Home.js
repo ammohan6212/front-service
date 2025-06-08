@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // 👈 import for navigation
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -7,7 +7,7 @@ function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // 👈 initialize navigator
 
   const products = [
     { name: "Apple iPhone", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=iPhone" },
@@ -55,17 +55,19 @@ function Home() {
   };
 
   const handleMenuClick = (item) => {
-    switch (item) {
-      case "Cart":
-        navigate("/cart");
-        break;
-      case "Orders":
-        navigate("/order");
-        break;
-      default:
-        alert(`You clicked on ${item}`);
-    }
-  };
+  switch (item) {
+    case "Cart":
+      navigate("/cart");
+      break;
+    case "Orders":
+      navigate("/order"); // 👈 navigate to orders page
+      break;
+    default:
+      alert(`You clicked on ${item}`);
+  }
+};
+
+  
 
   const displayedProducts =
     (searchTerm || activeCategory !== "All") && results.length > 0
@@ -75,20 +77,14 @@ function Home() {
       : products;
 
   return (
-    <div style={{
-      display: "flex",
-      height: "100vh",
-      width: "100vw",
-      overflow: "hidden"
-    }}>
-      
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden" }}>
       {/* Sidebar */}
       <aside
         style={{
-          width: menuOpen ? "220px" : "70px",
+          width: menuOpen ? "240px" : "80px",
           backgroundColor: "#1e1e2f",
           color: "#fff",
-          padding: "15px",
+          padding: "20px",
           transition: "width 0.3s ease",
           display: "flex",
           flexDirection: "column",
@@ -101,7 +97,7 @@ function Home() {
             color: "#fff",
             border: "none",
             cursor: "pointer",
-            fontSize: "22px",
+            fontSize: "20px",
             marginBottom: "20px",
             textAlign: "left",
           }}
@@ -114,7 +110,7 @@ function Home() {
               {["Dashboard", "Products", "Orders", "Cart", "Profile", "Settings", "Logout"].map((item, index) => (
                 <li
                   key={index}
-                  onClick={() => handleMenuClick(item)}
+                  onClick={() => handleMenuClick(item)} // 👈 updated for routing
                   style={{
                     padding: "12px 0",
                     borderBottom: "1px solid #333",
@@ -133,15 +129,13 @@ function Home() {
       <main
         style={{
           flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          padding: "30px",
+          padding: "50px 40px",
           overflowY: "auto",
           backgroundColor: "#f8f9fa",
         }}
       >
-        <h1 style={{ fontSize: "28px", marginBottom: "10px" }}>🏠 Home Page</h1>
-        <p style={{ marginBottom: "25px", fontSize: "16px" }}>
+        <h1 style={{ fontSize: "32px" }}>🏠 Home Page</h1>
+        <p style={{ marginBottom: "30px", fontSize: "16px" }}>
           Welcome! You are now logged in.
         </p>
 
@@ -163,22 +157,17 @@ function Home() {
         />
 
         {/* Categories */}
-        <div style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "12px",
-          marginBottom: "25px"
-        }}>
+        <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", marginBottom: "30px" }}>
           {categories.map((category, index) => (
             <button
               key={index}
               onClick={() => handleCategoryClick(category)}
               style={{
-                padding: "10px 14px",
+                padding: "10px 16px",
                 backgroundColor: activeCategory === category ? "#0056b3" : "#007bff",
                 color: "#fff",
                 border: "none",
-                borderRadius: "5px",
+                borderRadius: "6px",
                 cursor: "pointer",
                 fontSize: "14px",
               }}
@@ -189,42 +178,34 @@ function Home() {
         </div>
 
         {/* Product Grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-          gap: "18px",
-          flex: 1, // grow to fill available space
-        }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: "20px" }}>
           {displayedProducts.map((product, index) => (
             <div
               key={index}
               onClick={() => handleProductClick(product)}
               style={{
                 border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "10px",
+                borderRadius: "10px",
+                padding: "12px",
                 cursor: "pointer",
                 textAlign: "center",
                 backgroundColor: "#fff",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                transition: "transform 0.2s",
               }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.03)"}
-              onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
             >
               <img
                 src={product.image}
                 alt={product.name}
                 style={{
                   width: "100%",
-                  height: "140px",
+                  height: "150px",
                   objectFit: "cover",
-                  borderRadius: "6px",
-                  marginBottom: "8px",
+                  borderRadius: "8px",
+                  marginBottom: "10px",
                 }}
               />
-              <strong style={{ fontSize: "15px" }}>{product.name}</strong>
-              <p style={{ color: "#666", fontSize: "13px" }}>{product.category}</p>
+              <strong style={{ fontSize: "16px" }}>{product.name}</strong>
+              <p style={{ color: "#666", fontSize: "14px" }}>{product.category}</p>
             </div>
           ))}
         </div>
