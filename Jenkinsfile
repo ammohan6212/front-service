@@ -212,6 +212,11 @@ pipeline {
                         }
                     }
                 }
+                stage("Detect Programming Language") {
+                    steps {
+                        detectLanguage() // Calls vars/detectLanguage.groovy
+                    }
+                }
                 stage("Static Code Analysis and unit tests and code coverage and dependencies and dependency check at Test") {
                     steps {
                         runUnitTests(env.DETECTED_LANG)
