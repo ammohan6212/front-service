@@ -83,16 +83,19 @@ pipeline {
                 }
                 stage("Create Archiving File and push the artifact ") {
                     agent { label 'security-agent' }
-                    steps {
-                        try{
-                            createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
-                            pushArtifact("${env.service_name}-${env.version}-${env.BRANCH_NAME}.zip", "s3://${env.AWS_S3_BUCKET}/${env.AWS_S3_PATH}")
-                        } catch(err){
-                            echo "failed to push the artifact to specifcif repository ${err}"
-                            error("Stopping pipeline")
+                        steps {
+                            script {
+                                try {
+                                    createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
+                                    pushArtifact("${env.service_name}-${env.version}-${env.BRANCH_NAME}.zip", "s3://${env.AWS_S3_BUCKET}/${env.AWS_S3_PATH}")
+                                } catch (err) {
+                                    echo "failed to push the artifact to specific repository ${err}"
+                                    error("Stopping pipeline")
+                                }
+                            }
                         }
-                    }
                 }
+
                 stage("Perform building and  docker linting Container Scanning using trivy and syft and docker scout and Dockle and snyk at Test Env") {
                     agent { label 'security-agent' }
                         steps {
