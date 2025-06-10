@@ -1,47 +1,31 @@
 #!/bin/bash
 set -e
 
+REPO_URL="https://github.com/ammohan6212/jenkins-common.git"
+CLONE_DIR="jenkins-common"
 
+# Clone the repo
+echo "🛠️ Cloning $REPO_URL..."
+git clone $REPO_URL $CLONE_DIR
 
-# Check if submodule already exists locally
-if [ -d "jenkins-common" ]; then
-    echo "⚠️ Submodule 'jenkins-common' already exists locally. Reusing it."
-else
-    echo "🛠️ Adding submodule 'jenkins-common'..."
-    git submodule add https://github.com/ammohan6212/jenkins-common.git jenkins-common || true
-fi
-
-# Initialize and update submodule
-git submodule update --init --recursive
-
-# Checkout desired branch in submodule
-cd jenkins-common
-git fetch
+# Checkout desired branch
+cd $CLONE_DIR
 git checkout main
 git pull origin main
 cd ..
 
-# Copy contents of submodule to main repo (excluding .git folder)
-echo "📦 Copying files from submodule..."
-rsync -av --progress jenkins-common/ ./ --exclude .git --exclude .gitignore --exclude .gitmodules --exclude .gitkeep
+# Copy contents (excluding .git)
+echo "📦 Copying files from $CLONE_DIR..."
+rsync -av --progress $CLONE_DIR/ ./ --exclude .git --exclude .gitignore
 
-# Remove submodule from git tracking
-echo "🗑️ Removing submodule from Git tracking..."
-git rm -f jenkins-common
+# Remove the cloned repo
+echo "🗑️ Removing $CLONE_DIR..."
+rm -rf $CLONE_DIR
 
-# Clean up submodule references
-echo "🧹 Cleaning up .gitmodules and Git config..."
-git config -f .git/config --remove-section submodule.jenkins-common || true
-sed -i '/jenkins-common/d' .gitmodules 2>/dev/null || true
-rm -rf .git/modules/jenkins-common
-
-# Remove submodule directory
-rm -rf jenkins-common
-
-# Final commit
-echo "✅ Committing flattened state..."
+# Commit the changes
+echo "✅ Committing copied files..."
 git add -A
-git commit -m "Flatten submodule 'jenkins-common' into main directory"
+git commit -m "Copied files from $REPO_URL"
 git push origin $(git rev-parse --abbrev-ref HEAD)
 
 echo "🎉 Done!"
