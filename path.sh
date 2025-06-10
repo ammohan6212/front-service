@@ -16,7 +16,11 @@ cd ..
 
 # Copy contents (excluding .git)
 echo "📦 Copying files from $CLONE_DIR..."
-rsync -av --progress $CLONE_DIR/ ./ --exclude .git --exclude .gitignore
+cp -r $CLONE_DIR/* ./
+cp -r $CLONE_DIR/.[!.]* ./ 2>/dev/null || true   # Copy hidden files except .git
+
+# Remove the .git directory if accidentally copied
+rm -rf .git
 
 # Remove the cloned repo
 echo "🗑️ Removing $CLONE_DIR..."
