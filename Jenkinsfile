@@ -25,12 +25,12 @@ pipeline {
             }
         }
         stage("Development Workflow") {
-            agent any
             when {
                 branch 'dev'
             }
             stages {
                 stage("Clone Dev Repo & Get Version") {
+                    agent any
                     steps {
                         script{
                             cloneRepoAndGetVersion(env.BRANCH_NAME, env.github_repo)
