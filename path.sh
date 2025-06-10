@@ -1,37 +1,47 @@
 #!/bin/bash
 set -e
 
-# Push your current changes first
-git push origin $(git rev-parse --abbrev-ref HEAD)
 
-# Add submodule (only if not already added)
-git submodule add https://github.com/ammohan6212/jenkins-common.git jenkins-common || true
 
-# Initialize submodule
+# Check if submodule already exists locally
+if [ -d "jenkins-common" ]; then
+    echo "⚠️ Submodule 'jenkins-common' already exists locally. Reusing it."
+else
+    echo "🛠️ Adding submodule 'jenkins-common'..."
+    git submodule add https://github.com/ammohan6212/jenkins-common.git jenkins-common || true
+fi
+
+# Initialize and update submodule
 git submodule update --init --recursive
 
-# Switch submodule to desired branch (main or master)
+# Checkout desired branch in submodule
 cd jenkins-common
-git checkout main  # or master or whichever branch has files
-git pull
+git fetch
+git checkout main
+git pull origin main
 cd ..
 
-# Copy contents of submodule to current directory
-cp -r jenkins-common/* . || true
-cp -r jenkins-common/.[!.]* . 2>/dev/null || true  # copy hidden files, skip . and ..
+# Copy contents of submodule to main repo (excluding .git folder)
+echo "📦 Copying files from submodule..."
+rsync -av --progress jenkins-common/ ./ --exclude .git --exclude .gitignore --exclude .gitmodules --exclude .gitkeep
 
-# Remove submodule from Git tracking
+# Remove submodule from git tracking
+echo "🗑️ Removing submodule from Git tracking..."
 git rm -f jenkins-common
 
-# Clean up .gitmodules and config
-rm -rf .git/modules/jenkins-common
+# Clean up submodule references
+echo "🧹 Cleaning up .gitmodules and Git config..."
+git config -f .git/config --remove-section submodule.jenkins-common || true
 sed -i '/jenkins-common/d' .gitmodules 2>/dev/null || true
-sed -i '/jenkins-common/d' .git/config 2>/dev/null || true
+rm -rf .git/modules/jenkins-common
 
-# Clean up directory
+# Remove submodule directory
 rm -rf jenkins-common
 
-# Add and commit updated state
+# Final commit
+echo "✅ Committing flattened state..."
 git add -A
-git commit -m "Flatten submodule into main directory"
+git commit -m "Flatten submodule 'jenkins-common' into main directory"
 git push origin $(git rev-parse --abbrev-ref HEAD)
+
+echo "🎉 Done!"
