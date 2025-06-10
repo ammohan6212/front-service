@@ -478,7 +478,6 @@ pipeline {
                         )
                         if (env.ROLLBACK_DECISION == 'Rollback') {
                             echo "⏪ Manual decision: Rolling back to previous version..."
-
                             try {
                                 withKubeConfig(
                                     caCertificate: env.kubernetesCaCertificate, // Now dynamic
