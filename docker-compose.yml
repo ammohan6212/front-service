@@ -10,10 +10,8 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/mydb
       REDIS_URL: redis://redis:6379/0
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - db
+      - redis
     networks:
       - app-network
   frontend:
