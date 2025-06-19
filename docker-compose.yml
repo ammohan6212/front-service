@@ -81,9 +81,10 @@ services:
     image: product:1.0
     container_name: product-service
     ports:
-      - "8082:8080"
+      - "8082:8082"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
@@ -96,6 +97,12 @@ services:
     image: mysql:8.0
     container_name: mysql
     restart: always
+    healthcheck:
+      # This command checks if the MySQL server is responsive
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       MYSQL_ROOT_PASSWORD: Amohan9676$
       MYSQL_DATABASE: mydb
