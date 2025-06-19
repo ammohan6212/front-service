@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 👈 import for navigation
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -7,7 +7,7 @@ function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const navigate = useNavigate(); // 👈 initialize navigator
+  const navigate = useNavigate();
 
   const products = [
     { name: "Apple iPhone", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=iPhone" },
@@ -60,7 +60,7 @@ function Home() {
         navigate("/cart");
         break;
       case "Orders":
-        navigate("/order"); // 👈 navigate to orders page
+        navigate("/order");
         break;
       default:
         alert(`You clicked on ${item}`);
@@ -75,7 +75,7 @@ function Home() {
       : products;
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100%", overflowX: "hidden" }}> {/* 🔧 removed overflow */}
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflowX: "hidden" }}>
       {/* Sidebar */}
       <aside
         style={{
@@ -86,8 +86,7 @@ function Home() {
           transition: "width 0.3s ease",
           display: "flex",
           flexDirection: "column",
-          height: "100vh", // 🔧 added
-          boxSizing: "border-box", // 🔧 added
+          boxSizing: "border-box",
         }}
       >
         <button
@@ -129,11 +128,11 @@ function Home() {
       <main
         style={{
           flex: 1,
-          padding: "50px 40px",
+          padding: "40px",
           overflowY: "auto",
           backgroundColor: "#f8f9fa",
-          height: "100vh", // 🔧 added
-          boxSizing: "border-box", // 🔧 added
+          height: "100vh",
+          boxSizing: "border-box",
         }}
       >
         <h1 style={{ fontSize: "32px" }}>🏠 Home Page</h1>
@@ -150,7 +149,7 @@ function Home() {
           style={{
             padding: "12px 18px",
             width: "100%",
-            maxWidth: "400px",
+            maxWidth: "600px",
             fontSize: "16px",
             borderRadius: "8px",
             border: "1px solid #ccc",
@@ -180,7 +179,11 @@ function Home() {
         </div>
 
         {/* Product Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: "20px" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: "20px"
+        }}>
           {displayedProducts.map((product, index) => (
             <div
               key={index}
