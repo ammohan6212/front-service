@@ -81,7 +81,7 @@ services:
     image: product:1.0
     container_name: product-service
     ports:
-      - "8080:8080"
+      - "8082:8080"
     depends_on:
       - mysql
     environment:
