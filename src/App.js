@@ -1,44 +1,53 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
-import Cart from './components/Cart'; // ✅ Import Cart
+import Cart from './components/Cart';
 import Orders from './components/Orders';
 import Payment from './components/Payment';
 import SellerLogin from './components/SellerLogin';
 import SellerRegister from './components/SellerRegister';
 import SellerHome from './components/SellerHome';
-import SellerForgotPassword from './components/SellerForgotPassword'
-import SellerResetPassword from './components/SellerResetPassword'
+import SellerForgotPassword from './components/SellerForgotPassword';
+import SellerResetPassword from './components/SellerResetPassword';
 import Forgot from './components/ForgotPassword';
 import Reset from './components/ResetPassword';
 
 import './App.css';
 
+// ✅ Wrap routes inside a component that can access location
+function AppRoutes() {
+  const location = useLocation();
+
+  // Paths that should NOT use App.css styles
+  const isHomePage = location.pathname === "/home" || location.pathname === "/seller-home";
+
+  return (
+    <div className={isHomePage ? "" : "auth-container"}>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/order" element={<Orders />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/seller-login" element={<SellerLogin />} />
+        <Route path="/seller-register" element={<SellerRegister />} />
+        <Route path="/seller-home" element={<SellerHome />} />
+        <Route path="/seller-forgot-password" element={<SellerForgotPassword />} />
+        <Route path="/seller-reset-password" element={<SellerResetPassword />} />
+        <Route path="/reset-password" element={<Reset />} />
+        <Route path="/forgot-password" element={<Forgot />} />
+      </Routes>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <div className="auth-container">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/cart" element={<Cart />} /> {/* ✅ Add Cart route */}
-          <Route path="/order" element={<Orders />} /> {/* ✅ Add this */}
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/seller-login" element={<SellerLogin />} />
-          <Route path="/seller-register" element={<SellerRegister />} />
-          <Route path="/seller-home" element={<SellerHome />} />
-          <Route path="/seller-forgot-password" element={<SellerForgotPassword />} />
-          <Route path="/seller-reset-password" element={<SellerResetPassword />} />
-          <Route path="/reset-password" element={<Reset />} />
-          <Route path="/forgot-password" element={<Forgot />} />
-
-        
-
-        </Routes>
-      </div>
+      <AppRoutes />
     </Router>
   );
 }
