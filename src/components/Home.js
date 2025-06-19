@@ -187,7 +187,9 @@ function Home() {
           overflowY: "auto",
           backgroundColor: "#f8f9fa",
           boxSizing: "border-box",
-          minWidth: 0
+          minWidth: 0,
+          maxWidth: "100%",
+          width: "100vw",
         }}>
           <h1 style={{ fontSize: "32px" }}>🏠 Home Page</h1>
           <p style={{ marginBottom: "30px", fontSize: "16px" }}>Welcome! You are now logged in.</p>
