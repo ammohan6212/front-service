@@ -144,6 +144,14 @@ services:
     #   retries: 5
     networks:
       - app-network
+    healthcheck: # <--- ADD THIS BLOCK
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"] # OR a more appropriate check
+      # If no specific /health endpoint, you might just check if the port is open:
+      # test: ["CMD-SHELL", "nc -z localhost 8082 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s # Give the product service time to start up
 
   mysql:
     image: mysql:8.0
