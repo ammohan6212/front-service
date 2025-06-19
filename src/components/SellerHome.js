@@ -192,7 +192,9 @@ const styles = {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
+    // Adding justifyContent to center vertically
+    justifyContent: "center", 
   },
   header: {
     width: "100%",
@@ -200,7 +202,10 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "30px"
+    marginBottom: "30px",
+    // To position the header at the top
+    position: 'absolute',
+    top: '20px',
   },
   headerButton: {
     backgroundColor: "#4a90e2",
@@ -227,7 +232,9 @@ const styles = {
     backgroundColor: "#ffffff",
     borderRadius: "16px",
     padding: "30px",
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)"
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
+    // Adding margin top to avoid overlap with the fixed header
+    marginTop: "80px",
   },
   title: {
     marginBottom: "25px",
