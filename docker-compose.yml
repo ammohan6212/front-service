@@ -90,9 +90,6 @@ services:
       DB_USER: mohan
       DB_PASSWORD: Amohan9676$
       DB_NAME: mydb
-      GOOGLE_APPLICATION_CREDENTIALS: /app/service-account.json
-    volumes:
-      - ./service-account.json:/app/service-account.json
     networks:
       - app-network
   mysql:
