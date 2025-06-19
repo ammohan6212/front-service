@@ -75,8 +75,7 @@ function Home() {
       : products;
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw" }}> {/* 🔧 removed overflow */}
-      
+    <div style={{ display: "flex", height: "100vh", width: "100%", overflowX: "hidden" }}> {/* 🔧 removed overflow */}
       {/* Sidebar */}
       <aside
         style={{
