@@ -128,7 +128,8 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - mysql # Already correctly set to wait for healthy MySQL
+      mysql:
+        condition: service_healthy # Already correctly set to wait for healthy MySQL
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
