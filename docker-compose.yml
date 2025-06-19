@@ -10,34 +10,21 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/mydb
       REDIS_URL: redis://redis:6379/0
     depends_on:
-      db:
-        condition: service_healthy # Wait until PostgreSQL is ready
-      redis:
-        condition: service_healthy # Wait until Redis is ready
+      - db
+      - redis
     networks:
       - app-network
-
   frontend:
     image: front:1.0
     container_name: react-frontend
     ports:
       - "80:80"
-    # Frontend dependencies should ideally also use service_healthy if they make
-    # API calls on startup. For now, assuming they can handle temporary unavailability
-    # or that these services are quick to be ready after starting.
-    # If the frontend needs these services to be fully operational before it can
-    # start successfully, you should add healthchecks to them and use service_healthy.
     depends_on:
-      backend:
-        condition: service_started # Only waits for backend process to start
-      cart:
-        condition: service_started
-      order:
-        condition: service_started
-      payment:
-        condition: service_started
-      product:
-        condition: service_healthy # Product service already depends on a healthy MySQL
+      - backend
+      - cart
+      - order
+      - payment
+      - product
     networks:
       - app-network
 
@@ -46,12 +33,6 @@ services:
     container_name: cart-backend
     ports:
       - "5000:5000"
-    # Add a healthcheck if the frontend or other services truly depend on its readiness
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:5000/health"] # Replace with actual health endpoint
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
     networks:
       - app-network
 
@@ -60,12 +41,6 @@ services:
     container_name: payment-service
     ports:
       - "8081:8081"
-    # Add a healthcheck if the frontend or other services truly depend on its readiness
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8081/health"] # Replace with actual health endpoint
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
     networks:
       - app-network
 
@@ -74,17 +49,10 @@ services:
     container_name: order-service
     ports:
       - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy # Ensure the database is ready for the order service
-    # Add a healthcheck if the frontend or other services truly depend on its readiness
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8080/health"] # Replace with actual health endpoint
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
     networks:
       - app-network
+    depends_on:
+      - db
 
   db:
     image: postgres:14
@@ -98,12 +66,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s # Give PostgreSQL some time to initialize before starting checks
     networks:
       - app-network
 
@@ -113,12 +75,6 @@ services:
     restart: always
     ports:
       - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 5s # Give Redis some time to initialize
     networks:
       - app-network
 
@@ -129,40 +85,25 @@ services:
       - "8082:8082"
     depends_on:
       mysql:
-        condition: service_healthy # Already correctly set to wait for healthy MySQL
+        condition: service_healthy
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_USER: mohan
       DB_PASSWORD: Amohan9676$
       DB_NAME: mydb
-    # Add a healthcheck if the frontend or other services truly depend on its readiness
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8082/health"] # Replace with actual health endpoint
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
     networks:
       - app-network
-    healthcheck: # <--- ADD THIS BLOCK
-      test: ["CMD", "curl", "-f", "http://localhost:8082/health"] # OR a more appropriate check
-      # If no specific /health endpoint, you might just check if the port is open:
-      # test: ["CMD-SHELL", "nc -z localhost 8082 || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s # Give the product service time to start up
-
   mysql:
     image: mysql:8.0
     container_name: mysql
     restart: always
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_ROOT_PASSWORD}"]
+      # This command checks if the MySQL server is responsive
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 20s # Give MySQL more time to initialize before health checks start
     environment:
       MYSQL_ROOT_PASSWORD: Amohan9676$
       MYSQL_DATABASE: mydb
@@ -182,3 +123,80 @@ volumes:
 networks:
   app-network:
     driver: bridge
+
+
+
+#   # db1:
+#   #   image: postgres:15
+#   #   container_name: frontend2-db1-1
+#   #   restart: always
+#   #   environment:
+#   #     POSTGRES_USER: postgres
+#   #     POSTGRES_PASSWORD: yourpassword
+#   #     POSTGRES_DB: mydatabase
+#   #   ports:
+#   #     - "5433:5432"  # ✅ Changed host port to avoid conflict
+#   #   volumes:
+#   #     - postgres_data:/var/lib/postgresql/data
+#   #   networks:
+#   #     - app-network
+
+#   # app:
+#   #   image: go:1.0
+#   #   container_name: frontend2-app-1
+#   #   depends_on:
+#   #     - db1
+#   #   ports:
+#   #     - "8080:8080"
+#   #   environment:
+#   #     DB_HOST: db1  # ✅ Connect to db1 by service name
+#   #     DB_PORT: 5432
+#   #     DB_USER: postgres
+#   #     DB_PASSWORD: yourpassword
+#   #     DB_NAME: mydatabase
+#   #   networks:
+#   #     - app-network
+
+# volumes:
+#   pgdata:
+#   # postgres_data:
+
+# networks:
+#   app-network:
+#     driver: bridge
+
+
+
+# version: '3.8'
+
+# services:
+#   db:
+#     image: postgres:15
+#     restart: always
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: yourpassword
+#       POSTGRES_DB: mydatabase
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+#   app:
+#     image: go:1.0
+#     depends_on:
+#       - db
+#     ports:
+#       - "8080:8080"
+#     environment:
+#       DB_HOST: db
+#       DB_PORT: 5432
+#       DB_USER: postgres
+#       DB_PASSWORD: yourpassword
+#       DB_NAME: mydatabase
+
+# volumes:
+#   postgres_data:
+
+
+
