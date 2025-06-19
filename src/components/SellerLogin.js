@@ -22,9 +22,10 @@ function SellerLogin() {
     const data = await response.json();
 
     if (response.ok) {
-      setMessage(data.message); // ✅ "Login successful"
+      setMessage(data.message || "Login successful");
       localStorage.setItem("seller_token", data.access_token);
-      navigate('/seller-home'); // Navigate to seller home page
+      localStorage.setItem("seller_name", data.seller_name); // ✅ Save seller name
+      navigate('/seller-home');
     } else {
       setMessage(data.detail || "Login failed");
     }
@@ -57,6 +58,7 @@ function SellerLogin() {
           Clear
         </button>
       </form>
+
       <p>{message}</p>
 
       <p>
@@ -65,14 +67,15 @@ function SellerLogin() {
           Register here
         </button>
       </p>
+
       <p>
-      <button 
-        type="button" 
-        onClick={() => navigate('/seller-forgot-password')} 
-        style={{ marginTop: "10px", background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
-      >
-        Forgot Password?
-      </button>
+        <button 
+          type="button" 
+          onClick={() => navigate('/seller-forgot-password')} 
+          style={{ marginTop: "10px", background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
+        >
+          Forgot Password?
+        </button>
       </p>
     </div>
   );

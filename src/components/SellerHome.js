@@ -1,14 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
 function SellerHome() {
   const navigate = useNavigate();
+  const [sellerName, setSellerName] = useState("");
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productCategory, setProductCategory] = useState(null);
   const [productImage, setProductImage] = useState(null);
+
+  // Load seller name from localStorage after login
+  useEffect(() => {
+    const storedSellerName = localStorage.getItem("seller_name");
+    const token = localStorage.getItem("seller_token");
+
+    if (!storedSellerName || !token) {
+      navigate('/seller-login');
+    } else {
+      setSellerName(storedSellerName);
+    }
+  }, [navigate]);
 
   const categories = [
     "Men's Clothing", "Women's Clothing", "Kid's & Baby Clothing", "Shoes & Footwear",
@@ -36,6 +49,7 @@ function SellerHome() {
 
   const handleLogout = () => {
     localStorage.removeItem("seller_token");
+    localStorage.removeItem("seller_name");
     navigate('/seller-login');
   };
 
@@ -48,6 +62,7 @@ function SellerHome() {
     }
 
     const formData = new FormData();
+    formData.append("sellerName", sellerName);
     formData.append("name", productName);
     formData.append("description", productDescription);
     formData.append("price", productPrice);
@@ -80,7 +95,7 @@ function SellerHome() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h2>Welcome to Seller Home</h2>
+        <h2 style={{ color: "#2c3e50" }}>Welcome, {sellerName}</h2>
         <div>
           <button onClick={() => navigate('/seller-dashboard')} style={styles.headerButton}>
             Dashboard
@@ -90,149 +105,187 @@ function SellerHome() {
           </button>
         </div>
       </div>
-      <p style={styles.welcome}>You are logged in as a Seller.</p>
 
       <div style={styles.card}>
         <h3 style={styles.title}>Upload New Product</h3>
         <form onSubmit={handleProductSubmit} style={styles.form}>
-          <label style={styles.label}>Product Name</label>
-          <input
-            type="text"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-            required
-            style={styles.input}
-          />
+          <div style={styles.formItem}>
+            <label style={styles.label}>Seller</label>
+            <div style={styles.readOnlyText}>{sellerName}</div>
+          </div>
 
-          <label style={styles.label}>Product Description</label>
-          <textarea
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-            required
-            style={styles.textarea}
-          />
+          <div style={styles.formItem}>
+            <label style={styles.label}>Product Name</label>
+            <input
+              type="text"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              required
+              style={styles.input}
+            />
+          </div>
 
-          <label style={styles.label}>Product Price ($)</label>
-          <input
-            type="number"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-            required
-            style={styles.input}
-          />
+          <div style={styles.formItem}>
+            <label style={styles.label}>Description</label>
+            <textarea
+              value={productDescription}
+              onChange={(e) => setProductDescription(e.target.value)}
+              required
+              style={styles.textarea}
+            />
+          </div>
 
-          <label style={styles.label}>Product Category</label>
-          <Select
-            options={categoryOptions}
-            value={productCategory}
-            onChange={setProductCategory}
-            placeholder="Select or search category..."
-            isClearable
-          />
+          <div style={styles.formItem}>
+            <label style={styles.label}>Price ($)</label>
+            <input
+              type="number"
+              value={productPrice}
+              onChange={(e) => setProductPrice(e.target.value)}
+              required
+              style={styles.input}
+            />
+          </div>
 
-          <label style={styles.label}>Product Image</label>
-          <input
-            type="file"
-            id="productImage"
-            onChange={(e) => setProductImage(e.target.files[0])}
-            accept="image/*"
-            required
-            style={styles.fileInput}
-          />
+          <div style={styles.formItem}>
+            <label style={styles.label}>Category</label>
+            <Select
+              options={categoryOptions}
+              value={productCategory}
+              onChange={setProductCategory}
+              placeholder="Select..."
+              isClearable
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  borderRadius: "6px",
+                  padding: "2px",
+                  fontSize: "14px",
+                  width: "180px"
+                }),
+              }}
+            />
+          </div>
 
-          <button type="submit" style={styles.submitButton}>Upload Product</button>
+          <div style={styles.formItem}>
+            <label style={styles.label}>Image</label>
+            <input
+              type="file"
+              id="productImage"
+              onChange={(e) => setProductImage(e.target.files[0])}
+              accept="image/*"
+              required
+              style={styles.fileInput}
+            />
+          </div>
+
+          <div style={styles.formItem}>
+            <button type="submit" style={styles.submitButton}>Upload</button>
+          </div>
         </form>
       </div>
     </div>
   );
 }
 
-// 💅 Inline Styles
 const styles = {
   container: {
-    padding: "30px",
+    padding: "40px",
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    backgroundColor: "#f7f9fc",
+    background: "linear-gradient(to right, #e0f7fa, #f8f9fa)",
     minHeight: "100vh",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "10px"
+    marginBottom: "30px"
   },
   headerButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#4a90e2",
     color: "#fff",
-    padding: "8px 12px",
-    marginRight: "10px",
+    padding: "10px 16px",
+    marginRight: "12px",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
     cursor: "pointer",
+    fontWeight: "bold"
   },
   logoutButton: {
-    backgroundColor: "#dc3545",
+    backgroundColor: "#e74c3c",
     color: "#fff",
-    padding: "8px 12px",
+    padding: "10px 16px",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
     cursor: "pointer",
-  },
-  welcome: {
-    marginBottom: "20px",
-    fontSize: "16px",
-    color: "#555",
+    fontWeight: "bold"
   },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: "10px",
+    backgroundColor: "#ffffff",
+    borderRadius: "16px",
     padding: "30px",
-    maxWidth: "500px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-    margin: "0 auto",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
+    overflowX: "auto"
   },
   title: {
-    marginBottom: "20px",
-    color: "#333",
+    marginBottom: "25px",
+    color: "#2c3e50",
     textAlign: "center",
+    fontSize: "22px",
+    fontWeight: "600",
   },
   form: {
     display: "flex",
+    flexDirection: "row",
+    gap: "20px",
+    flexWrap: "wrap",
+    alignItems: "flex-end",
+    justifyContent: "space-evenly"
+  },
+  formItem: {
+    display: "flex",
     flexDirection: "column",
-    gap: "15px"
+    minWidth: "140px",
+    maxWidth: "200px"
   },
   label: {
     fontWeight: "bold",
-    marginBottom: "5px",
-    color: "#333"
+    marginBottom: "4px",
+    fontSize: "13px"
   },
   input: {
-    padding: "10px",
+    padding: "8px",
     borderRadius: "6px",
     border: "1px solid #ccc",
     fontSize: "14px"
   },
   textarea: {
-    padding: "10px",
+    padding: "8px",
     borderRadius: "6px",
     border: "1px solid #ccc",
     fontSize: "14px",
-    minHeight: "80px"
+    resize: "vertical"
   },
   fileInput: {
-    fontSize: "14px",
+    fontSize: "13px"
   },
   submitButton: {
-    marginTop: "10px",
-    backgroundColor: "#28a745",
+    backgroundColor: "#00b894",
     color: "#fff",
-    padding: "12px",
+    padding: "10px 20px",
     border: "none",
-    borderRadius: "6px",
-    fontSize: "16px",
+    borderRadius: "8px",
+    fontSize: "15px",
     cursor: "pointer",
-    transition: "background-color 0.3s ease",
+    fontWeight: "bold"
   },
+  readOnlyText: {
+    padding: "8px",
+    border: "1px solid #ccc",
+    borderRadius: "6px",
+    backgroundColor: "#f1f1f1",
+    fontWeight: "bold",
+    fontSize: "14px"
+  }
 };
 
 export default SellerHome;
