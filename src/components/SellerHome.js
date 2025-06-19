@@ -113,6 +113,8 @@ function SellerHome() {
             <div style={styles.readOnlyText}>{sellerName}</div>
           </div>
 
+          {/* ... other form items ... */}
+
           <div style={styles.formItem}>
             <label style={styles.label}>Product Name</label>
             <input
@@ -186,15 +188,15 @@ function SellerHome() {
 
 const styles = {
   container: {
-    padding: "20px",
+    padding: "40px 20px", // Provides spacing from top and sides
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     background: "linear-gradient(to right, #e0f7fa, #f8f9fa)",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    // Adding justifyContent to center vertically
-    justifyContent: "center", 
+    justifyContent: "flex-start", // Aligns content to the top
+    boxSizing: "border-box", // Ensures padding doesn't add to the total height/width
   },
   header: {
     width: "100%",
@@ -202,10 +204,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "30px",
-    // To position the header at the top
-    position: 'absolute',
-    top: '20px',
+    marginBottom: "30px", // Creates space between header and card
   },
   headerButton: {
     backgroundColor: "#4a90e2",
@@ -233,8 +232,7 @@ const styles = {
     borderRadius: "16px",
     padding: "30px",
     boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-    // Adding margin top to avoid overlap with the fixed header
-    marginTop: "80px",
+    marginBottom: "40px", // Adds space at the bottom of the card
   },
   title: {
     marginBottom: "25px",
