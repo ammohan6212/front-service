@@ -69,7 +69,7 @@ function SellerHome() {
     formData.append("image", productImage);
 
     try {
-      const response = await fetch("YOUR_BACKEND_API_ENDPOINT/products", {
+      const response = await fetch("/product/products", {
         method: "POST",
         body: formData,
       });

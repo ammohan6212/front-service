@@ -77,8 +77,43 @@ services:
     networks:
       - app-network
 
+  product:
+    image: product:1.0
+    container_name: product-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: mohan
+      DB_PASSWORD: Amohan9676$
+      DB_NAME: mydb
+      GOOGLE_APPLICATION_CREDENTIALS: /app/service-account.json
+    volumes:
+      - ./service-account.json:/app/service-account.json
+    networks:
+      - app-network
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Amohan9676$
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: mohan
+      MYSQL_PASSWORD: Amohan9676$
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
 volumes:
   pgdata:
+  mysql-data:
 
 networks:
   app-network:
