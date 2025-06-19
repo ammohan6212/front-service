@@ -86,8 +86,7 @@ function Home() {
         background: "linear-gradient(to bottom, #00aaff, #004488)"
       }}>
         <div style={{
-          position: "absolute",
-          top: 0, left: 0,
+          position: "absolute", top: 0, left: 0,
           width: "300%", height: "300%",
           background: "url('https://svgshare.com/i/uR5.svg') repeat-x",
           backgroundSize: "cover",
@@ -95,8 +94,7 @@ function Home() {
           animation: "wave 20s linear infinite"
         }} />
         <div style={{
-          position: "absolute",
-          top: 0, left: 0,
+          position: "absolute", top: 0, left: 0,
           width: "300%", height: "300%",
           background: "url('https://svgshare.com/i/uR5.svg') repeat-x",
           backgroundSize: "cover",
@@ -104,35 +102,36 @@ function Home() {
           animation: "wave 30s linear infinite reverse"
         }} />
         <div style={{
-          position: "absolute",
-          top: 0, left: 0,
+          position: "absolute", top: 0, left: 0,
           width: "300%", height: "300%",
           background: "url('https://svgshare.com/i/uR5.svg') repeat-x",
           backgroundSize: "cover",
           opacity: 0.2,
           animation: "wave 40s linear infinite"
         }} />
-        {/* Inline animation style */}
         <style>{`
           @keyframes wave {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
           }
-          body {
+          html, body {
             margin: 0;
-            overflow-x: hidden;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
           }
         `}</style>
       </div>
 
-      {/* Layout */}
+      {/* Root container to override global centering */}
       <div style={{
-        display: "flex",
-        height: "100vh",
-        width: "100%",
         position: "relative",
         zIndex: 10,
-        boxSizing: "border-box"
+        display: "flex",
+        flexDirection: "row",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
       }}>
         {/* Sidebar */}
         <aside style={{
@@ -187,14 +186,14 @@ function Home() {
           overflowY: "auto",
           backgroundColor: "#f8f9fa",
           boxSizing: "border-box",
-          minWidth: 0,
-          maxWidth: "100%",
-          width: "100vw",
+          width: "100%",
+          maxHeight: "100vh"
         }}>
           <h1 style={{ fontSize: "32px" }}>🏠 Home Page</h1>
-          <p style={{ marginBottom: "30px", fontSize: "16px" }}>Welcome! You are now logged in.</p>
+          <p style={{ marginBottom: "30px", fontSize: "16px" }}>
+            Welcome! You are now logged in.
+          </p>
 
-          {/* Search */}
           <input
             type="text"
             placeholder="🔍 Search products..."
@@ -254,13 +253,12 @@ function Home() {
                   cursor: "pointer",
                   textAlign: "center",
                   backgroundColor: "#fff",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                  transition: "box-shadow 0.2s"
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                 }}
               >
                 <img
                   src={product.image}
-                  alt={`Product: ${product.name}`}
+                  alt={product.name}
                   style={{
                     width: "100%",
                     height: "150px",
@@ -275,7 +273,6 @@ function Home() {
             ))}
           </div>
 
-          {/* No Results */}
           {displayedProducts.length === 0 && (
             <p style={{
               marginTop: "20px",
