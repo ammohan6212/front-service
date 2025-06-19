@@ -11,7 +11,6 @@ function SellerHome() {
   const [productCategory, setProductCategory] = useState(null);
   const [productImage, setProductImage] = useState(null);
 
-  // Load seller name from localStorage after login
   useEffect(() => {
     const storedSellerName = localStorage.getItem("seller_name");
     const token = localStorage.getItem("seller_token");
@@ -158,9 +157,7 @@ function SellerHome() {
                 control: (base) => ({
                   ...base,
                   borderRadius: "6px",
-                  padding: "2px",
                   fontSize: "14px",
-                  width: "180px"
                 }),
               }}
             />
@@ -189,12 +186,17 @@ function SellerHome() {
 
 const styles = {
   container: {
-    padding: "40px",
+    padding: "20px",
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     background: "linear-gradient(to right, #e0f7fa, #f8f9fa)",
     minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
   },
   header: {
+    width: "100%",
+    maxWidth: "900px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -220,71 +222,68 @@ const styles = {
     fontWeight: "bold"
   },
   card: {
+    width: "100%",
+    maxWidth: "600px",
     backgroundColor: "#ffffff",
     borderRadius: "16px",
     padding: "30px",
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-    overflowX: "auto"
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)"
   },
   title: {
     marginBottom: "25px",
     color: "#2c3e50",
     textAlign: "center",
-    fontSize: "22px",
+    fontSize: "24px",
     fontWeight: "600",
   },
   form: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     gap: "20px",
-    flexWrap: "wrap",
-    alignItems: "flex-end",
-    justifyContent: "space-evenly"
   },
   formItem: {
     display: "flex",
-    flexDirection: "column",
-    minWidth: "140px",
-    maxWidth: "200px"
+    flexDirection: "column"
   },
   label: {
     fontWeight: "bold",
     marginBottom: "4px",
-    fontSize: "13px"
-  },
-  input: {
-    padding: "8px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
     fontSize: "14px"
   },
-  textarea: {
-    padding: "8px",
+  input: {
+    padding: "10px",
     borderRadius: "6px",
     border: "1px solid #ccc",
-    fontSize: "14px",
-    resize: "vertical"
+    fontSize: "15px"
+  },
+  textarea: {
+    padding: "10px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "15px",
+    resize: "vertical",
+    minHeight: "80px"
   },
   fileInput: {
-    fontSize: "13px"
+    fontSize: "14px"
   },
   submitButton: {
     backgroundColor: "#00b894",
     color: "#fff",
-    padding: "10px 20px",
+    padding: "12px 20px",
     border: "none",
     borderRadius: "8px",
-    fontSize: "15px",
+    fontSize: "16px",
     cursor: "pointer",
     fontWeight: "bold"
   },
   readOnlyText: {
-    padding: "8px",
+    padding: "10px",
     border: "1px solid #ccc",
     borderRadius: "6px",
     backgroundColor: "#f1f1f1",
     fontWeight: "bold",
-    fontSize: "14px"
+    fontSize: "15px"
   }
 };
 
