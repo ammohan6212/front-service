@@ -9,6 +9,7 @@ function SellerHome() {
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productCategory, setProductCategory] = useState(null);
+  const [productQuantity, setProductQuantity] = useState("");
   const [productImage, setProductImage] = useState(null);
 
   useEffect(() => {
@@ -66,6 +67,7 @@ function SellerHome() {
     formData.append("description", productDescription);
     formData.append("price", productPrice);
     formData.append("category", productCategory.value);
+    formData.append("quantity", productQuantity);
     formData.append("image", productImage);
 
     try {
@@ -80,6 +82,7 @@ function SellerHome() {
         setProductDescription("");
         setProductPrice("");
         setProductCategory(null);
+        setProductQuantity("");
         setProductImage(null);
         document.getElementById("productImage").value = null;
       } else {
@@ -162,7 +165,17 @@ function SellerHome() {
               }}
             />
           </div>
-
+          <div style={styles.formItem}>
+            <label style={styles.label}>Quantity</label>
+            <input
+              type="number"
+              value={productQuantity}
+              onChange={(e) => setProductQuantity(e.target.value)}
+              required
+              style={styles.input}
+              min="1"
+            />
+          </div>
           <div style={styles.formItem}>
             <label style={styles.label}>Image</label>
             <input
