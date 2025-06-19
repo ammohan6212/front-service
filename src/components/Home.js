@@ -55,19 +55,17 @@ function Home() {
   };
 
   const handleMenuClick = (item) => {
-  switch (item) {
-    case "Cart":
-      navigate("/cart");
-      break;
-    case "Orders":
-      navigate("/order"); // 👈 navigate to orders page
-      break;
-    default:
-      alert(`You clicked on ${item}`);
-  }
-};
-
-  
+    switch (item) {
+      case "Cart":
+        navigate("/cart");
+        break;
+      case "Orders":
+        navigate("/order"); // 👈 navigate to orders page
+        break;
+      default:
+        alert(`You clicked on ${item}`);
+    }
+  };
 
   const displayedProducts =
     (searchTerm || activeCategory !== "All") && results.length > 0
@@ -77,7 +75,8 @@ function Home() {
       : products;
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden" }}>
+    <div style={{ display: "flex", height: "100vh", width: "100vw" }}> {/* 🔧 removed overflow */}
+      
       {/* Sidebar */}
       <aside
         style={{
@@ -88,6 +87,8 @@ function Home() {
           transition: "width 0.3s ease",
           display: "flex",
           flexDirection: "column",
+          height: "100vh", // 🔧 added
+          boxSizing: "border-box", // 🔧 added
         }}
       >
         <button
@@ -110,7 +111,7 @@ function Home() {
               {["Dashboard", "Products", "Orders", "Cart", "Profile", "Settings", "Logout"].map((item, index) => (
                 <li
                   key={index}
-                  onClick={() => handleMenuClick(item)} // 👈 updated for routing
+                  onClick={() => handleMenuClick(item)}
                   style={{
                     padding: "12px 0",
                     borderBottom: "1px solid #333",
@@ -132,6 +133,8 @@ function Home() {
           padding: "50px 40px",
           overflowY: "auto",
           backgroundColor: "#f8f9fa",
+          height: "100vh", // 🔧 added
+          boxSizing: "border-box", // 🔧 added
         }}
       >
         <h1 style={{ fontSize: "32px" }}>🏠 Home Page</h1>
