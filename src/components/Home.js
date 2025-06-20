@@ -8,6 +8,7 @@ function Home() {
   const [categories, setCategories] = useState(["All"]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true); // <-- Added loading state
 
   const navigate = useNavigate();
 
@@ -19,12 +20,14 @@ function Home() {
         setProducts(fetchedProducts);
         setResults(fetchedProducts);
 
-        // Extract unique categories
         const uniqueCategories = [...new Set(fetchedProducts.map(p => p.category))];
         setCategories(["All", ...uniqueCategories]);
       })
       .catch(err => {
         console.error("Failed to fetch products:", err);
+      })
+      .finally(() => {
+        setLoading(false); // <-- Stop loading once fetch completes
       });
   }, []);
 
@@ -180,42 +183,51 @@ function Home() {
             ))}
           </div>
 
-          {/* Product Grid */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-            gap: "20px"
-          }}>
-            {displayedProducts.map((product, index) => (
-              <div key={index} onClick={() => handleProductClick(product)} style={{
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                padding: "12px",
-                backgroundColor: "#fff",
-                cursor: "pointer",
-                textAlign: "center",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-              }}>
-                <img
-                  src={product.image_url || "https://via.placeholder.com/150"}
-                  alt={product.name}
-                  style={{
-                    width: "100%", height: "150px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                    marginBottom: "10px"
-                  }}
-                />
-                <strong>{product.name}</strong>
-                <p style={{ color: "#666" }}>{product.category}</p>
-              </div>
-            ))}
-          </div>
-
-          {displayedProducts.length === 0 && (
-            <p style={{ marginTop: "20px", color: "#888", fontSize: "18px", textAlign: "center" }}>
-              😕 No products found for <strong>"{searchTerm}"</strong> in <strong>"{activeCategory}"</strong>.
+          {/* Loading or Products */}
+          {loading ? (
+            <p style={{ fontSize: "20px", textAlign: "center", marginTop: "40px" }}>
+              ⏳ Loading products...
             </p>
+          ) : (
+            <>
+              {/* Product Grid */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                gap: "20px"
+              }}>
+                {displayedProducts.map((product, index) => (
+                  <div key={index} onClick={() => handleProductClick(product)} style={{
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "12px",
+                    backgroundColor: "#fff",
+                    cursor: "pointer",
+                    textAlign: "center",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                  }}>
+                    <img
+                      src={product.image_url || "https://via.placeholder.com/150"}
+                      alt={product.name}
+                      style={{
+                        width: "100%", height: "150px",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                        marginBottom: "10px"
+                      }}
+                    />
+                    <strong>{product.name}</strong>
+                    <p style={{ color: "#666" }}>{product.category}</p>
+                  </div>
+                ))}
+              </div>
+
+              {displayedProducts.length === 0 && (
+                <p style={{ marginTop: "20px", color: "#888", fontSize: "18px", textAlign: "center" }}>
+                  😕 No products found for <strong>"{searchTerm}"</strong> in <strong>"{activeCategory}"</strong>.
+                </p>
+              )}
+            </>
           )}
         </main>
       </div>
@@ -223,7 +235,7 @@ function Home() {
   );
 }
 
-// Helper for wave layers
+// Helper for wave animation
 const waveStyle = (opacity, animation) => ({
   position: "absolute", top: 0, left: 0,
   width: "300%", height: "300%",
