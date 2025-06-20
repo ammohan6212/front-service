@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
+import { useDropzone } from 'react-dropzone';
 
 function SellerHome() {
   const navigate = useNavigate();
@@ -84,7 +85,6 @@ function SellerHome() {
         setProductCategory(null);
         setProductQuantity("");
         setProductImage(null);
-        document.getElementById("productImage").value = null;
       } else {
         alert("Failed to upload product.");
       }
@@ -93,6 +93,18 @@ function SellerHome() {
       alert("An error occurred while uploading the product.");
     }
   };
+
+  const onDrop = (acceptedFiles) => {
+    if (acceptedFiles.length > 0) {
+      setProductImage(acceptedFiles[0]);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'image/*': [] },
+    multiple: false
+  });
 
   return (
     <div style={styles.container}>
@@ -165,6 +177,7 @@ function SellerHome() {
               }}
             />
           </div>
+
           <div style={styles.formItem}>
             <label style={styles.label}>Quantity</label>
             <input
@@ -176,16 +189,26 @@ function SellerHome() {
               min="1"
             />
           </div>
+
           <div style={styles.formItem}>
             <label style={styles.label}>Image</label>
-            <input
-              type="file"
-              id="productImage"
-              onChange={(e) => setProductImage(e.target.files[0])}
-              accept="image/*"
-              required
-              style={styles.fileInput}
-            />
+            <div
+              {...getRootProps()}
+              style={{
+                ...styles.dropzone,
+                borderColor: isDragActive ? '#00b894' : '#ccc',
+                backgroundColor: isDragActive ? '#e0f7fa' : '#fafafa',
+              }}
+            >
+              <input {...getInputProps()} />
+              {productImage ? (
+                <p><strong>Selected:</strong> {productImage.name}</p>
+              ) : isDragActive ? (
+                <p>Drop the image here ...</p>
+              ) : (
+                <p>Drag 'n' drop image here, or click to select</p>
+              )}
+            </div>
           </div>
 
           <div style={styles.formItem}>
@@ -284,9 +307,6 @@ const styles = {
     resize: "vertical",
     minHeight: "80px"
   },
-  fileInput: {
-    fontSize: "14px"
-  },
   submitButton: {
     backgroundColor: "#00b894",
     color: "#fff",
@@ -304,6 +324,15 @@ const styles = {
     backgroundColor: "#f1f1f1",
     fontWeight: "bold",
     fontSize: "15px"
+  },
+  dropzone: {
+    border: "2px dashed #ccc",
+    borderRadius: "8px",
+    padding: "20px",
+    textAlign: "center",
+    cursor: "pointer",
+    fontSize: "14px",
+    color: "#555"
   }
 };
 
