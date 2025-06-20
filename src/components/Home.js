@@ -57,7 +57,7 @@ function Home() {
   };
 
   const handleProductClick = (product) => {
-    navigate(`/product-home/${product._id}`); // ✅ Redirect to product detail page
+    navigate(`/product-home/${product.id}`); // ✅ Redirect to product detail page
   };
 
   const handleMenuClick = (item) => {
