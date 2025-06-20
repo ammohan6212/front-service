@@ -14,17 +14,17 @@ import SellerResetPassword from './components/SellerResetPassword';
 import Forgot from './components/ForgotPassword';
 import Reset from './components/ResetPassword';
 import ProductHome from './components/ProductHome';
-import SellerDashboard from './components/SellerDashboard'
+import SellerDashboard from './components/SellerDashboard';
 import './App.css';
 
 function AppRoutes() {
   const location = useLocation();
 
-  // ✅ Exclude these pages from auth-container layout
+  // ✅ Fixed: added `||` for product-home check
   const isHomePage =
     location.pathname === "/home" ||
     location.pathname === "/seller-home" ||
-    location.pathname === "/seller-dashboard"
+    location.pathname === "/seller-dashboard" ||
     location.pathname.startsWith("/product-home");
 
   return (
@@ -44,7 +44,7 @@ function AppRoutes() {
         <Route path="/reset-password" element={<Reset />} />
         <Route path="/forgot-password" element={<Forgot />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
-        <Route path="/product-home/:id" element={<ProductHome />} /> {/* ✅ new route */}
+        <Route path="/product-home/:id" element={<ProductHome />} />
       </Routes>
     </div>
   );
