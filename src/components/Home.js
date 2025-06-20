@@ -1,27 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState([]);
   const [results, setResults] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [categories, setCategories] = useState(["All"]);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
-  const products = [
-    { name: "Apple iPhone", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=iPhone" },
-    { name: "Samsung Galaxy", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=Galaxy" },
-    { name: "Google Pixel", category: "Mobiles", image: "https://via.placeholder.com/150x150?text=Pixel" },
-    { name: "Sony Headphones", category: "Electronics", image: "https://via.placeholder.com/150x150?text=Headphones" },
-    { name: "Dell Laptop", category: "Electronics", image: "https://via.placeholder.com/150x150?text=Dell+Laptop" },
-    { name: "Leather Jacket", category: "Fashion", image: "https://via.placeholder.com/150x150?text=Jacket" },
-    { name: "Smartwatch", category: "Fashion", image: "https://via.placeholder.com/150x150?text=Watch" },
-    { name: "Vacuum Cleaner", category: "Home Gadgets", image: "https://via.placeholder.com/150x150?text=Vacuum" },
-    { name: "Smart Bulb", category: "Home Gadgets", image: "https://via.placeholder.com/150x150?text=Smart+Bulb" },
-  ];
+  useEffect(() => {
+    fetch("product/get-products")
+      .then(res => res.json())
+      .then(data => {
+        const fetchedProducts = data.products || [];
+        setProducts(fetchedProducts);
+        setResults(fetchedProducts);
 
-  const categories = ["All", "Mobiles", "Fashion", "Home Gadgets", "Electronics"];
+        // Extract unique categories
+        const uniqueCategories = [...new Set(fetchedProducts.map(p => p.category))];
+        setCategories(["All", ...uniqueCategories]);
+      })
+      .catch(err => {
+        console.error("Failed to fetch products:", err);
+      });
+  }, []);
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -35,16 +40,14 @@ function Home() {
   };
 
   const filterProducts = (search, category) => {
-    let filtered = products;
+    let filtered = [...products];
 
     if (category !== "All") {
-      filtered = filtered.filter((item) => item.category === category);
+      filtered = filtered.filter(p => p.category === category);
     }
 
-    if (search.trim() !== "") {
-      filtered = filtered.filter((item) =>
-        item.name.toLowerCase().includes(search.toLowerCase())
-      );
+    if (search.trim()) {
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
     }
 
     setResults(filtered);
@@ -68,11 +71,7 @@ function Home() {
   };
 
   const displayedProducts =
-    (searchTerm || activeCategory !== "All") && results.length > 0
-      ? results
-      : (searchTerm || activeCategory !== "All") && results.length === 0
-      ? []
-      : products;
+    (searchTerm || activeCategory !== "All") ? results : products;
 
   return (
     <>
@@ -81,34 +80,12 @@ function Home() {
         position: "fixed",
         top: 0, left: 0,
         width: "100%", height: "100%",
-        overflow: "hidden",
         zIndex: 1,
         background: "linear-gradient(to bottom, #00aaff, #004488)"
       }}>
-        <div style={{
-          position: "absolute", top: 0, left: 0,
-          width: "300%", height: "300%",
-          background: "url('https://svgshare.com/i/uR5.svg') repeat-x",
-          backgroundSize: "cover",
-          opacity: 0.4,
-          animation: "wave 20s linear infinite"
-        }} />
-        <div style={{
-          position: "absolute", top: 0, left: 0,
-          width: "300%", height: "300%",
-          background: "url('https://svgshare.com/i/uR5.svg') repeat-x",
-          backgroundSize: "cover",
-          opacity: 0.3,
-          animation: "wave 30s linear infinite reverse"
-        }} />
-        <div style={{
-          position: "absolute", top: 0, left: 0,
-          width: "300%", height: "300%",
-          background: "url('https://svgshare.com/i/uR5.svg') repeat-x",
-          backgroundSize: "cover",
-          opacity: 0.2,
-          animation: "wave 40s linear infinite"
-        }} />
+        <div style={{ ...waveStyle(0.4, "wave 20s linear infinite") }} />
+        <div style={{ ...waveStyle(0.3, "wave 30s linear infinite reverse") }} />
+        <div style={{ ...waveStyle(0.2, "wave 40s linear infinite") }} />
         <style>{`
           @keyframes wave {
             0% { transform: translateX(0); }
@@ -123,15 +100,10 @@ function Home() {
         `}</style>
       </div>
 
-      {/* Root container to override global centering */}
+      {/* App Container */}
       <div style={{
-        position: "relative",
-        zIndex: 10,
-        display: "flex",
-        flexDirection: "row",
-        width: "100vw",
-        height: "100vh",
-        overflow: "hidden",
+        position: "relative", zIndex: 10,
+        display: "flex", width: "100vw", height: "100vh"
       }}>
         {/* Sidebar */}
         <aside style={{
@@ -139,38 +111,23 @@ function Home() {
           backgroundColor: "#1e1e2f",
           color: "#fff",
           padding: "20px",
-          transition: "width 0.3s ease",
-          display: "flex",
-          flexDirection: "column",
-          boxSizing: "border-box"
+          transition: "width 0.3s ease"
         }}>
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            style={{
-              background: "none",
-              color: "#fff",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "20px",
-              marginBottom: "20px",
-              textAlign: "left"
-            }}
-          >
+          <button onClick={() => setMenuOpen(!menuOpen)} style={{
+            background: "none", color: "#fff", border: "none",
+            fontSize: "20px", marginBottom: "20px"
+          }}>
             {menuOpen ? "☰ Close" : "☰ Menu"}
           </button>
           {menuOpen && (
             <nav>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {["Dashboard", "Products", "Orders", "Cart", "Profile", "Settings", "Logout"].map((item, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleMenuClick(item)}
-                    style={{
-                      padding: "12px 0",
-                      borderBottom: "1px solid #333",
-                      cursor: "pointer"
-                    }}
-                  >
+                  <li key={index} onClick={() => handleMenuClick(item)} style={{
+                    padding: "12px 0",
+                    borderBottom: "1px solid #333",
+                    cursor: "pointer"
+                  }}>
                     {item}
                   </li>
                 ))}
@@ -184,15 +141,10 @@ function Home() {
           flex: 1,
           padding: "40px",
           overflowY: "auto",
-          backgroundColor: "#f8f9fa",
-          boxSizing: "border-box",
-          width: "100%",
-          maxHeight: "100vh"
+          backgroundColor: "#f8f9fa"
         }}>
-          <h1 style={{ fontSize: "32px" }}>🏠 Home Page</h1>
-          <p style={{ marginBottom: "30px", fontSize: "16px" }}>
-            Welcome! You are now logged in.
-          </p>
+          <h1>🏠 Home Page</h1>
+          <p style={{ marginBottom: "30px" }}>Welcome! You are now logged in.</p>
 
           <input
             type="text"
@@ -201,8 +153,7 @@ function Home() {
             onChange={handleSearch}
             style={{
               padding: "12px 18px",
-              width: "100%",
-              maxWidth: "600px",
+              width: "100%", maxWidth: "600px",
               fontSize: "16px",
               borderRadius: "8px",
               border: "1px solid #ccc",
@@ -210,28 +161,21 @@ function Home() {
             }}
           />
 
-          {/* Categories */}
+          {/* Dynamic Categories */}
           <div style={{
-            display: "flex",
-            gap: "15px",
-            flexWrap: "wrap",
-            marginBottom: "30px"
+            display: "flex", gap: "15px", flexWrap: "wrap", marginBottom: "30px"
           }}>
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                onClick={() => handleCategoryClick(category)}
-                style={{
-                  padding: "10px 16px",
-                  backgroundColor: activeCategory === category ? "#0056b3" : "#007bff",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px"
-                }}
-              >
-                {category}
+            {categories.map((cat, idx) => (
+              <button key={idx} onClick={() => handleCategoryClick(cat)} style={{
+                padding: "10px 16px",
+                backgroundColor: activeCategory === cat ? "#0056b3" : "#007bff",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px"
+              }}>
+                {cat}
               </button>
             ))}
           </div>
@@ -243,43 +187,33 @@ function Home() {
             gap: "20px"
           }}>
             {displayedProducts.map((product, index) => (
-              <div
-                key={index}
-                onClick={() => handleProductClick(product)}
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "10px",
-                  padding: "12px",
-                  cursor: "pointer",
-                  textAlign: "center",
-                  backgroundColor: "#fff",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-                }}
-              >
+              <div key={index} onClick={() => handleProductClick(product)} style={{
+                border: "1px solid #ddd",
+                borderRadius: "10px",
+                padding: "12px",
+                backgroundColor: "#fff",
+                cursor: "pointer",
+                textAlign: "center",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+              }}>
                 <img
-                  src={product.image}
+                  src={product.image_url || "https://via.placeholder.com/150"}
                   alt={product.name}
                   style={{
-                    width: "100%",
-                    height: "150px",
+                    width: "100%", height: "150px",
                     objectFit: "cover",
                     borderRadius: "8px",
                     marginBottom: "10px"
                   }}
                 />
-                <strong style={{ fontSize: "16px" }}>{product.name}</strong>
-                <p style={{ color: "#666", fontSize: "14px" }}>{product.category}</p>
+                <strong>{product.name}</strong>
+                <p style={{ color: "#666" }}>{product.category}</p>
               </div>
             ))}
           </div>
 
           {displayedProducts.length === 0 && (
-            <p style={{
-              marginTop: "20px",
-              color: "#888",
-              fontSize: "18px",
-              textAlign: "center"
-            }}>
+            <p style={{ marginTop: "20px", color: "#888", fontSize: "18px", textAlign: "center" }}>
               😕 No products found for <strong>"{searchTerm}"</strong> in <strong>"{activeCategory}"</strong>.
             </p>
           )}
@@ -288,5 +222,15 @@ function Home() {
     </>
   );
 }
+
+// Helper for wave layers
+const waveStyle = (opacity, animation) => ({
+  position: "absolute", top: 0, left: 0,
+  width: "300%", height: "300%",
+  background: "url('https://svgshare.com/i/uR5.svg') repeat-x",
+  backgroundSize: "cover",
+  opacity,
+  animation
+});
 
 export default Home;
