@@ -8,7 +8,7 @@ function Home() {
   const [categories, setCategories] = useState(["All"]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(true); // <-- Added loading state
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ function Home() {
         console.error("Failed to fetch products:", err);
       })
       .finally(() => {
-        setLoading(false); // <-- Stop loading once fetch completes
+        setLoading(false);
       });
   }, []);
 
@@ -57,7 +57,7 @@ function Home() {
   };
 
   const handleProductClick = (product) => {
-    alert(`You clicked on ${product.name}`);
+    navigate(`/product-home/${product._id}`); // ✅ Redirect to product detail page
   };
 
   const handleMenuClick = (item) => {
@@ -217,6 +217,7 @@ function Home() {
                       }}
                     />
                     <strong>{product.name}</strong>
+                    {/* Category removed */}
                   </div>
                 ))}
               </div>

@@ -13,15 +13,18 @@ import SellerForgotPassword from './components/SellerForgotPassword';
 import SellerResetPassword from './components/SellerResetPassword';
 import Forgot from './components/ForgotPassword';
 import Reset from './components/ResetPassword';
+import ProductHome from './components/ProductHome';
 
 import './App.css';
 
-// ✅ Wrap routes inside a component that can access location
 function AppRoutes() {
   const location = useLocation();
 
-  // Paths that should NOT use App.css styles
-  const isHomePage = location.pathname === "/home" || location.pathname === "/seller-home";
+  // ✅ Exclude these pages from auth-container layout
+  const isHomePage =
+    location.pathname === "/home" ||
+    location.pathname === "/seller-home" ||
+    location.pathname.startsWith("/product-home");
 
   return (
     <div className={isHomePage ? "" : "auth-container"}>
@@ -39,6 +42,7 @@ function AppRoutes() {
         <Route path="/seller-reset-password" element={<SellerResetPassword />} />
         <Route path="/reset-password" element={<Reset />} />
         <Route path="/forgot-password" element={<Forgot />} />
+        <Route path="/product-home/:id" element={<ProductHome />} /> {/* ✅ new route */}
       </Routes>
     </div>
   );
