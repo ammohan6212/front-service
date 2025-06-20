@@ -14,7 +14,7 @@ import SellerResetPassword from './components/SellerResetPassword';
 import Forgot from './components/ForgotPassword';
 import Reset from './components/ResetPassword';
 import ProductHome from './components/ProductHome';
-import SellerDashboard from './components/SellerDashboard';
+import SellerDashboard from './components/Sellerdashboard';
 import './App.css';
 
 function AppRoutes() {
