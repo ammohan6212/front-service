@@ -59,8 +59,10 @@ function ProductHome() {
       <p><strong>Category:</strong> {product.category}</p>
       <p><strong>Description:</strong> {product.description || "No description provided."}</p>
       <p><strong>Price:</strong> ₹{product.price || "N/A"}</p>
-
-      {/* Add more product fields if available */}
+      <p>
+        <strong>Quantity Left:</strong>{" "}
+        {product.quantity > 0 ? `${product.quantity} in stock` : "Out of stock"}
+      </p>
     </div>
   );
 }
