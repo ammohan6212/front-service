@@ -217,7 +217,6 @@ function Home() {
                       }}
                     />
                     <strong>{product.name}</strong>
-                    <p style={{ color: "#666" }}>{product.category}</p>
                   </div>
                 ))}
               </div>
