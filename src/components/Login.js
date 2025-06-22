@@ -24,6 +24,7 @@ function Login() {
     if (response.ok) {
       setMessage(data.message);
       localStorage.setItem("token", data.access_token);
+      localStorage.setItem("username", form.username); // ✅ Save username
       navigate('/home');
     } else {
       setMessage(data.detail || "Login failed");
@@ -78,14 +79,12 @@ function Login() {
               Register here
             </button>
           </p>
-
           <p>
             Are you a seller?
             <button onClick={() => navigate('/seller-login')} style={styles.linkButton}>
               Seller Login
             </button>
           </p>
-
           <p>
             Forgot your password?
             <button

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const [username, setUsername] = useState(""); // ✅ Get from localStorage
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
   const [results, setResults] = useState([]);
@@ -13,6 +14,11 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const storedUsername = localStorage.getItem("username"); // ✅ Retrieve username
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+
     fetch("product/get-products")
       .then(res => res.json())
       .then(data => {
@@ -57,7 +63,7 @@ function Home() {
   };
 
   const handleProductClick = (product) => {
-    navigate(`/product-home/${product.id}`); // ✅ Redirect to product detail page
+    navigate(`/product-home/${product.id}`);
   };
 
   const handleMenuClick = (item) => {
@@ -67,6 +73,11 @@ function Home() {
         break;
       case "Orders":
         navigate("/order");
+        break;
+      case "Logout":
+        localStorage.removeItem("username");
+        localStorage.removeItem("token");
+        navigate("/login");
         break;
       default:
         alert(`You clicked on ${item}`);
@@ -80,8 +91,7 @@ function Home() {
     <>
       {/* Ocean Background */}
       <div style={{
-        position: "fixed",
-        top: 0, left: 0,
+        position: "fixed", top: 0, left: 0,
         width: "100%", height: "100%",
         zIndex: 1,
         background: "linear-gradient(to bottom, #00aaff, #004488)"
@@ -147,7 +157,9 @@ function Home() {
           backgroundColor: "#f8f9fa"
         }}>
           <h1>🏠 Home Page</h1>
-          <p style={{ marginBottom: "30px" }}>Welcome! You are now logged in.</p>
+          <p style={{ marginBottom: "30px", fontSize: "18px" }}>
+            👋 Hi <strong>{username || "Guest"}</strong>, welcome to your dashboard.
+          </p>
 
           <input
             type="text"
@@ -190,7 +202,6 @@ function Home() {
             </p>
           ) : (
             <>
-              {/* Product Grid */}
               <div style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
@@ -217,7 +228,6 @@ function Home() {
                       }}
                     />
                     <strong>{product.name}</strong>
-                    {/* Category removed */}
                   </div>
                 ))}
               </div>

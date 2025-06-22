@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 function ProductHome() {
-  const { id } = useParams(); // Get product ID from route
+  const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [quantityToBuy, setQuantityToBuy] = useState(1);
 
   useEffect(() => {
-    fetch(`/product/get-product-details/${id}`) // Adjust URL based on your backend route
+    fetch(`/product/get-product-details/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        setProduct(data.product); // Backend should return { product: { ... } }
+        setProduct(data.product);
       })
       .catch((err) => {
         console.error("Error fetching product:", err);
@@ -20,6 +21,54 @@ function ProductHome() {
         setLoading(false);
       });
   }, [id]);
+
+  const handleAddToCart = () => {
+    const username = localStorage.getItem("username");
+
+    if (!username) {
+      alert("⚠️ Please log in to add items to cart.");
+      navigate("/login");
+      return;
+    }
+
+    const cartItem = {
+      username,
+      productId: product._id || product.id,
+      name: product.name,
+      quantity: quantityToBuy,
+      price: product.price,
+      image_url: product.image_url || "https://via.placeholder.com/150", // ✅ included
+    };
+
+    fetch("/cart/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cartItem),
+    })
+      .then((res) => {
+        if (res.ok) {
+          alert(`✅ Added ${quantityToBuy} of ${product.name} to cart.`);
+        } else {
+          alert("❌ Failed to add to cart.");
+        }
+      })
+      .catch((err) => {
+        console.error("Error adding to cart:", err);
+        alert("❌ Something went wrong.");
+      });
+  };
+
+  const increaseQuantity = () => {
+    if (product && quantityToBuy < product.quantity) {
+      setQuantityToBuy(quantityToBuy + 1);
+    }
+  };
+
+  const decreaseQuantity = () => {
+    if (quantityToBuy > 1) {
+      setQuantityToBuy(quantityToBuy - 1);
+    }
+  };
 
   if (loading) {
     return <p style={{ padding: "30px", fontSize: "20px" }}>⏳ Loading product...</p>;
@@ -63,8 +112,40 @@ function ProductHome() {
         <strong>Quantity Left:</strong>{" "}
         {product.quantity > 0 ? `${product.quantity} in stock` : "Out of stock"}
       </p>
+
+      {/* Quantity Controls */}
+      <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
+        <button onClick={decreaseQuantity} style={qtyButtonStyle}>−</button>
+        <span style={{ margin: "0 15px", fontSize: "18px" }}>{quantityToBuy}</span>
+        <button onClick={increaseQuantity} style={qtyButtonStyle}>+</button>
+      </div>
+
+      <button
+        onClick={handleAddToCart}
+        style={{
+          marginTop: "25px",
+          padding: "12px 24px",
+          fontSize: "16px",
+          backgroundColor: "#28a745",
+          color: "#fff",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+        }}
+      >
+        🛒 Add to Cart
+      </button>
     </div>
   );
 }
+
+const qtyButtonStyle = {
+  padding: "8px 14px",
+  fontSize: "18px",
+  borderRadius: "6px",
+  border: "1px solid #ccc",
+  cursor: "pointer",
+  backgroundColor: "#f0f0f0",
+};
 
 export default ProductHome;
