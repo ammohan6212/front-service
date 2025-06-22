@@ -33,6 +33,8 @@ services:
     container_name: cart-backend
     ports:
       - "5000:5000"
+    environment: 
+      MONGODB_URI: mongodb://admin:secret@mongo:27017/mycartdb
     networks:
       - app-network
 
@@ -113,6 +115,21 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo-db
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: mycartdb
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - mongo-data:/data/db
     networks:
       - app-network
 

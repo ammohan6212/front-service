@@ -39,7 +39,7 @@ function ProductHome() {
       price: product.price,
       image_url: product.image_url || "https://via.placeholder.com/150", // ✅ included
     };
-
+    
     fetch("/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
