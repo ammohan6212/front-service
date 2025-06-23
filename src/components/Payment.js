@@ -57,7 +57,6 @@ function Payment() {
       .then(() => {
         alert("✅ Payment successful and cart cleared!");
         setSelectedItems([]);
-        localStorage.removeItem("selectedCartItems");
       })
       .catch((err) => {
         console.error("❌ Error during payment or cart cleanup:", err);
