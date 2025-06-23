@@ -94,92 +94,102 @@ function Cart() {
       ) : cartItems.length === 0 && !error ? (
         <p>🧺 Your cart is empty.</p>
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {cartItems.map((item) => (
             <div
               key={item._id}
               style={{
-                border: "1px solid #ddd",
-                borderRadius: "12px",
-                padding: "16px",
-                backgroundColor: "#fff",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                width: "300px",
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                alignItems: "flex-start",
+                gap: "16px",
               }}
             >
-              {/* ✅ Checkbox for selection */}
+              {/* ✅ Checkbox on left */}
               <input
                 type="checkbox"
                 checked={selectedItems.includes(item._id)}
                 onChange={() => toggleSelectItem(item._id)}
-                style={{ alignSelf: "flex-start", marginBottom: "10px" }}
+                style={{ marginTop: "20px", transform: "scale(1.5)" }}
               />
 
-              <img
-                src={item.image_url}
-                alt={item.name}
+              {/* ✅ Cart Item Card */}
+              <div
                 style={{
-                  width: "80px",
-                  height: "80px",
-                  borderRadius: "8px",
-                  objectFit: "cover",
-                  marginBottom: "10px",
-                }}
-              />
-              <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
-
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
-                <button
-                  onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                  disabled={item.quantity <= 1}
-                  style={{
-                    padding: "4px 10px",
-                    fontSize: "16px",
-                    marginRight: "8px",
-                    backgroundColor: "#f0f0f0",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                >
-                  −
-                </button>
-                <span style={{ fontSize: "16px", fontWeight: "bold" }}>{item.quantity}</span>
-                <button
-                  onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                  style={{
-                    padding: "4px 10px",
-                    fontSize: "16px",
-                    marginLeft: "8px",
-                    backgroundColor: "#f0f0f0",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                >
-                  +
-                </button>
-              </div>
-
-              <p style={{ margin: "0 0 10px 0" }}>₹{item.price} each</p>
-
-              <button
-                onClick={() => handleRemoveItem(item._id)}
-                style={{
-                  padding: "6px 12px",
-                  fontSize: "14px",
-                  color: "#fff",
-                  backgroundColor: "#dc3545",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
+                  border: "1px solid #ddd",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  backgroundColor: "#fff",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  width: "100%",
+                  maxWidth: "600px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                 }}
               >
-                ❌ Remove
-              </button>
+                <img
+                  src={item.image_url}
+                  alt={item.name}
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "8px",
+                    objectFit: "cover",
+                    marginBottom: "10px",
+                  }}
+                />
+                <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
+
+                <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                  <button
+                    onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                    disabled={item.quantity <= 1}
+                    style={{
+                      padding: "4px 10px",
+                      fontSize: "16px",
+                      marginRight: "8px",
+                      backgroundColor: "#f0f0f0",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    −
+                  </button>
+                  <span style={{ fontSize: "16px", fontWeight: "bold" }}>{item.quantity}</span>
+                  <button
+                    onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                    style={{
+                      padding: "4px 10px",
+                      fontSize: "16px",
+                      marginLeft: "8px",
+                      backgroundColor: "#f0f0f0",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <p style={{ margin: "0 0 10px 0" }}>₹{item.price} each</p>
+
+                <button
+                  onClick={() => handleRemoveItem(item._id)}
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: "14px",
+                    color: "#fff",
+                    backgroundColor: "#dc3545",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ❌ Remove
+                </button>
+              </div>
             </div>
           ))}
         </div>
