@@ -25,6 +25,7 @@ function AppRoutes() {
     location.pathname === "/home" ||
     location.pathname === "/seller-home" ||
     location.pathname === "/seller-dashboard" ||
+    location.pathname === "/cart" ||
     location.pathname.startsWith("/product-home");
 
   return (

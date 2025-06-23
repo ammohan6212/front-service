@@ -84,108 +84,209 @@ function Cart() {
     navigate("/payment");
   };
 
+  // --- Inline Styles (for a single-file solution) ---
+  const styles = {
+    cartContainer: {
+      padding: "40px",
+      maxWidth: "900px",
+      margin: "0 auto",
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      color: "#333",
+    },
+    cartTitle: {
+      textAlign: "center",
+      fontSize: "2.5em",
+      marginBottom: "30px",
+      color: "#2c3e50",
+    },
+    errorMessage: {
+      color: "#dc3545",
+      textAlign: "center",
+      fontSize: "1.1em",
+      marginBottom: "20px",
+      padding: "10px",
+      backgroundColor: "#f8d7da",
+      border: "1px solid #f5c6cb",
+      borderRadius: "8px",
+    },
+    loadingMessage: {
+      textAlign: "center",
+      fontSize: "1.2em",
+      color: "#6c757d",
+      padding: "20px",
+      backgroundColor: "#e9ecef",
+      borderRadius: "8px",
+      marginBottom: "20px",
+    },
+    emptyCartMessage: {
+      textAlign: "center",
+      fontSize: "1.2em",
+      color: "#6c757d",
+      padding: "20px",
+      backgroundColor: "#e9ecef",
+      borderRadius: "8px",
+      marginBottom: "20px",
+    },
+    cartItemsList: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "25px",
+    },
+    cartItemWrapper: {
+      display: "flex",
+      alignItems: "center",
+      gap: "20px",
+    },
+    itemCheckbox: {
+      transform: "scale(1.6)",
+      cursor: "pointer",
+      minWidth: "24px",
+      minHeight: "24px",
+    },
+    cartItemCard: {
+      border: "1px solid #e0e0e0",
+      borderRadius: "15px",
+      padding: "20px",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.08)",
+      width: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+    },
+    itemImage: {
+      width: "100px",
+      height: "100px",
+      borderRadius: "10px",
+      objectFit: "cover",
+      marginBottom: "15px",
+      border: "1px solid #eee",
+    },
+    itemName: {
+      margin: "0 0 10px 0",
+      fontSize: "1.6em",
+      color: "#34495e",
+      textAlign: "center",
+    },
+    quantityControl: {
+      display: "flex",
+      alignItems: "center",
+      marginBottom: "15px",
+      backgroundColor: "#f8f9fa",
+      borderRadius: "8px",
+      overflow: "hidden",
+      border: "1px solid #ced4da",
+    },
+    quantityButton: {
+      padding: "8px 15px",
+      fontSize: "1.2em",
+      backgroundColor: "#f0f0f0",
+      border: "none",
+      cursor: "pointer",
+      transition: "background-color 0.2s ease",
+    },
+    itemQuantity: {
+      padding: "8px 15px",
+      fontSize: "1.2em",
+      fontWeight: "bold",
+      color: "#495057",
+      minWidth: "40px",
+      textAlign: "center",
+    },
+    itemPrice: {
+      margin: "0 0 20px 0",
+      fontSize: "1.3em",
+      fontWeight: "600",
+      color: "#28a745",
+    },
+    removeButton: {
+      padding: "10px 20px",
+      fontSize: "1.1em",
+      color: "#fff",
+      backgroundColor: "#dc3545",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      transition: "background-color 0.2s ease, transform 0.1s ease",
+      boxShadow: "0 2px 5px rgba(0, 0, 0, 0.15)",
+    },
+    payButton: {
+      display: "block",
+      margin: "40px auto 20px auto",
+      padding: "15px 30px",
+      fontSize: "1.4em",
+      fontWeight: "bold",
+      color: "#fff",
+      background: "linear-gradient(135deg, #6f42c1, #007bff)",
+      border: "none",
+      borderRadius: "10px",
+      cursor: "pointer",
+      boxShadow: "0 6px 15px rgba(0, 0, 0, 0.25)",
+      transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+      letterSpacing: "0.5px",
+      textTransform: "uppercase",
+    },
+  };
+
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>🛒 Your Cart</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div style={styles.cartContainer}>
+      <h1 style={styles.cartTitle}>🛒 Your Cart</h1>
+      {error && <p style={styles.errorMessage}>{error}</p>}
 
       {loading ? (
-        <p style={{ fontSize: "18px" }}>⏳ Loading your cart...</p>
+        <p style={styles.loadingMessage}>⏳ Loading your cart...</p>
       ) : cartItems.length === 0 && !error ? (
-        <p>🧺 Your cart is empty.</p>
+        <p style={styles.emptyCartMessage}>🧺 Your cart is empty.</p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div style={styles.cartItemsList}>
           {cartItems.map((item) => (
-            <div
-              key={item._id}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "16px",
-              }}
-            >
+            <div key={item._id} style={styles.cartItemWrapper}>
               {/* ✅ Checkbox on left */}
               <input
                 type="checkbox"
                 checked={selectedItems.includes(item._id)}
                 onChange={() => toggleSelectItem(item._id)}
-                style={{ marginTop: "20px", transform: "scale(1.5)" }}
+                style={styles.itemCheckbox}
               />
 
               {/* ✅ Cart Item Card */}
-              <div
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "12px",
-                  padding: "16px",
-                  backgroundColor: "#fff",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  width: "100%",
-                  maxWidth: "600px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
+              <div style={styles.cartItemCard}>
                 <img
                   src={item.image_url}
                   alt={item.name}
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    borderRadius: "8px",
-                    objectFit: "cover",
-                    marginBottom: "10px",
-                  }}
+                  style={styles.itemImage}
                 />
-                <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
+                <h3 style={styles.itemName}>{item.name}</h3>
 
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                <div style={styles.quantityControl}>
                   <button
                     onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
                     disabled={item.quantity <= 1}
                     style={{
-                      padding: "4px 10px",
-                      fontSize: "16px",
-                      marginRight: "8px",
-                      backgroundColor: "#f0f0f0",
-                      border: "1px solid #ccc",
-                      borderRadius: "4px",
-                      cursor: "pointer",
+                      ...styles.quantityButton,
+                      borderRight: "1px solid #ced4da", // Add border between buttons
                     }}
                   >
                     −
                   </button>
-                  <span style={{ fontSize: "16px", fontWeight: "bold" }}>{item.quantity}</span>
+                  <span style={styles.itemQuantity}>{item.quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
                     style={{
-                      padding: "4px 10px",
-                      fontSize: "16px",
-                      marginLeft: "8px",
-                      backgroundColor: "#f0f0f0",
-                      border: "1px solid #ccc",
-                      borderRadius: "4px",
-                      cursor: "pointer",
+                      ...styles.quantityButton,
+                      borderLeft: "1px solid #ced4da", // Add border between buttons
                     }}
                   >
                     +
                   </button>
                 </div>
 
-                <p style={{ margin: "0 0 10px 0" }}>₹{item.price} each</p>
+                <p style={styles.itemPrice}>₹{item.price} each</p>
 
                 <button
                   onClick={() => handleRemoveItem(item._id)}
-                  style={{
-                    padding: "6px 12px",
-                    fontSize: "14px",
-                    color: "#fff",
-                    backgroundColor: "#dc3545",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                  }}
+                  style={styles.removeButton}
                 >
                   ❌ Remove
                 </button>
@@ -198,21 +299,15 @@ function Cart() {
       {!loading && cartItems.length > 0 && (
         <button
           onClick={handlePayClick}
-          style={{
-            padding: "12px 24px",
-            fontSize: "16px",
-            fontWeight: "bold",
-            color: "#fff",
-            background: "linear-gradient(90deg, #ff7e5f, #feb47b)",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            transition: "transform 0.2s ease-in-out",
-            marginTop: "30px",
+          style={styles.payButton}
+          onMouseOver={(e) => {
+            e.target.style.transform = "scale(1.03)";
+            e.target.style.boxShadow = "0 8px 20px rgba(0, 0, 0, 0.3)";
           }}
-          onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-          onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
+          onMouseOut={(e) => {
+            e.target.style.transform = "scale(1)";
+            e.target.style.boxShadow = "0 6px 15px rgba(0, 0, 0, 0.25)";
+          }}
         >
           Click here to Pay
         </button>
