@@ -100,6 +100,7 @@ function Cart() {
         </div>
       )}
 
+      {/* ✅ Payment Button restored */}
       {cartItems.length > 0 && (
         <button
           onClick={handlePayClick}
