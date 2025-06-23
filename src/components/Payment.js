@@ -2,21 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function Payment() {
-  const [message, setMessage] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
 
   useEffect(() => {
-    // Fetch message from backend
-    axios
-      .get("/pay/payment")
-      .then((res) => setMessage(res.data))
-      .catch((err) => {
-        console.error("Error fetching payment message:", err);
-        setMessage("❌ Failed to load payment message.");
-      });
-
-    // Load selected items
+    // Load selected items from localStorage
     const items = localStorage.getItem("selectedCartItems");
     if (items) {
       try {
@@ -27,8 +17,12 @@ function Payment() {
     }
   }, []);
 
-  const calculateTotal = () =>
-    selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const calculateTotal = () => {
+    return selectedItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  };
 
   const handlePayNow = () => {
     if (!paymentMethod) {
@@ -36,38 +30,54 @@ function Payment() {
       return;
     }
 
-    alert(`✅ Payment processed using ${paymentMethod}`);
-    // Example POST to backend
-    // axios.post('/pay/checkout', { items: selectedItems, method: paymentMethod })
+    const username = localStorage.getItem("username") || "guest";
+
+    const payload = selectedItems.map((item) => ({
+      username,
+      item_id: item._id,
+      item_name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image_url: item.image_url,
+      payment_method: paymentMethod,
+      total: item.price * item.quantity,
+    }));
+
+    axios
+      .post("/api/payment", payload)
+      .then(() => {
+        alert("✅ Payment successful and saved!");
+        localStorage.removeItem("selectedCartItems");
+      })
+      .catch((err) => {
+        console.error("❌ Payment failed:", err);
+        alert("❌ Payment failed. Please try again.");
+      });
   };
 
   const styles = {
     container: {
-      padding: "40px 20px",
+      padding: "40px",
       maxWidth: "900px",
       margin: "0 auto",
-      fontFamily: "'Segoe UI', sans-serif",
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     },
     title: {
       textAlign: "center",
       fontSize: "2.5em",
-      marginBottom: "10px",
-      color: "#343a40",
-    },
-    apiMessage: {
-      textAlign: "center",
       marginBottom: "30px",
-      fontSize: "1.1em",
-      color: "#6c757d",
+      color: "#2c3e50",
     },
     itemCard: {
+      border: "1px solid #e0e0e0",
+      borderRadius: "15px",
+      padding: "20px",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.08)",
+      marginBottom: "20px",
       display: "flex",
       alignItems: "center",
-      backgroundColor: "#fff",
-      borderRadius: "12px",
-      padding: "16px",
-      marginBottom: "20px",
-      boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+      gap: "20px",
     },
     itemImage: {
       width: "80px",
@@ -75,7 +85,6 @@ function Payment() {
       borderRadius: "10px",
       objectFit: "cover",
       border: "1px solid #eee",
-      marginRight: "16px",
     },
     itemDetails: {
       flex: 1,
@@ -83,75 +92,63 @@ function Payment() {
     itemName: {
       margin: 0,
       fontSize: "1.4em",
-      fontWeight: 600,
-      color: "#212529",
+      color: "#34495e",
     },
     itemInfo: {
-      margin: "6px 0",
+      margin: "5px 0",
       fontSize: "1em",
       color: "#555",
     },
     total: {
       textAlign: "right",
-      fontSize: "1.6em",
+      fontSize: "1.5em",
       fontWeight: "bold",
       color: "#28a745",
       marginTop: "30px",
     },
-    noItemsText: {
-      textAlign: "center",
-      fontSize: "1.2em",
+    paymentSection: {
+      marginTop: "40px",
       padding: "20px",
-      color: "#999",
-    },
-    paymentOptionsContainer: {
-      marginTop: "30px",
-      textAlign: "center",
-    },
-    label: {
-      display: "block",
-      fontSize: "1.2em",
-      fontWeight: "bold",
-      marginBottom: "10px",
-    },
-    select: {
-      padding: "10px",
-      fontSize: "1em",
-      width: "250px",
-      borderRadius: "8px",
       border: "1px solid #ccc",
-      marginBottom: "20px",
-      outline: "none",
+      borderRadius: "10px",
+      backgroundColor: "#f9f9f9",
     },
     payButton: {
-      display: "block",
-      margin: "20px auto 0 auto",
+      marginTop: "30px",
       padding: "15px 30px",
-      fontSize: "1.4em",
+      fontSize: "1.2em",
       fontWeight: "bold",
       color: "#fff",
-      background: "linear-gradient(135deg, #00c9ff, #92fe9d)",
+      background: "linear-gradient(135deg, #00c6ff, #0072ff)",
       border: "none",
-      borderRadius: "10px",
+      borderRadius: "8px",
       cursor: "pointer",
-      boxShadow: "0 6px 15px rgba(0, 0, 0, 0.2)",
-      transition: "all 0.2s ease-in-out",
-      textTransform: "uppercase",
+      display: "block",
+      marginLeft: "auto",
+      transition: "transform 0.2s ease-in-out",
+    },
+    radioLabel: {
+      marginBottom: "10px",
+      display: "block",
+      fontSize: "1.1em",
     },
   };
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>💳 Payment Summary</h1>
-      <p style={styles.apiMessage}>🛒 {message}</p>
+      <h1 style={styles.title}>💳 Payment Page</h1>
 
       {selectedItems.length === 0 ? (
-        <p style={styles.noItemsText}>No items selected for payment.</p>
+        <p>No items selected for payment.</p>
       ) : (
         <>
           {selectedItems.map((item) => (
             <div key={item._id} style={styles.itemCard}>
-              <img src={item.image_url} alt={item.name} style={styles.itemImage} />
+              <img
+                src={item.image_url}
+                alt={item.name}
+                style={styles.itemImage}
+              />
               <div style={styles.itemDetails}>
                 <h3 style={styles.itemName}>{item.name}</h3>
                 <p style={styles.itemInfo}>Quantity: {item.quantity}</p>
@@ -159,39 +156,58 @@ function Payment() {
               </div>
             </div>
           ))}
-          <p style={styles.total}>🧾 Total: ₹{calculateTotal()}</p>
 
-          {/* 🔘 Payment Method Dropdown */}
-          <div style={styles.paymentOptionsContainer}>
-            <label style={styles.label}>Select Payment Method:</label>
-            <select
-              style={styles.select}
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            >
-              <option value="">-- Choose --</option>
-              <option value="Debit Card">Debit Card</option>
-              <option value="Credit Card">Credit Card</option>
-              <option value="UPI">UPI</option>
-              <option value="Net Banking">Net Banking</option>
-              <option value="Cash on Delivery">Cash on Delivery</option>
-            </select>
+          <p style={styles.total}>Total: ₹{calculateTotal()}</p>
+
+          {/* Payment Method Section */}
+          <div style={styles.paymentSection}>
+            <h3>Select Payment Method</h3>
+            <label style={styles.radioLabel}>
+              <input
+                type="radio"
+                name="payment"
+                value="debit_card"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />{" "}
+              Debit Card
+            </label>
+            <label style={styles.radioLabel}>
+              <input
+                type="radio"
+                name="payment"
+                value="upi"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />{" "}
+              UPI
+            </label>
+            <label style={styles.radioLabel}>
+              <input
+                type="radio"
+                name="payment"
+                value="cash_on_delivery"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />{" "}
+              Cash on Delivery
+            </label>
+            <label style={styles.radioLabel}>
+              <input
+                type="radio"
+                name="payment"
+                value="net_banking"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />{" "}
+              Net Banking
+            </label>
           </div>
 
-          {/* ✅ Pay Now Button */}
+          {/* Pay Now Button */}
           <button
             style={styles.payButton}
             onClick={handlePayNow}
-            onMouseOver={(e) => {
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
-            }}
-            onMouseOut={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "0 6px 15px rgba(0, 0, 0, 0.2)";
-            }}
+            onMouseOver={(e) => (e.target.style.transform = "scale(1.03)")}
+            onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
           >
-            Pay Now
+            🧾 Pay Now
           </button>
         </>
       )}
