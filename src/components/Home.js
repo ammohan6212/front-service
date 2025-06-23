@@ -77,7 +77,7 @@ function Home() {
       case "Logout":
         localStorage.removeItem("username");
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/");
         break;
       default:
         alert(`You clicked on ${item}`);
