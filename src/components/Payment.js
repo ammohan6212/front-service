@@ -4,6 +4,7 @@ import axios from "axios";
 function Payment() {
   const [message, setMessage] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("");
 
   useEffect(() => {
     // Fetch message from backend
@@ -30,11 +31,14 @@ function Payment() {
     selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handlePayNow = () => {
-    alert("✅ Payment processed successfully!");
-    // Here you can call your backend payment processing endpoint
-    // axios.post('/pay/checkout', selectedItems)
-    //   .then(() => { ... })
-    //   .catch(() => { ... })
+    if (!paymentMethod) {
+      alert("⚠️ Please select a payment method.");
+      return;
+    }
+
+    alert(`✅ Payment processed using ${paymentMethod}`);
+    // Example POST to backend
+    // axios.post('/pay/checkout', { items: selectedItems, method: paymentMethod })
   };
 
   const styles = {
@@ -100,9 +104,28 @@ function Payment() {
       padding: "20px",
       color: "#999",
     },
+    paymentOptionsContainer: {
+      marginTop: "30px",
+      textAlign: "center",
+    },
+    label: {
+      display: "block",
+      fontSize: "1.2em",
+      fontWeight: "bold",
+      marginBottom: "10px",
+    },
+    select: {
+      padding: "10px",
+      fontSize: "1em",
+      width: "250px",
+      borderRadius: "8px",
+      border: "1px solid #ccc",
+      marginBottom: "20px",
+      outline: "none",
+    },
     payButton: {
       display: "block",
-      margin: "30px auto 0 auto",
+      margin: "20px auto 0 auto",
       padding: "15px 30px",
       fontSize: "1.4em",
       fontWeight: "bold",
@@ -138,7 +161,24 @@ function Payment() {
           ))}
           <p style={styles.total}>🧾 Total: ₹{calculateTotal()}</p>
 
-          {/* 🟢 Pay Now Button */}
+          {/* 🔘 Payment Method Dropdown */}
+          <div style={styles.paymentOptionsContainer}>
+            <label style={styles.label}>Select Payment Method:</label>
+            <select
+              style={styles.select}
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="">-- Choose --</option>
+              <option value="Debit Card">Debit Card</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="UPI">UPI</option>
+              <option value="Net Banking">Net Banking</option>
+              <option value="Cash on Delivery">Cash on Delivery</option>
+            </select>
+          </div>
+
+          {/* ✅ Pay Now Button */}
           <button
             style={styles.payButton}
             onClick={handlePayNow}
