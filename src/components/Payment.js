@@ -6,7 +6,6 @@ function Payment() {
   const [paymentMethod, setPaymentMethod] = useState("");
 
   useEffect(() => {
-    // Load selected items from localStorage
     const items = localStorage.getItem("selectedCartItems");
     if (items) {
       try {
@@ -127,10 +126,18 @@ function Payment() {
       marginLeft: "auto",
       transition: "transform 0.2s ease-in-out",
     },
-    radioLabel: {
+    select: {
+      padding: "10px",
+      fontSize: "1em",
+      width: "100%",
+      borderRadius: "8px",
+      border: "1px solid #ccc",
+      marginTop: "10px",
+    },
+    label: {
+      fontSize: "1.1em",
       marginBottom: "10px",
       display: "block",
-      fontSize: "1.1em",
     },
   };
 
@@ -159,48 +166,24 @@ function Payment() {
 
           <p style={styles.total}>Total: ₹{calculateTotal()}</p>
 
-          {/* Payment Method Section */}
           <div style={styles.paymentSection}>
-            <h3>Select Payment Method</h3>
-            <label style={styles.radioLabel}>
-              <input
-                type="radio"
-                name="payment"
-                value="debit_card"
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />{" "}
-              Debit Card
+            <label htmlFor="paymentMethod" style={styles.label}>
+              Select Payment Method:
             </label>
-            <label style={styles.radioLabel}>
-              <input
-                type="radio"
-                name="payment"
-                value="upi"
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />{" "}
-              UPI
-            </label>
-            <label style={styles.radioLabel}>
-              <input
-                type="radio"
-                name="payment"
-                value="cash_on_delivery"
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />{" "}
-              Cash on Delivery
-            </label>
-            <label style={styles.radioLabel}>
-              <input
-                type="radio"
-                name="payment"
-                value="net_banking"
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />{" "}
-              Net Banking
-            </label>
+            <select
+              id="paymentMethod"
+              style={styles.select}
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="">-- Choose Payment Method --</option>
+              <option value="debit_card">Debit Card</option>
+              <option value="upi">UPI</option>
+              <option value="cash_on_delivery">Cash on Delivery</option>
+              <option value="net_banking">Net Banking</option>
+            </select>
           </div>
 
-          {/* Pay Now Button */}
           <button
             style={styles.payButton}
             onClick={handlePayNow}
