@@ -7,7 +7,7 @@ function Cart() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchCart = () => {
     const username = localStorage.getItem("username");
 
     if (!username) {
@@ -22,7 +22,23 @@ function Cart() {
         console.error("❌ Error fetching cart:", err);
         setError("Failed to load cart items.");
       });
+  };
+
+  useEffect(() => {
+    fetchCart();
   }, []);
+
+  const handleRemoveItem = (itemId) => {
+    axios
+      .delete(`/cart/remove/${itemId}`)
+      .then(() => {
+        setCartItems((prevItems) => prevItems.filter((item) => item._id !== itemId));
+      })
+      .catch((err) => {
+        console.error("❌ Failed to remove item:", err);
+        alert("Failed to remove item.");
+      });
+  };
 
   const handlePayClick = () => {
     navigate("/payment");
@@ -48,25 +64,42 @@ function Cart() {
                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                 width: "300px",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                gap: "15px",
               }}
             >
               <img
                 src={item.image_url}
                 alt={item.name}
-                style={{ width: "80px", height: "80px", borderRadius: "8px", objectFit: "cover" }}
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "8px",
+                  objectFit: "cover",
+                  marginBottom: "10px",
+                }}
               />
-              <div>
-                <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
-                <p style={{ margin: 0 }}>₹{item.price} × {item.quantity}</p>
-              </div>
+              <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
+              <p style={{ margin: "0 0 10px 0" }}>₹{item.price} × {item.quantity}</p>
+              <button
+                onClick={() => handleRemoveItem(item._id)}
+                style={{
+                  padding: "6px 12px",
+                  fontSize: "14px",
+                  color: "#fff",
+                  backgroundColor: "#dc3545",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                ❌ Remove
+              </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Payment Button */}
       {cartItems.length > 0 && (
         <button
           onClick={handlePayClick}
@@ -83,12 +116,8 @@ function Cart() {
             transition: "transform 0.2s ease-in-out",
             marginTop: "30px",
           }}
-          onMouseOver={(e) => {
-            e.target.style.transform = "scale(1.05)";
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = "scale(1)";
-          }}
+          onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+          onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
         >
           Click here to Pay
         </button>
