@@ -46,7 +46,6 @@ function Payment() {
       .post("/pay/payment", payload)
       .then(() => {
         alert("✅ Payment successful and saved!");
-        localStorage.removeItem("selectedCartItems");
       })
       .catch((err) => {
         console.error("❌ Payment failed:", err);
