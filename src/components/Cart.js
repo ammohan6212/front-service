@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true); // ✅ New loading state
   const navigate = useNavigate();
 
   const fetchCart = () => {
@@ -12,15 +13,20 @@ function Cart() {
 
     if (!username) {
       setError("⚠️ Please log in to view your cart.");
+      setLoading(false);
       return;
     }
 
     axios
       .get(`/cart/get-details/${username}`)
-      .then((res) => setCartItems(res.data.cartItems))
+      .then((res) => {
+        setCartItems(res.data.cartItems);
+        setLoading(false); // ✅ Stop loading on success
+      })
       .catch((err) => {
         console.error("❌ Error fetching cart:", err);
         setError("Failed to load cart items.");
+        setLoading(false); // ✅ Stop loading on error
       });
   };
 
@@ -67,7 +73,10 @@ function Cart() {
       <h1>🛒 Your Cart</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {cartItems.length === 0 && !error ? (
+      {/* ✅ Show loading message */}
+      {loading ? (
+        <p style={{ fontSize: "18px" }}>⏳ Loading your cart...</p>
+      ) : cartItems.length === 0 && !error ? (
         <p>🧺 Your cart is empty.</p>
       ) : (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
@@ -155,7 +164,7 @@ function Cart() {
       )}
 
       {/* ✅ Payment Button */}
-      {cartItems.length > 0 && (
+      {!loading && cartItems.length > 0 && (
         <button
           onClick={handlePayClick}
           style={{
