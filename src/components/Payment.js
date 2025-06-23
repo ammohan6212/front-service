@@ -4,6 +4,7 @@ import axios from "axios";
 function Payment() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const items = localStorage.getItem("selectedCartItems");
@@ -30,7 +31,6 @@ function Payment() {
     }
 
     const username = localStorage.getItem("username") || "guest";
-
     const payload = selectedItems.map((item) => ({
       username,
       item_id: item._id,
@@ -42,14 +42,31 @@ function Payment() {
       total: item.price * item.quantity,
     }));
 
+    setLoading(true);
+
     axios
       .post("/pay/payment", payload)
       .then(() => {
-        alert("✅ Payment successful and saved!");
+        // Delete items from cart
+        return Promise.all(
+          selectedItems.map((item) =>
+            axios.delete(`/cart/remove/${item._id}`)
+          )
+        );
+      })
+      .then(() => {
+        alert("✅ Payment successful and cart cleared!");
+        setSelectedItems([]);
+        localStorage.removeItem("selectedCartItems");
       })
       .catch((err) => {
-        console.error("❌ Payment failed:", err);
-        alert("❌ Payment failed. Please try again.");
+        console.error("❌ Error during payment or cart cleanup:", err);
+        alert(
+          "❌ Something went wrong. If payment was successful, please check your cart manually."
+        );
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -184,12 +201,16 @@ function Payment() {
           </div>
 
           <button
-            style={styles.payButton}
+            style={{
+              ...styles.payButton,
+              opacity: loading ? 0.6 : 1,
+              pointerEvents: loading ? "none" : "auto",
+            }}
             onClick={handlePayNow}
             onMouseOver={(e) => (e.target.style.transform = "scale(1.03)")}
             onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
           >
-            🧾 Pay Now
+            {loading ? "⏳ Processing..." : "🧾 Pay Now"}
           </button>
         </>
       )}
