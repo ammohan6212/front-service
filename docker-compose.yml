@@ -14,6 +14,7 @@ services:
       - redis
     networks:
       - app-network
+
   frontend:
     image: front:1.0
     container_name: react-frontend
@@ -21,10 +22,6 @@ services:
       - "80:80"
     depends_on:
       - backend
-      - cart
-      - order
-      - payment
-      - product
     networks:
       - app-network
 
@@ -33,36 +30,20 @@ services:
     container_name: cart-backend
     ports:
       - "5000:5000"
-    environment: 
+    environment:
       MONGODB_URI: mongodb://mongo:27017/mycartdb
     networks:
       - app-network
-
 
   payment:
     image: payment:1.0
     container_name: payment-service
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5433/mydb
+      DATABASE_URL: postgresql://postgres:postgres@db1:5432/mydb
     ports:
       - "8081:8081"
     depends_on:
       - db1
-    networks:
-      - app-network
-  
-  db1:
-    image: postgres:14
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mydb
-    volumes:
-      - pgdata1:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
     networks:
       - app-network
 
@@ -71,32 +52,8 @@ services:
     container_name: order-service
     ports:
       - "8080:8080"
-    networks:
-      - app-network
     depends_on:
       - db
-
-  db:
-    image: postgres:14
-    container_name: postgres-db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mydb
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
-
-  redis:
-    image: redis:7.2
-    container_name: redis-cache
-    restart: always
-    ports:
-      - "6379:6379"
     networks:
       - app-network
 
@@ -106,8 +63,7 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
@@ -116,25 +72,18 @@ services:
       DB_NAME: mydb
     networks:
       - app-network
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
+
+  redis:
+    image: redis:7.2
+    container_name: redis-cache
     restart: always
+    ports:
+      - "6379:6379"
     healthcheck:
-      # This command checks if the MySQL server is responsive
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
-    environment:
-      MYSQL_ROOT_PASSWORD: Amohan9676$
-      MYSQL_DATABASE: mydb
-      MYSQL_USER: mohan
-      MYSQL_PASSWORD: Amohan9676$
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
     networks:
       - app-network
 
@@ -150,12 +99,72 @@ services:
     networks:
       - app-network
 
+  db:
+    image: postgres:14
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  db1:
+    image: postgres:14
+    container_name: postgres-db1
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata1:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "mohan", "-pAmohan9676$"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      MYSQL_ROOT_PASSWORD: Amohan9676$
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: mohan
+      MYSQL_PASSWORD: Amohan9676$
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
 
 volumes:
   pgdata:
-  mysql-data:
-  mongo-data: 
   pgdata1:
+  mysql-data:
+  mongo-data:
 
 networks:
   app-network:
