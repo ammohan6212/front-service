@@ -40,6 +40,24 @@ function Cart() {
       });
   };
 
+  const handleQuantityChange = (itemId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    axios
+      .patch(`/cart/update-quantity/${itemId}`, { quantity: newQuantity })
+      .then(() => {
+        setCartItems((prevItems) =>
+          prevItems.map((item) =>
+            item._id === itemId ? { ...item, quantity: newQuantity } : item
+          )
+        );
+      })
+      .catch((err) => {
+        console.error("❌ Failed to update quantity:", err);
+        alert("Failed to update quantity.");
+      });
+  };
+
   const handlePayClick = () => {
     navigate("/payment");
   };
@@ -80,7 +98,43 @@ function Cart() {
                 }}
               />
               <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
-              <p style={{ margin: "0 0 10px 0" }}>₹{item.price} × {item.quantity}</p>
+
+              {/* Quantity Controls */}
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                <button
+                  onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                  disabled={item.quantity <= 1}
+                  style={{
+                    padding: "4px 10px",
+                    fontSize: "16px",
+                    marginRight: "8px",
+                    backgroundColor: "#f0f0f0",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  −
+                </button>
+                <span style={{ fontSize: "16px", fontWeight: "bold" }}>{item.quantity}</span>
+                <button
+                  onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                  style={{
+                    padding: "4px 10px",
+                    fontSize: "16px",
+                    marginLeft: "8px",
+                    backgroundColor: "#f0f0f0",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  +
+                </button>
+              </div>
+
+              <p style={{ margin: "0 0 10px 0" }}>₹{item.price} each</p>
+
               <button
                 onClick={() => handleRemoveItem(item._id)}
                 style={{
@@ -100,7 +154,7 @@ function Cart() {
         </div>
       )}
 
-      {/* ✅ Payment Button restored */}
+      {/* ✅ Payment Button */}
       {cartItems.length > 0 && (
         <button
           onClick={handlePayClick}
