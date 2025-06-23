@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true); // ✅ New loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchCart = () => {
@@ -21,12 +22,12 @@ function Cart() {
       .get(`/cart/get-details/${username}`)
       .then((res) => {
         setCartItems(res.data.cartItems);
-        setLoading(false); // ✅ Stop loading on success
+        setLoading(false);
       })
       .catch((err) => {
         console.error("❌ Error fetching cart:", err);
         setError("Failed to load cart items.");
-        setLoading(false); // ✅ Stop loading on error
+        setLoading(false);
       });
   };
 
@@ -39,6 +40,7 @@ function Cart() {
       .delete(`/cart/remove/${itemId}`)
       .then(() => {
         setCartItems((prevItems) => prevItems.filter((item) => item._id !== itemId));
+        setSelectedItems((prev) => prev.filter((id) => id !== itemId));
       })
       .catch((err) => {
         console.error("❌ Failed to remove item:", err);
@@ -64,7 +66,21 @@ function Cart() {
       });
   };
 
+  const toggleSelectItem = (itemId) => {
+    setSelectedItems((prevSelected) =>
+      prevSelected.includes(itemId)
+        ? prevSelected.filter((id) => id !== itemId)
+        : [...prevSelected, itemId]
+    );
+  };
+
   const handlePayClick = () => {
+    if (selectedItems.length === 0) {
+      alert("Please select at least one item to proceed to payment.");
+      return;
+    }
+
+    localStorage.setItem("selectedCartItems", JSON.stringify(selectedItems));
     navigate("/payment");
   };
 
@@ -73,7 +89,6 @@ function Cart() {
       <h1>🛒 Your Cart</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* ✅ Show loading message */}
       {loading ? (
         <p style={{ fontSize: "18px" }}>⏳ Loading your cart...</p>
       ) : cartItems.length === 0 && !error ? (
@@ -95,6 +110,14 @@ function Cart() {
                 alignItems: "center",
               }}
             >
+              {/* ✅ Checkbox for selection */}
+              <input
+                type="checkbox"
+                checked={selectedItems.includes(item._id)}
+                onChange={() => toggleSelectItem(item._id)}
+                style={{ alignSelf: "flex-start", marginBottom: "10px" }}
+              />
+
               <img
                 src={item.image_url}
                 alt={item.name}
@@ -108,7 +131,6 @@ function Cart() {
               />
               <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
 
-              {/* Quantity Controls */}
               <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
                 <button
                   onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
@@ -163,7 +185,6 @@ function Cart() {
         </div>
       )}
 
-      {/* ✅ Payment Button */}
       {!loading && cartItems.length > 0 && (
         <button
           onClick={handlePayClick}
