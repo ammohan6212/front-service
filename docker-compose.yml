@@ -136,6 +136,7 @@ services:
 volumes:
   pgdata:
   mysql-data:
+  mongo-data: 
 
 networks:
   app-network:
