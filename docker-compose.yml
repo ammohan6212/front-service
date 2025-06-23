@@ -42,8 +42,28 @@ services:
   payment:
     image: payment:1.0
     container_name: payment-service
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5433/mydb
+      REDIS_URL: redis://redis:6379/0
     ports:
       - "8081:8081"
+    depends_on:
+      - db1
+    networks:
+      - app-network
+  
+  db1:
+    image: postgres:14
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata1:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
     networks:
       - app-network
 

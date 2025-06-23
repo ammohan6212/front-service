@@ -43,7 +43,7 @@ function Payment() {
     }));
 
     axios
-      .post("/api/payment", payload)
+      .post("/pay/payment", payload)
       .then(() => {
         alert("✅ Payment successful and saved!");
         localStorage.removeItem("selectedCartItems");
