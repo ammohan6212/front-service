@@ -34,9 +34,10 @@ services:
     ports:
       - "5000:5000"
     environment: 
-      MONGODB_URI: mongodb://admin:secret@mongo:27017/mycartdb
+      MONGODB_URI: mongodb://mongo:27017/mycartdb
     networks:
       - app-network
+
 
   payment:
     image: payment:1.0
@@ -124,14 +125,12 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: mycartdb
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: secret
+    command: --noauth
     volumes:
       - mongo-data:/data/db
     networks:
       - app-network
+
 
 volumes:
   pgdata:
