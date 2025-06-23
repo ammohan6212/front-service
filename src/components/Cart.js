@@ -80,11 +80,14 @@ function Cart() {
       return;
     }
 
-    localStorage.setItem("selectedCartItems", JSON.stringify(selectedItems));
+    const selectedItemDetails = cartItems.filter((item) =>
+      selectedItems.includes(item._id)
+    );
+
+    localStorage.setItem("selectedCartItems", JSON.stringify(selectedItemDetails));
     navigate("/payment");
   };
 
-  // --- Inline Styles (for a single-file solution) ---
   const styles = {
     cartContainer: {
       padding: "40px",
@@ -242,7 +245,6 @@ function Cart() {
         <div style={styles.cartItemsList}>
           {cartItems.map((item) => (
             <div key={item._id} style={styles.cartItemWrapper}>
-              {/* ✅ Checkbox on left */}
               <input
                 type="checkbox"
                 checked={selectedItems.includes(item._id)}
@@ -250,13 +252,8 @@ function Cart() {
                 style={styles.itemCheckbox}
               />
 
-              {/* ✅ Cart Item Card */}
               <div style={styles.cartItemCard}>
-                <img
-                  src={item.image_url}
-                  alt={item.name}
-                  style={styles.itemImage}
-                />
+                <img src={item.image_url} alt={item.name} style={styles.itemImage} />
                 <h3 style={styles.itemName}>{item.name}</h3>
 
                 <div style={styles.quantityControl}>
@@ -265,7 +262,7 @@ function Cart() {
                     disabled={item.quantity <= 1}
                     style={{
                       ...styles.quantityButton,
-                      borderRight: "1px solid #ced4da", // Add border between buttons
+                      borderRight: "1px solid #ced4da",
                     }}
                   >
                     −
@@ -275,7 +272,7 @@ function Cart() {
                     onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
                     style={{
                       ...styles.quantityButton,
-                      borderLeft: "1px solid #ced4da", // Add border between buttons
+                      borderLeft: "1px solid #ced4da",
                     }}
                   >
                     +
