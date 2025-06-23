@@ -23,7 +23,7 @@ function Payment() {
     );
   };
 
-  const handlePayNow = async () => {
+  const handlePayNow = () => {
     if (!paymentMethod) {
       alert("⚠️ Please select a payment method.");
       return;
@@ -42,27 +42,15 @@ function Payment() {
       total: item.price * item.quantity,
     }));
 
-    try {
-      await axios.post("/pay/payment", payload);
-      alert("✅ Payment successful and saved!");
-
-      // Remove each item from the cart (server-side)
-      await Promise.all(
-        selectedItems.map((item) =>
-          axios.delete(`/cart/remove/${item._id}`).catch((err) => {
-            console.error(`❌ Failed to remove item ${item._id}:`, err);
-          })
-        )
-      );
-
-      // Clear local storage and UI
-      localStorage.removeItem("selectedCartItems");
-      setSelectedItems([]);
-      setPaymentMethod("");
-    } catch (err) {
-      console.error("❌ Payment failed:", err);
-      alert("❌ Payment failed. Please try again.");
-    }
+    axios
+      .post("/pay/payment", payload)
+      .then(() => {
+        alert("✅ Payment successful and saved!");
+      })
+      .catch((err) => {
+        console.error("❌ Payment failed:", err);
+        alert("❌ Payment failed. Please try again.");
+      });
   };
 
   const styles = {
