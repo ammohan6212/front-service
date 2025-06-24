@@ -4,7 +4,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
 import Cart from './components/Cart';
-import Orders from './components/Orders';
+import UserOrders from './components/Orders';
 import Payment from './components/Payment';
 import SellerLogin from './components/SellerLogin';
 import SellerRegister from './components/SellerRegister';
@@ -35,7 +35,7 @@ function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/order" element={<Orders />} />
+        <Route path="/order" element={<UserOrders />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/seller-login" element={<SellerLogin />} />
         <Route path="/seller-register" element={<SellerRegister />} />
