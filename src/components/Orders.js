@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Package, XCircle, Loader2, Info, ShoppingBag, Truck, Calendar, Wallet } from 'lucide-react';
 
-const UserOrders = () => {
+const Orders = () => {
   const [username, setUsername] = useState('');
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
@@ -129,4 +129,4 @@ const UserOrders = () => {
   );
 };
 
-export default UserOrders;
+export default Orders;
