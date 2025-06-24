@@ -123,7 +123,7 @@ function SellerDashboard() {
 
             return (
               <div
-                key={product._id}
+                key={product.id}
                 style={{
                   border: "1px solid #ccc",
                   borderRadius: "10px",
@@ -194,7 +194,7 @@ function SellerDashboard() {
                     <p><strong>Category:</strong> {product.category}</p>
                     <button onClick={() => handleEdit(index)}>Update</button>
                     <button
-                      onClick={() => handleDelete(product._id)}
+                      onClick={() => handleDelete(product.id)}
                       style={{
                         marginLeft: "10px",
                         backgroundColor: "#ffdddd",
