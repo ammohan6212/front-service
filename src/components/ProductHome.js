@@ -35,6 +35,7 @@ function ProductHome() {
       username,
       productId: product._id || product.id,
       name: product.name,
+      sellerName: product.sellername, // ✅ Add seller name
       quantity: quantityToBuy,
       price: product.price,
       image_url: product.image_url || "https://via.placeholder.com/150",
@@ -108,6 +109,7 @@ function ProductHome() {
       <p><strong>Category:</strong> {product.category}</p>
       <p><strong>Description:</strong> {product.description || "No description provided."}</p>
       <p><strong>Price:</strong> ₹{product.price || "N/A"}</p>
+      <p><strong>Seller:</strong> {product.seller_name || "Unknown"}</p> {/* ✅ Show seller */}
       <p>
         <strong>Quantity Left:</strong>{" "}
         {product.quantity > 0 ? `${product.quantity} in stock` : "Out of stock"}
@@ -120,7 +122,7 @@ function ProductHome() {
         <button onClick={increaseQuantity} style={qtyButtonStyle}>+</button>
       </div>
 
-      {/* ✅ Add to Cart Button (Disabled if Out of Stock) */}
+      {/* Add to Cart Button */}
       <button
         onClick={handleAddToCart}
         disabled={product.quantity === 0}
