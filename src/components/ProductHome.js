@@ -35,7 +35,7 @@ function ProductHome() {
       username,
       productId: product._id || product.id,
       name: product.name,
-      sellerName: product.sellername, // ✅ Add seller name
+      seller_name: product.seller_name, // ✅ Add seller name
       quantity: quantityToBuy,
       price: product.price,
       image_url: product.image_url || "https://via.placeholder.com/150",

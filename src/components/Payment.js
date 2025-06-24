@@ -4,6 +4,7 @@ import axios from "axios";
 function Payment() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,60 +26,63 @@ function Payment() {
   };
 
   const handlePayNow = () => {
-  if (!paymentMethod) {
-    alert("⚠️ Please select a payment method.");
-    return;
-  }
+    if (!paymentMethod) {
+      alert("⚠️ Please select a payment method.");
+      return;
+    }
 
-  const username = localStorage.getItem("username") || "guest";
-  const payload = selectedItems.map((item) => ({
-    username,
-    item_id: item._id,
-    item_name: item.name,
-    price: item.price,
-    quantity: item.quantity,
-    image_url: item.image_url,
-    payment_method: paymentMethod,
-    total: item.price * item.quantity,
-  }));
+    if (!address.trim()) {
+      alert("⚠️ Please enter a delivery address.");
+      return;
+    }
 
-  setLoading(true);
+    const username = localStorage.getItem("username") || "guest";
+    const payload = selectedItems.map((item) => ({
+      username,
+      item_id: item._id,
+      item_name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image_url: item.image_url,
+      payment_method: paymentMethod,
+      total: item.price * item.quantity,
+      seller_name: item.seller_name,
+      address, // ✅ include address in payload
+    }));
 
-  // First: Send payment
-  axios
-    .post("/pay/payment", payload)
-    .then(() => {
-      // Second: Update product quantity
-      return Promise.all(
-        selectedItems.map((item) =>
-          axios.patch(`/product/update-quantity/${item.productId || item._id}`, {
-            quantityPurchased: item.quantity,
-          })
-        )
-      );
-    })
-    .then(() => {
-      // Third: Remove items from cart
-      return Promise.all(
-        selectedItems.map((item) =>
-          axios.delete(`/cart/remove/${item._id}`)
-        )
-      );
-    })
-    .then(() => {
-      alert("✅ Payment successful, stock updated, and cart cleared!");
-      setSelectedItems([]);
-    })
-    .catch((err) => {
-      console.error("❌ Error during payment process:", err);
-      alert(
-        "❌ Something went wrong. If payment was successful, please check cart and stock manually."
-      );
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-};
+    setLoading(true);
+
+    axios
+      .post("/pay/payment", payload)
+      .then(() => {
+        return Promise.all(
+          selectedItems.map((item) =>
+            axios.patch(`/product/update-quantity/${item.productId || item._id}`, {
+              quantityPurchased: item.quantity,
+            })
+          )
+        );
+      })
+      .then(() => {
+        return Promise.all(
+          selectedItems.map((item) => axios.delete(`/cart/remove/${item._id}`))
+        );
+      })
+      .then(() => {
+        alert("✅ Payment successful, stock updated, and cart cleared!");
+        setSelectedItems([]);
+        setAddress("");
+        setPaymentMethod("");
+        localStorage.removeItem("selectedCartItems");
+      })
+      .catch((err) => {
+        console.error("❌ Error during payment process:", err);
+        alert("❌ Something went wrong. Please verify your cart and stock.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const styles = {
     container: {
@@ -165,6 +169,16 @@ function Payment() {
       marginBottom: "10px",
       display: "block",
     },
+    textarea: {
+      padding: "10px",
+      fontSize: "1em",
+      width: "100%",
+      borderRadius: "8px",
+      border: "1px solid #ccc",
+      marginTop: "10px",
+      resize: "vertical",
+      fontFamily: "inherit",
+    },
   };
 
   return (
@@ -177,11 +191,7 @@ function Payment() {
         <>
           {selectedItems.map((item) => (
             <div key={item._id} style={styles.itemCard}>
-              <img
-                src={item.image_url}
-                alt={item.name}
-                style={styles.itemImage}
-              />
+              <img src={item.image_url} alt={item.name} style={styles.itemImage} />
               <div style={styles.itemDetails}>
                 <h3 style={styles.itemName}>{item.name}</h3>
                 <p style={styles.itemInfo}>Quantity: {item.quantity}</p>
@@ -208,6 +218,18 @@ function Payment() {
               <option value="cash_on_delivery">Cash on Delivery</option>
               <option value="net_banking">Net Banking</option>
             </select>
+
+            <label htmlFor="address" style={styles.label}>
+              Delivery Address:
+            </label>
+            <textarea
+              id="address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter full delivery address"
+              rows={4}
+              style={styles.textarea}
+            />
           </div>
 
           <button
