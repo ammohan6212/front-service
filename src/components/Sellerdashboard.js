@@ -60,9 +60,11 @@ function SellerDashboard() {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditedProduct((prev) => ({ ...prev, [name]: value }));
-  };
+  const { name, value } = e.target;
+  const val = name === "quantity" ? parseInt(value, 10) || 0 : value;
+  setEditedProduct((prev) => ({ ...prev, [name]: val }));
+};
+
 
   const handleSave = async () => {
     try {
