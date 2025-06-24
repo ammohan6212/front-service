@@ -37,9 +37,9 @@ function ProductHome() {
       name: product.name,
       quantity: quantityToBuy,
       price: product.price,
-      image_url: product.image_url || "https://via.placeholder.com/150", // ✅ included
+      image_url: product.image_url || "https://via.placeholder.com/150",
     };
-    
+
     fetch("/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -120,17 +120,21 @@ function ProductHome() {
         <button onClick={increaseQuantity} style={qtyButtonStyle}>+</button>
       </div>
 
+      {/* ✅ Add to Cart Button (Disabled if Out of Stock) */}
       <button
         onClick={handleAddToCart}
+        disabled={product.quantity === 0}
+        title={product.quantity === 0 ? "Out of stock" : ""}
         style={{
           marginTop: "25px",
           padding: "12px 24px",
           fontSize: "16px",
-          backgroundColor: "#28a745",
+          backgroundColor: product.quantity === 0 ? "#ccc" : "#28a745",
           color: "#fff",
           border: "none",
           borderRadius: "8px",
-          cursor: "pointer",
+          cursor: product.quantity === 0 ? "not-allowed" : "pointer",
+          opacity: product.quantity === 0 ? 0.6 : 1,
         }}
       >
         🛒 Add to Cart
