@@ -62,6 +62,25 @@ function SellerDashboard() {
     setEditedProduct({});
   };
 
+  const handleDelete = async (productId) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+
+    try {
+      const res = await fetch(`/product/delete/${productId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Delete failed");
+
+      setProducts(products.filter((p) => p._id !== productId));
+    } catch (err) {
+      console.error("Error deleting product:", err);
+    }
+  };
+
   return (
     <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
       <h1 style={{ marginBottom: "30px" }}>📦 Seller Dashboard</h1>
@@ -81,7 +100,7 @@ function SellerDashboard() {
 
             return (
               <div
-                key={index}
+                key={product._id}
                 style={{
                   border: "1px solid #ccc",
                   borderRadius: "10px",
@@ -151,6 +170,19 @@ function SellerDashboard() {
                       <strong>Category:</strong> {product.category}
                     </p>
                     <button onClick={() => handleEdit(index)}>Update</button>
+                    <button
+                      onClick={() => handleDelete(product._id)}
+                      style={{
+                        marginLeft: "10px",
+                        backgroundColor: "#ffdddd",
+                        color: "red",
+                        border: "1px solid red",
+                        padding: "4px 8px",
+                        borderRadius: "5px",
+                      }}
+                    >
+                      Delete
+                    </button>
                   </>
                 )}
               </div>
