@@ -175,7 +175,7 @@ function SellerDashboard() {
                     />
                     <input
                       name="quantity"
-                      value={editedProduct.quantity || ""}
+                      value={editedProduct.quantity}
                       onChange={handleChange}
                       placeholder="Stock Left"
                       style={{ width: "100%", marginBottom: "6px" }}
