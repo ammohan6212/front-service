@@ -52,7 +52,7 @@ function SellerDashboard() {
    setEditedProduct({
     name: products[index].name || "",
     price: products[index].price || "",
-    quantity: products[index].quantity || "",
+    quantity: products[index].quantity,
     category: products[index].category || "",
     description: products[index].description || "", // Add this line
     id: products[index].id || products[index]._id,  // in case it's _id
