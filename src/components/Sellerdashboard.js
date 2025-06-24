@@ -58,26 +58,26 @@ function SellerDashboard() {
   };
 
   const handleSave = async () => {
-  try {
-    const res = await fetch(`/product/update/${editedProduct.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(editedProduct),
-    });
+    try {
+      const res = await fetch(`/product/update/${editedProduct.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editedProduct),
+      });
 
-    if (!res.ok) throw new Error("Update failed");
+      if (!res.ok) throw new Error("Update failed");
 
-    const updated = [...products];
-    updated[editingIndex] = editedProduct;
-    setProducts(updated);
-    setEditingIndex(null);
-  } catch (err) {
-    console.error("Error updating product:", err);
-  }
-};
+      const updated = [...products];
+      updated[editingIndex] = editedProduct;
+      setProducts(updated);
+      setEditingIndex(null);
+    } catch (err) {
+      console.error("Error updating product:", err);
+    }
+  };
 
   const handleCancel = () => {
     setEditingIndex(null);
@@ -85,24 +85,23 @@ function SellerDashboard() {
   };
 
   const handleDelete = async (productId) => {
-  if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
 
-  try {
-    const res = await fetch(`/product/delete/${productId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await fetch(`/product/delete/${productId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!res.ok) throw new Error("Delete failed");
+      if (!res.ok) throw new Error("Delete failed");
 
-    setProducts(products.filter((p) => p.id !== productId));
-  } catch (err) {
-    console.error("Error deleting product:", err);
-  }
-};
-
+      setProducts(products.filter((p) => p.id !== productId));
+    } catch (err) {
+      console.error("Error deleting product:", err);
+    }
+  };
 
   return (
     <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
@@ -153,6 +152,13 @@ function SellerDashboard() {
                       placeholder="Name"
                       style={{ width: "100%", marginBottom: "6px" }}
                     />
+                    <textarea
+                      name="description"
+                      value={editedProduct.description || ""}
+                      onChange={handleChange}
+                      placeholder="Description"
+                      style={{ width: "100%", marginBottom: "6px" }}
+                    />
                     <input
                       name="price"
                       value={editedProduct.price}
@@ -189,6 +195,7 @@ function SellerDashboard() {
                 ) : (
                   <>
                     <h3>{product.name}</h3>
+                    <p><strong>Description:</strong> {product.description}</p>
                     <p><strong>Price:</strong> ₹{product.price}</p>
                     <p><strong>Stock Left:</strong> {product.quantity}</p>
                     <p><strong>Category:</strong> {product.category}</p>
