@@ -21,7 +21,7 @@ const UserOrders = () => {
       setError('');
     } catch (err) {
       console.error(err);
-      setError('❌ Failed to fetch orders. User may not exist.');
+      setError('❌ Failed to fetch orders1. User may not exist.');
       setOrders([]);
     }
   };
