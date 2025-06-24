@@ -24,13 +24,14 @@ function Payment() {
     );
   };
 
-  const handlePayNow = () => {
+  const handlePayNow = async () => {
     if (!paymentMethod) {
       alert("⚠️ Please select a payment method.");
       return;
     }
 
     const username = localStorage.getItem("username") || "guest";
+
     const payload = selectedItems.map((item) => ({
       username,
       item_id: item._id,
@@ -44,29 +45,38 @@ function Payment() {
 
     setLoading(true);
 
-    axios
-      .post("/pay/payment", payload)
-      .then(() => {
-        // Delete items from cart
-        return Promise.all(
-          selectedItems.map((item) =>
-            axios.delete(`/cart/remove/${item._id}`)
-          )
-        );
-      })
-      .then(() => {
-        alert("✅ Payment successful and cart cleared!");
-        setSelectedItems([]);
-      })
-      .catch((err) => {
-        console.error("❌ Error during payment or cart cleanup:", err);
-        alert(
-          "❌ Something went wrong. If payment was successful, please check your cart manually."
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      // 1️⃣ Submit payment payload
+      await axios.post("/pay/payment", payload);
+
+      // 2️⃣ Update quantity of each product
+      await Promise.all(
+        selectedItems.map((item) =>
+          axios.put(`/product/update-quantity/${item._id}`, {
+            quantityPurchased: item.quantity,
+          })
+        )
+      );
+
+      // 3️⃣ Remove each item from cart
+      await Promise.all(
+        selectedItems.map((item) =>
+          axios.delete(`/cart/remove/${item._id}`)
+        )
+      );
+
+      // 4️⃣ Cleanup
+      alert("✅ Payment successful, inventory updated, and cart cleared!");
+      setSelectedItems([]);
+      localStorage.removeItem("selectedCartItems");
+    } catch (err) {
+      console.error("❌ Error during payment or inventory/cart update:", err);
+      alert(
+        "❌ Something went wrong. If payment was successful, please check your cart and inventory manually."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const styles = {
