@@ -154,7 +154,7 @@ function SellerDashboard() {
                   <>
                     <input
                       name="name"
-                      value={editedProduct.name}
+                      value={editedProduct.name || ""}
                       onChange={handleChange}
                       placeholder="Name"
                       style={{ width: "100%", marginBottom: "6px" }}
@@ -175,14 +175,14 @@ function SellerDashboard() {
                     />
                     <input
                       name="quantity"
-                      value={editedProduct.quantity}
+                      value={editedProduct.quantity || ""}
                       onChange={handleChange}
                       placeholder="Stock Left"
                       style={{ width: "100%", marginBottom: "6px" }}
                     />
                     <select
                       name="category"
-                      value={editedProduct.category}
+                      value={editedProduct.category || ""}
                       onChange={handleChange}
                       style={{ width: "100%", marginBottom: "6px" }}
                     >
