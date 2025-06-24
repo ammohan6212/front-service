@@ -48,8 +48,15 @@ function SellerDashboard() {
   }, [sellerName, token, navigate]);
 
   const handleEdit = (index) => {
-    setEditingIndex(index);
-    setEditedProduct({ ...products[index] });
+   setEditingIndex(index);
+   setEditedProduct({
+    name: products[index].name || "",
+    price: products[index].price || "",
+    quantity: products[index].quantity || "",
+    category: products[index].category || "",
+    description: products[index].description || "", // Add this line
+    id: products[index].id || products[index]._id,  // in case it's _id
+   });
   };
 
   const handleChange = (e) => {
