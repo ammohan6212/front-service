@@ -25,49 +25,60 @@ function Payment() {
   };
 
   const handlePayNow = () => {
-    if (!paymentMethod) {
-      alert("⚠️ Please select a payment method.");
-      return;
-    }
+  if (!paymentMethod) {
+    alert("⚠️ Please select a payment method.");
+    return;
+  }
 
-    const username = localStorage.getItem("username") || "guest";
-    const payload = selectedItems.map((item) => ({
-      username,
-      item_id: item._id,
-      item_name: item.name,
-      price: item.price,
-      quantity: item.quantity,
-      image_url: item.image_url,
-      payment_method: paymentMethod,
-      total: item.price * item.quantity,
-    }));
+  const username = localStorage.getItem("username") || "guest";
+  const payload = selectedItems.map((item) => ({
+    username,
+    item_id: item._id,
+    item_name: item.name,
+    price: item.price,
+    quantity: item.quantity,
+    image_url: item.image_url,
+    payment_method: paymentMethod,
+    total: item.price * item.quantity,
+  }));
 
-    setLoading(true);
+  setLoading(true);
 
-    axios
-      .post("/pay/payment", payload)
-      .then(() => {
-        // Delete items from cart
-        return Promise.all(
-          selectedItems.map((item) =>
-            axios.delete(`/cart/remove/${item._id}`)
-          )
-        );
-      })
-      .then(() => {
-        alert("✅ Payment successful and cart cleared!");
-        setSelectedItems([]);
-      })
-      .catch((err) => {
-        console.error("❌ Error during payment or cart cleanup:", err);
-        alert(
-          "❌ Something went wrong. If payment was successful, please check your cart manually."
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  // First: Send payment
+  axios
+    .post("/pay/payment", payload)
+    .then(() => {
+      // Second: Update product quantity
+      return Promise.all(
+        selectedItems.map((item) =>
+          axios.patch(`/product/update-quantity/${item.productId || item._id}`, {
+            quantityPurchased: item.quantity,
+          })
+        )
+      );
+    })
+    .then(() => {
+      // Third: Remove items from cart
+      return Promise.all(
+        selectedItems.map((item) =>
+          axios.delete(`/cart/remove/${item._id}`)
+        )
+      );
+    })
+    .then(() => {
+      alert("✅ Payment successful, stock updated, and cart cleared!");
+      setSelectedItems([]);
+    })
+    .catch((err) => {
+      console.error("❌ Error during payment process:", err);
+      alert(
+        "❌ Something went wrong. If payment was successful, please check cart and stock manually."
+      );
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+};
 
   const styles = {
     container: {
