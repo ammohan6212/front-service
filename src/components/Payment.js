@@ -34,7 +34,7 @@ function Payment() {
 
     const payload = selectedItems.map((item) => ({
       username,
-      item_id: item._id,
+      item_id: item.id, // ✅ updated
       item_name: item.name,
       price: item.price,
       quantity: item.quantity,
@@ -52,7 +52,7 @@ function Payment() {
       // 2️⃣ Update quantity of each product
       await Promise.all(
         selectedItems.map((item) =>
-          axios.put(`/product/update-quantity/${item._id}`, {
+          axios.put(`/product/update-quantity/${item.id}`, {
             quantityPurchased: item.quantity,
           })
         )
@@ -61,7 +61,7 @@ function Payment() {
       // 3️⃣ Remove each item from cart
       await Promise.all(
         selectedItems.map((item) =>
-          axios.delete(`/cart/remove/${item._id}`)
+          axios.delete(`/cart/remove/${item.id}`)
         )
       );
 
@@ -174,7 +174,7 @@ function Payment() {
       ) : (
         <>
           {selectedItems.map((item) => (
-            <div key={item._id} style={styles.itemCard}>
+            <div key={item.id} style={styles.itemCard}>
               <img
                 src={item.image_url}
                 alt={item.name}
