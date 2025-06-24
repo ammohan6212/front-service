@@ -1,27 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function Orders() {
-  const [message, setMessage] = useState('');
+const UserOrders = () => {
+  const [username, setUsername] = useState('');
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState('');
 
+  // Load username from localStorage on mount
   useEffect(() => {
-    // Fetch data from backend
-    axios.get('/order/order')  // Adjust the URL as per your backend
-      .then(response => {
-        setMessage(response.data);
-      })
-      .catch(error => {
-        console.error("Error fetching order message:", error);
-        setMessage("Failed to load order service message.");
-      });
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+      fetchOrders(storedUsername);
+    }
   }, []);
 
+  const fetchOrders = async (user) => {
+    try {
+      const response = await axios.get(`/order/user/${user}`);
+      setOrders(response.data);
+      setError('');
+    } catch (err) {
+      console.error(err);
+      setError('❌ Failed to fetch orders. User may not exist.');
+      setOrders([]);
+    }
+  };
+
   return (
-    <div style={{ padding: '40px' }}>
-      <h1>📦 Orders Page</h1>
-      <p>{message}</p>
+    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
+      <h2>📦 Orders for {username || 'N/A'}</h2>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {orders.length > 0 ? (
+        <table border="1" cellPadding="10" style={{ marginTop: '1rem', width: '100%' }}>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Seller</th>
+              <th>Total</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map(order => (
+              <tr key={order.id}>
+                <td>{order.item_name}</td>
+                <td>{order.quantity}</td>
+                <td>₹{order.price}</td>
+                <td>{order.seller_name}</td>
+                <td>₹{order.total}</td>
+                <td>{new Date(order.created_at).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        !error && <p>No orders found for this user.</p>
+      )}
     </div>
   );
-}
+};
 
-export default Orders;
+export default UserOrders;
