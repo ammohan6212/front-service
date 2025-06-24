@@ -24,17 +24,16 @@ function Payment() {
     );
   };
 
-  const handlePayNow = async () => {
+  const handlePayNow = () => {
     if (!paymentMethod) {
       alert("⚠️ Please select a payment method.");
       return;
     }
 
     const username = localStorage.getItem("username") || "guest";
-
     const payload = selectedItems.map((item) => ({
       username,
-      item_id: item.id, // ✅ updated
+      item_id: item._id,
       item_name: item.name,
       price: item.price,
       quantity: item.quantity,
@@ -45,37 +44,29 @@ function Payment() {
 
     setLoading(true);
 
-    try {
-      // 1️⃣ Submit payment payload
-      await axios.post("/pay/payment", payload);
-
-      // 2️⃣ Update quantity of each product
-      await Promise.all(
-        selectedItems.map((item) =>
-          axios.put(`/product/update-quantity/${item.id}`, {
-            quantityPurchased: item.quantity,
-          })
-        )
-      );
-
-      // 3️⃣ Remove each item from cart
-      await Promise.all(
-        selectedItems.map((item) =>
-          axios.delete(`/cart/remove/${item.id}`)
-        )
-      );
-
-      // 4️⃣ Cleanup
-      alert("✅ Payment successful, inventory updated, and cart cleared!");
-      setSelectedItems([]);
-    } catch (err) {
-      console.error("❌ Error during payment or inventory/cart update:", err);
-      alert(
-        "❌ Something went wrong. If payment was successful, please check your cart and inventory manually."
-      );
-    } finally {
-      setLoading(false);
-    }
+    axios
+      .post("/pay/payment", payload)
+      .then(() => {
+        // Delete items from cart
+        return Promise.all(
+          selectedItems.map((item) =>
+            axios.delete(`/cart/remove/${item._id}`)
+          )
+        );
+      })
+      .then(() => {
+        alert("✅ Payment successful and cart cleared!");
+        setSelectedItems([]);
+      })
+      .catch((err) => {
+        console.error("❌ Error during payment or cart cleanup:", err);
+        alert(
+          "❌ Something went wrong. If payment was successful, please check your cart manually."
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const styles = {
@@ -174,7 +165,7 @@ function Payment() {
       ) : (
         <>
           {selectedItems.map((item) => (
-            <div key={item.id} style={styles.itemCard}>
+            <div key={item._id} style={styles.itemCard}>
               <img
                 src={item.image_url}
                 alt={item.name}
