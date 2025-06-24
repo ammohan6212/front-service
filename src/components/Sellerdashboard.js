@@ -9,6 +9,28 @@ function SellerDashboard() {
   const sellerName = localStorage.getItem("seller_name");
   const token = localStorage.getItem("seller_token");
 
+  const categories = [
+    "Men's Clothing", "Women's Clothing", "Kid's & Baby Clothing", "Shoes & Footwear",
+    "Jewelry & Watches", "Handbags & Accessories", "Lingerie & Sleepwear",
+    "Computers & Laptops", "Smartphones & Tablets", "TV, Video & Audio",
+    "Cameras & Photography", "Video Games & Consoles", "Wearable Technology",
+    "Drones & Accessories", "Electronic Accessories", "Home & Kitchen", "Furniture & Decor",
+    "Bed & Bath", "Garden & Outdoor", "Home Improvement & Tools", "Appliances",
+    "Lighting & Ceiling Fans", "Skincare & Makeup", "Hair Care & Styling", "Fragrances",
+    "Health Care & Supplements", "Personal Care & Wellness", "Shaving & Hair Removal",
+    "Books & Literature", "eBooks & Audiobooks", "Movies & TV Shows", "Music, Vinyl & CDs",
+    "Textbooks", "Athletic Apparel", "Exercise & Fitness", "Outdoor Recreation", "Team Sports",
+    "Fan Shop & Memorabilia", "Cycling", "Camping & Hiking", "Action Figures & Statues",
+    "Board Games & Puzzles", "Dolls & Accessories", "Building Toys (e.g., LEGO)",
+    "Educational Toys", "Video Games", "Car Parts & Accessories", "Motorcycle & Powersports",
+    "Tools & Equipment", "Tires & Wheels", "Industrial Supplies", "Pantry Staples",
+    "Snacks & Sweets", "Coffee, Tea & Beverages", "Gourmet & Specialty Foods",
+    "Organic Products", "Art & Wall Decor", "Crafting & Sewing", "Collectibles & Memorabilia",
+    "Antiques", "Dog Supplies", "Cat Supplies", "Fish & Aquatic Pets", "Bird Supplies",
+    "Small Animal Supplies", "Office & School Supplies", "Luggage & Travel Gear",
+    "Musical Instruments", "Software", "Gift Cards"
+  ];
+
   useEffect(() => {
     if (!sellerName || !token) {
       navigate("/seller-login");
@@ -144,13 +166,20 @@ function SellerDashboard() {
                       placeholder="Stock Left"
                       style={{ width: "100%", marginBottom: "6px" }}
                     />
-                    <input
+
+                    <select
                       name="category"
                       value={editedProduct.category}
                       onChange={handleChange}
-                      placeholder="Category"
                       style={{ width: "100%", marginBottom: "6px" }}
-                    />
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((cat, idx) => (
+                        <option key={idx} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
 
                     <button onClick={handleSave} style={{ marginRight: "10px" }}>
                       Save
