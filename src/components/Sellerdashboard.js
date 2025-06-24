@@ -168,7 +168,7 @@ function SellerDashboard() {
                     />
                     <input
                       name="price"
-                      value={editedProduct.price}
+                      value={editedProduct.price || ""}
                       onChange={handleChange}
                       placeholder="Price"
                       style={{ width: "100%", marginBottom: "6px" }}
