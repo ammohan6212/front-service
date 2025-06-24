@@ -166,7 +166,6 @@ function SellerDashboard() {
                       placeholder="Stock Left"
                       style={{ width: "100%", marginBottom: "6px" }}
                     />
-
                     <select
                       name="category"
                       value={editedProduct.category}
@@ -189,15 +188,9 @@ function SellerDashboard() {
                 ) : (
                   <>
                     <h3>{product.name}</h3>
-                    <p>
-                      <strong>Price:</strong> ₹{product.price}
-                    </p>
-                    <p>
-                      <strong>Stock Left:</strong> {product.quantity}
-                    </p>
-                    <p>
-                      <strong>Category:</strong> {product.category}
-                    </p>
+                    <p><strong>Price:</strong> ₹{product.price}</p>
+                    <p><strong>Stock Left:</strong> {product.quantity}</p>
+                    <p><strong>Category:</strong> {product.category}</p>
                     <button onClick={() => handleEdit(index)}>Update</button>
                     <button
                       onClick={() => handleDelete(product._id)}
