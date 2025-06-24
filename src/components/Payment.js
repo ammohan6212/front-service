@@ -68,7 +68,6 @@ function Payment() {
       // 4️⃣ Cleanup
       alert("✅ Payment successful, inventory updated, and cart cleared!");
       setSelectedItems([]);
-      localStorage.removeItem("selectedCartItems");
     } catch (err) {
       console.error("❌ Error during payment or inventory/cart update:", err);
       alert(
