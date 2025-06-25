@@ -31,9 +31,7 @@ const UserOrders = () => {
 
   const removeOrder = async (orderId) => {
     try {
-      // Optional: Call API to remove the order
       await axios.delete(`/order/${orderId}`);
-      // Remove from UI
       setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
     } catch (err) {
       console.error("❌ Failed to delete order:", err);
@@ -54,11 +52,20 @@ const UserOrders = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {orders.length > 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            overflowX: 'auto',
+            gap: '1rem',
+            padding: '1rem 0',
+          }}
+        >
           {orders.map(order => (
             <div
               key={order.id}
               style={{
+                minWidth: '300px',
                 border: '1px solid #ccc',
                 borderRadius: '8px',
                 padding: '1rem',
@@ -66,7 +73,6 @@ const UserOrders = () => {
                 boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.5rem',
               }}
             >
               <h3>{order.itemName}</h3>
@@ -78,8 +84,7 @@ const UserOrders = () => {
               <button
                 onClick={() => removeOrder(order.id)}
                 style={{
-                  alignSelf: 'flex-start',
-                  marginTop: '0.5rem',
+                  marginTop: '1rem',
                   backgroundColor: '#ff4d4f',
                   color: 'white',
                   border: 'none',
