@@ -6,7 +6,6 @@ const UserOrders = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
 
-  // Load username from localStorage on mount
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
