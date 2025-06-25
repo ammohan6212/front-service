@@ -81,7 +81,7 @@ const SellerOrders = () => {
               }}
             >
               <h3>{order.itemName}</h3>
-              <p><strong>Buyer:</strong> {order.buyerName || 'N/A'}</p>
+              <p><strong>Buyer:</strong> {order.buyerName }</p>
               <p><strong>Quantity:</strong> {order.quantity || 0}</p>
               <p><strong>Price:</strong> ₹{order.price || 0}</p>
               <p><strong>Total:</strong> ₹{order.total || 0}</p>
