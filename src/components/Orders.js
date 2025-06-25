@@ -59,6 +59,8 @@ const UserOrders = () => {
             overflowX: 'auto',
             gap: '1rem',
             padding: '1rem 0',
+            scrollSnapType: 'x mandatory',
+            scrollBehavior: 'smooth',
           }}
         >
           {orders.map(order => (
@@ -66,6 +68,8 @@ const UserOrders = () => {
               key={order.id}
               style={{
                 minWidth: '300px',
+                maxWidth: '300px',
+                flex: '0 0 auto',
                 border: '1px solid #ccc',
                 borderRadius: '8px',
                 padding: '1rem',
@@ -73,6 +77,7 @@ const UserOrders = () => {
                 boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
                 flexDirection: 'column',
+                scrollSnapAlign: 'start',
               }}
             >
               <h3>{order.itemName}</h3>
@@ -90,7 +95,7 @@ const UserOrders = () => {
                   border: 'none',
                   padding: '0.5rem 1rem',
                   borderRadius: '5px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 ❌ Remove Order
