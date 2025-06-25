@@ -15,6 +15,7 @@ import Forgot from './components/ForgotPassword';
 import Reset from './components/ResetPassword';
 import ProductHome from './components/ProductHome';
 import SellerDashboard from './components/Sellerdashboard';
+import SellerOrders  from './components/sellerorders';  
 import './App.css';
 
 function AppRoutes() {
@@ -37,6 +38,7 @@ function AppRoutes() {
         <Route path="/home" element={<Home />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/order" element={<UserOrders />} />
+        <Route path="/sellerorder" element={<SellerOrders />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/seller-login" element={<SellerLogin />} />
         <Route path="/seller-register" element={<SellerRegister />} />

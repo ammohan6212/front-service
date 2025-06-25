@@ -114,6 +114,9 @@ function SellerHome() {
           <button onClick={() => navigate('/seller-dashboard')} style={styles.headerButton}>
             Dashboard
           </button>
+          <button onClick={() => navigate('/sellerorder')} style={styles.headerButton}>
+            Orders
+          </button>
           <button onClick={handleLogout} style={styles.logoutButton}>
             Logout
           </button>
