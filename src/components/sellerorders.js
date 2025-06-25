@@ -7,7 +7,7 @@ const SellerOrders = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const storedSeller = localStorage.getItem('sellerName');
+    const storedSeller = localStorage.getItem('seller_name');
     if (storedSeller) {
       setSellerName(storedSeller);
       fetchSellerOrders(storedSeller);
