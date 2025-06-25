@@ -19,6 +19,7 @@ const UserOrders = () => {
   const fetchOrders = async (user) => {
     try {
       const response = await axios.get(`/order/user/${user}`);
+      console.log("✅ Orders fetched:", response.data);
       setOrders(response.data);
       setError('');
     } catch (err) {
@@ -26,6 +27,12 @@ const UserOrders = () => {
       setError('❌ Failed to fetch orders. User may not exist.');
       setOrders([]);
     }
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    const parsed = new Date(dateStr.slice(0, 19));
+    return isNaN(parsed.getTime()) ? 'Invalid Date' : parsed.toLocaleString();
   };
 
   return (
@@ -49,12 +56,12 @@ const UserOrders = () => {
           <tbody>
             {orders.map(order => (
               <tr key={order.id}>
-                <td>{order.itemName}</td>
-                <td>{order.quantity}</td>
-                <td>₹{order.price}</td>
-                <td>{order.sellerName}</td>
-                <td>₹{order.total}</td>
-                <td>{new Date(order.createdAt).toLocaleString()}</td>
+                <td>{order.itemName || 'N/A'}</td>
+                <td>{order.quantity || 0}</td>
+                <td>₹{order.price || 0}</td>
+                <td>{order.sellerName || 'N/A'}</td>
+                <td>₹{order.total || 0}</td>
+                <td>{formatDate(order.createdAt)}</td>
               </tr>
             ))}
           </tbody>
