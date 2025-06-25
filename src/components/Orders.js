@@ -29,6 +29,18 @@ const UserOrders = () => {
     }
   };
 
+  const removeOrder = async (orderId) => {
+    try {
+      // Optional: Call API to remove the order
+      await axios.delete(`/order/${orderId}`);
+      // Remove from UI
+      setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+    } catch (err) {
+      console.error("❌ Failed to delete order:", err);
+      setError("❌ Failed to delete order.");
+    }
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A';
     const parsed = new Date(dateStr.slice(0, 19));
@@ -42,30 +54,45 @@ const UserOrders = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {orders.length > 0 ? (
-        <table border="1" cellPadding="10" style={{ marginTop: '1rem', width: '100%' }}>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Seller</th>
-              <th>Total</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map(order => (
-              <tr key={order.id}>
-                <td>{order.itemName }</td>
-                <td>{order.quantity || 0}</td>
-                <td>₹{order.price || 0}</td>
-                <td>{order.sellerName }</td>
-                <td>₹{order.total || 0}</td>
-                <td>{formatDate(order.createdAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {orders.map(order => (
+            <div
+              key={order.id}
+              style={{
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                padding: '1rem',
+                background: '#f9f9f9',
+                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+              }}
+            >
+              <h3>{order.itemName}</h3>
+              <p><strong>Quantity:</strong> {order.quantity || 0}</p>
+              <p><strong>Price:</strong> ₹{order.price || 0}</p>
+              <p><strong>Seller:</strong> {order.sellerName}</p>
+              <p><strong>Total:</strong> ₹{order.total || 0}</p>
+              <p><strong>Date:</strong> {formatDate(order.createdAt)}</p>
+              <button
+                onClick={() => removeOrder(order.id)}
+                style={{
+                  alignSelf: 'flex-start',
+                  marginTop: '0.5rem',
+                  backgroundColor: '#ff4d4f',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+              >
+                ❌ Remove Order
+              </button>
+            </div>
+          ))}
+        </div>
       ) : (
         !error && <p>No orders found for this user.</p>
       )}
