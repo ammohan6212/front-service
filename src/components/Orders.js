@@ -12,6 +12,8 @@ const UserOrders = () => {
     if (storedUsername) {
       setUsername(storedUsername);
       fetchOrders(storedUsername);
+    } else {
+      setError("⚠️ No username found in localStorage.");
     }
   }, []);
 
@@ -48,12 +50,12 @@ const UserOrders = () => {
           <tbody>
             {orders.map(order => (
               <tr key={order.id}>
-                <td>{order.item_name}</td>
+                <td>{order.itemName}</td>
                 <td>{order.quantity}</td>
                 <td>₹{order.price}</td>
-                <td>{order.seller_name}</td>
+                <td>{order.sellerName}</td>
                 <td>₹{order.total}</td>
-                <td>{new Date(order.created_at).toLocaleString()}</td>
+                <td>{new Date(order.createdAt).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
