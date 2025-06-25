@@ -56,10 +56,10 @@ const UserOrders = () => {
           <tbody>
             {orders.map(order => (
               <tr key={order.id}>
-                <td>{order.itemName || 'N/A'}</td>
+                <td>{order.itemName }</td>
                 <td>{order.quantity || 0}</td>
                 <td>₹{order.price || 0}</td>
-                <td>{order.sellerName || 'N/A'}</td>
+                <td>{order.sellerName }</td>
                 <td>₹{order.total || 0}</td>
                 <td>{formatDate(order.createdAt)}</td>
               </tr>
