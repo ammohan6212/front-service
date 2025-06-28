@@ -55,21 +55,17 @@ const UserOrders = () => {
         <div
           style={{
             display: 'flex',
-            flexDirection: 'row',
-            overflowX: 'auto',
+            flexDirection: 'column',
+            maxHeight: '600px',      // 👈 You can adjust height as needed
+            overflowY: 'auto',
             gap: '1rem',
             padding: '1rem 0',
-            scrollSnapType: 'x mandatory',
-            scrollBehavior: 'smooth',
           }}
         >
           {orders.map(order => (
             <div
               key={order.id}
               style={{
-                minWidth: '300px',
-                maxWidth: '300px',
-                flex: '0 0 auto',
                 border: '1px solid #ccc',
                 borderRadius: '8px',
                 padding: '1rem',
@@ -77,7 +73,6 @@ const UserOrders = () => {
                 boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
                 flexDirection: 'column',
-                scrollSnapAlign: 'start',
               }}
             >
               <h3>{order.itemName}</h3>
