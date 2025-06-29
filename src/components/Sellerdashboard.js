@@ -116,7 +116,7 @@ function SellerDashboard() {
       });
 
       // ✅ Also delete from orders (Spring Boot endpoint)
-      await fetch(`/order/order/delete-by-image?imageUrl=${encodeURIComponent(imageUrl)}`, {
+      await fetch(`/order/delete-by-image?imageUrl=${encodeURIComponent(imageUrl)}`, {
         method: "DELETE",
       });
 
