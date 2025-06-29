@@ -30,7 +30,7 @@ const OrderDetails = () => {
       await axios.delete(`/order/order/${orderId}`);
 
       // ✅ Increase the product quantity in stock
-      await axios.put(`/products/increase-quantity/${order.itemId}`, {
+      await axios.put(`/product/increase-quantity/${order.itemId}`, {
         quantity: order.quantity
       });
 
