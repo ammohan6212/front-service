@@ -107,7 +107,7 @@ function SellerDashboard() {
       if (!res.ok) throw new Error("Delete failed");
 
       // ✅ Also delete from cart using image_url
-      await fetch(`/cart/delete-by-image?image_url=${encodeURIComponent(imageUrl)}`, {
+      await fetch(`/cart/delete-by-image?imageUrl=${encodeURIComponent(imageUrl)}`, {
         method: "DELETE",
       });
       // ✅ Also delete from orders (Spring Boot endpoint)
