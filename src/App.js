@@ -16,7 +16,6 @@ import Reset from './components/ResetPassword';
 import ProductHome from './components/ProductHome';
 import SellerDashboard from './components/Sellerdashboard';
 import SellerOrders  from './components/sellerorders';  
-import UserOrders from './components/Orders';
 import OrderDetails from './components/order-details';
 
 import './App.css';
