@@ -14,7 +14,7 @@ const OrderDetails = () => {
 
   const fetchOrder = async () => {
     try {
-      const response = await axios.get(`/order/${orderId}`);
+      const response = await axios.get(`/order/order/${orderId}`);
       setOrder(response.data);
     } catch (err) {
       console.error(err);
@@ -24,7 +24,7 @@ const OrderDetails = () => {
 
   const handleRemoveOrder = async () => {
     try {
-      await axios.delete(`/order/${orderId}`);
+      await axios.delete(`/order/order/${orderId}`);
       alert('✅ Order removed successfully!');
       navigate('/'); // Go back to orders list page
     } catch (err) {
