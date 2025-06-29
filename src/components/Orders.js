@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UserOrders = () => {
   const [username, setUsername] = useState('');
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -19,7 +21,6 @@ const UserOrders = () => {
   const fetchOrders = async (user) => {
     try {
       const response = await axios.get(`/order/user/${user}`);
-      console.log("✅ Orders fetched:", response.data);
       setOrders(response.data);
       setError('');
     } catch (err) {
@@ -40,8 +41,7 @@ const UserOrders = () => {
   };
 
   const handleOrderClick = (orderId) => {
-    console.log("Order clicked:", orderId);
-    // You can navigate to details page or show modal here
+    navigate(`/order/${orderId}`);
   };
 
   return (
@@ -51,14 +51,7 @@ const UserOrders = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {orders.length > 0 ? (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-            padding: '1rem 0',
-          }}
-        >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {orders.map(order => (
             <div
               key={order.id}
