@@ -30,7 +30,7 @@ const OrderDetails = () => {
       await axios.delete(`/order/order/${orderId}`);
 
       // ✅ Increase the product quantity using imageUrl
-      await axios.put(`/products/increase-quantity?imageUrl=${encodeURIComponent(order.imageUrl)}`, {
+      await axios.put(`/product/increase-quantity?imageUrl=${encodeURIComponent(order.imageUrl)}`, {
         quantity: order.quantity
       });
 
