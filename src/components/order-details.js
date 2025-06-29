@@ -23,13 +23,22 @@ const OrderDetails = () => {
   };
 
   const handleRemoveOrder = async () => {
+    if (!order) return;
+
     try {
+      // ✅ Delete the order first
       await axios.delete(`/order/order/${orderId}`);
-      alert('✅ Order removed successfully!');
+
+      // ✅ Increase the product quantity in stock
+      await axios.put(`/products/increase-quantity/${order.itemId}`, {
+        quantity: order.quantity
+      });
+
+      alert('✅ Order removed and stock updated successfully!');
       navigate('/'); // Go back to orders list page
     } catch (err) {
-      console.error("❌ Failed to delete order:", err);
-      setError("❌ Failed to delete order.");
+      console.error("❌ Failed to remove order or update stock:", err);
+      setError("❌ Failed to remove order or update stock.");
     }
   };
 
