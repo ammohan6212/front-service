@@ -48,23 +48,22 @@ function SellerDashboard() {
   }, [sellerName, token, navigate]);
 
   const handleEdit = (index) => {
-   setEditingIndex(index);
-   setEditedProduct({
-    name: products[index].name || "",
-    price: products[index].price || "",
-    quantity: products[index].quantity,
-    category: products[index].category || "",
-    description: products[index].description || "", // Add this line
-    id: products[index].id || products[index]._id,  // in case it's _id
-   });
+    setEditingIndex(index);
+    setEditedProduct({
+      name: products[index].name || "",
+      price: products[index].price || "",
+      quantity: products[index].quantity,
+      category: products[index].category || "",
+      description: products[index].description || "",
+      id: products[index].id || products[index]._id,
+    });
   };
 
   const handleChange = (e) => {
-  const { name, value } = e.target;
-  const val = name === "quantity" ? parseInt(value, 10) || 0 : value;
-  setEditedProduct((prev) => ({ ...prev, [name]: val }));
-};
-
+    const { name, value } = e.target;
+    const val = name === "quantity" ? parseInt(value, 10) || 0 : value;
+    setEditedProduct((prev) => ({ ...prev, [name]: val }));
+  };
 
   const handleSave = async () => {
     try {
@@ -93,10 +92,11 @@ function SellerDashboard() {
     setEditedProduct({});
   };
 
-  const handleDelete = async (productId) => {
+  const handleDelete = async (productId, imageUrl) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
+      // ✅ Delete product first
       const res = await fetch(`/product/delete/${productId}`, {
         method: "DELETE",
         headers: {
@@ -106,9 +106,24 @@ function SellerDashboard() {
 
       if (!res.ok) throw new Error("Delete failed");
 
+      // ✅ Also delete from cart using image_url
+      await fetch(`/cart/delete-by-image-url`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image_url: imageUrl }),
+      });
+
+      // ✅ Also delete from orders (Spring Boot endpoint)
+      await fetch(`/order/imageUrl?imageUrl=${encodeURIComponent(imageUrl)}`, {
+        method: "DELETE",
+      });
+
+      // ✅ Update local state
       setProducts(products.filter((p) => p.id !== productId));
     } catch (err) {
-      console.error("Error deleting product:", err);
+      console.error("Error deleting product or related data:", err);
     }
   };
 
@@ -210,7 +225,7 @@ function SellerDashboard() {
                     <p><strong>Category:</strong> {product.category}</p>
                     <button onClick={() => handleEdit(index)}>Update</button>
                     <button
-                      onClick={() => handleDelete(product.id)}
+                      onClick={() => handleDelete(product.id, product.image_url)}
                       style={{
                         marginLeft: "10px",
                         backgroundColor: "#ffdddd",
