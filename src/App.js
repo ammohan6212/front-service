@@ -16,6 +16,9 @@ import Reset from './components/ResetPassword';
 import ProductHome from './components/ProductHome';
 import SellerDashboard from './components/Sellerdashboard';
 import SellerOrders  from './components/sellerorders';  
+import UserOrders from './components/Orders';
+import OrderDetails from './components/order-details';
+
 import './App.css';
 
 function AppRoutes() {
@@ -38,6 +41,7 @@ function AppRoutes() {
         <Route path="/home" element={<Home />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/order" element={<UserOrders />} />
+        <Route path="/order/:orderId" element={<OrderDetails />} />
         <Route path="/sellerorder" element={<SellerOrders />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/seller-login" element={<SellerLogin />} />
