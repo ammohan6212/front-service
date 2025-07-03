@@ -4,16 +4,9 @@ pipeline {
     agent any
     options {
         disableConcurrentBuilds()
-        skipDefaultCheckout true
+        // skipDefaultCheckout true
     }
     stages {
-        stage("getting the folder"){
-            steps{
-                sh """
-                ls -l
-                """
-            }
-        }
         stage("Load project configuration"){
             steps{
                 script{
