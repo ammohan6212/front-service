@@ -1,5 +1,5 @@
 {
-    "github_repo": "https://github.com/ammohan6212/frontend2.git",
+    "github_repo": "https://github.com/ammohan6212/front-service.git",
     "serviceName": "frontend",
     "notificationRecipients": "mohan14242@gmail.com",
     "docker_username": "dockeruser123",
@@ -12,6 +12,7 @@
     "kubernetesCredentialsId": "k8s-credentials-id",
     "kubernetesCaCertificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...==",
     "gcp_credid": "gcp-credentials-id",
-    "aws_credid": "aws-credentials-id"
+    "aws_credid": "aws-credentials-id",
+    "service_port":"8080"
 }
 
