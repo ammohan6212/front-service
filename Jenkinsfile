@@ -7,6 +7,35 @@ pipeline {
         skipDefaultCheckout true
     }
     stages {
+        stage("getting the folder"){
+            steps{
+                sh """
+                ls -l
+                """
+            }
+        }
+        stage("Load project configuration"){
+            steps{
+                script{
+                    def projectConfig = readJSON file: 'config.json'
+                        env.github_repo=projectConfig.github_repo
+                        env.service_name = projectConfig.serviceName
+                        env.notificationRecipients = projectConfig.notificationRecipients
+                        env.docker_username=projectConfig.docker_username
+                        env.kubernetes_endpoint=projectConfig.kubernetes_endpoint
+                        env.bucket_name=projectConfig.bucket_name 
+                        env.bucket_path=projectConfig.bucket_path   
+                        env.docker_credentials=projectConfig.docker_credentials
+                        env.docker_registry=projectConfig.docker_registry
+                        env.kubernetesClusterName=projectConfig.kubernetesClusterName
+                        env.kubernetesCredentialsId=projectConfig.kubernetesCredentialsId
+                        env.kubernetesCaCertificate=projectConfig.kubernetesCaCertificate
+                        env.gcp_credid=projectConfig.gcp_credid
+                        env.aws_credid=projectConfig.aws_credid
+                        env.service_port=projectConfig.service_port
+                }
+            }
+        }
         stage("Development Workflow") {
             when {
                 branch 'dev'
@@ -17,28 +46,6 @@ pipeline {
                         script{
                             cloneRepoAndGetVersion(env.BRANCH_NAME, env.github_repo)
                             detectLanguage() 
-                        }
-                    }
-                }
-                stage("Load project configuration"){
-                    steps{
-                        script{
-                            def projectConfig = readJSON file: 'config.json'
-                                env.github_repo=projectConfig.github_repo
-                                env.service_name = projectConfig.serviceName
-                                env.notificationRecipients = projectConfig.notificationRecipients
-                                env.docker_username=projectConfig.docker_username
-                                env.kubernetes_endpoint=projectConfig.kubernetes_endpoint
-                                env.bucket_name=projectConfig.bucket_name 
-                                env.bucket_path=projectConfig.bucket_path   
-                                env.docker_credentials=projectConfig.docker_credentials
-                                env.docker_registry=projectConfig.docker_registry
-                                env.kubernetesClusterName=projectConfig.kubernetesClusterName
-                                env.kubernetesCredentialsId=projectConfig.kubernetesCredentialsId
-                                env.kubernetesCaCertificate=projectConfig.kubernetesCaCertificate
-                                env.gcp_credid=projectConfig.gcp_credid
-                                env.aws_credid=projectConfig.aws_credid
-                                env.service_port=projectConfig.service_port
                         }
                     }
                 }
