@@ -8,20 +8,10 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/mydb
-      REDIS_URL: redis://redis:6379/0  # Add this if your backend uses REDIS_URL env
+      REDIS_URL: redis://redis:6379/0
     depends_on:
       - db
-      - redis  # Add redis dependency
-    networks:
-      - app-network
-
-  go-backend:
-    image: product:1.0
-    container_name: go-product-service
-    ports:
-      - "8080:8080"
-    depends_on:
-      - backend
+      - redis
     networks:
       - app-network
 
@@ -32,13 +22,7 @@ services:
       - "80:80"
     depends_on:
       - backend
-<<<<<<< HEAD
-      - go-backend
-=======
-      - cart
-      - order
-      - payment
->>>>>>> main
+      - product
     networks:
       - app-network
 
@@ -47,14 +31,20 @@ services:
     container_name: cart-backend
     ports:
       - "5000:5000"
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/mycartdb
     networks:
       - app-network
 
   payment:
     image: payment:1.0
     container_name: payment-service
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db1:5432/mydb
     ports:
       - "8081:8081"
+    depends_on:
+      - db1
     networks:
       - app-network
 
@@ -63,10 +53,55 @@ services:
     container_name: order-service
     ports:
       - "8080:8080"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db1:5432/mydb
+    depends_on:
+      - db1
     networks:
       - app-network
+
+  product:
+    image: product:1.0
+    container_name: product-service
+    ports:
+      - "8082:8082"
     depends_on:
-      - db
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: mohan
+      DB_PASSWORD: Amohan9676$
+      DB_NAME: mydb
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.2
+    container_name: redis-cache
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo-db
+    restart: always
+    ports:
+      - "27017:27017"
+    command: --noauth
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
 
   db:
     image: postgres:14
@@ -80,24 +115,65 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - app-network
 
-  redis:
-    image: redis:7.2 # You can pick latest redis version or stable
-    container_name: redis-cache
+  db1:
+    image: postgres:14
+    container_name: postgres-db1
     restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata1:/var/lib/postgresql/data
     ports:
-      - "6379:6379"
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "mohan", "-pAmohan9676$"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      MYSQL_ROOT_PASSWORD: Amohan9676$
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: mohan
+      MYSQL_PASSWORD: Amohan9676$
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
     networks:
       - app-network
 
 volumes:
   pgdata:
+  pgdata1:
+  mysql-data:
+  mongo-data:
 
 networks:
   app-network:
     driver: bridge
+
 
 
 #   # db1:
