@@ -16,8 +16,7 @@ pipeline {
                         env.notificationRecipients = projectConfig.notificationRecipients
                         env.docker_username=projectConfig.docker_username
                         env.kubernetes_endpoint=projectConfig.kubernetes_endpoint
-                        env.bucket_name=projectConfig.bucket_name 
-                        env.bucket_path=projectConfig.bucket_path   
+                        env.bucket_name=projectConfig.bucket_name  
                         env.docker_credentials=projectConfig.docker_credentials
                         env.docker_registry=projectConfig.docker_registry
                         env.kubernetesClusterName=projectConfig.kubernetesClusterName
@@ -90,90 +89,90 @@ pipeline {
                 //         buildApplication(env.DETECTED_LANG)
                 //     }
                 // }
-                stage("Create Archiving File and push the artifact ") {
-                        steps {
-                            script {
-                                try {
-                                    createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
-                                    pushArtifact("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts","gcp-credentials-id")
-                                } catch (err) {
-                                    echo "failed to push the artifact to specific repository ${err}"
-                                    error("Stopping pipeline")
-                                }
+                // stage("Create Archiving File and push the artifact ") {
+                //         steps {
+                //             script {
+                //                 try {
+                //                     createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
+                //                     pushArtifact("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts","gcp-credentials-id")
+                //                 } catch (err) {
+                //                     echo "failed to push the artifact to specific repository ${err}"
+                //                     error("Stopping pipeline")
+                //                 }
+                //             }
+                //         }
+                // }
+                stage("Perform building and  docker linting Container Scanning using trivy and syft and docker scout and Dockle and snyk at Test Env") {
+                    steps {
+                        buildDockerImage("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}", env.version, '.')
+                        validateDockerImagedockle("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                        scanContainerTrivy("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                        scanContainerSyftDockle("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                        scanContainerSnyk("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "Dockerfile")
+                        scanContainerDockerScout("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                        scanContainerGrype("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                    }
+                }
+                stage("Perform Integration and ui/component testingand static security analysis and chaos testing with Docker Containers") {
+                    steps {
+                        integrationWithDocker()
+                        runUiComponentTests(env.DETECTED_LANG)
+                        performStaticSecurityAnalysis(env.DETECTED_LANG)
+                        runChaosTests(env.DETECTED_LANG)
+                    }
+                }
+                stage("Push Docker Image to dev env Registry") {
+                    steps {
+                        script { // Wrap the steps in a script block to use try-catch
+                            try {
+                                pushDockerImageToRegistry("${env.docker_registry}", "${env.docker_credentials}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
+                            } catch (err) {
+                                echo "Failed to push Docker image to registry: ${err.getMessage()}"
+                                error("Stopping pipeline due to Docker image push failure.")
                             }
                         }
+                    }
                 }
-                // stage("Perform building and  docker linting Container Scanning using trivy and syft and docker scout and Dockle and snyk at Test Env") {
-                //     steps {
-                //         buildDockerImage("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}", env.version, '.')
-                //         validateDockerImagedockle("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
-                //         scanContainerTrivy("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
-                //         scanContainerSyftDockle("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
-                //         scanContainerSnyk("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "Dockerfile")
-                //         scanContainerDockerScout("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
-                //         scanContainerGrype("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
-                //     }
-                // }
-                // stage("Perform Integration and ui/component testingand static security analysis and chaos testing with Docker Containers") {
-                //     steps {
-                //         integrationWithDocker()
-                //         runUiComponentTests(env.DETECTED_LANG)
-                //         performStaticSecurityAnalysis(env.DETECTED_LANG)
-                //         runChaosTests(env.DETECTED_LANG)
-                //     }
-                // }
-                // stage("Push Docker Image to dev env Registry") {
-                //     steps {
-                //         script { // Wrap the steps in a script block to use try-catch
-                //             try {
-                //                 pushDockerImageToRegistry("${env.docker_registry}", "${env.docker_credentials}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
-                //             } catch (err) {
-                //                 echo "Failed to push Docker image to registry: ${err.getMessage()}"
-                //                 error("Stopping pipeline due to Docker image push failure.")
-                //             }
-                //         }
-                //     }
-                // }
-                // stage("Deploy to Dev") {
-                //     steps {
-                //         script {
-                //             try {
-                //                 withKubeConfig(
-                //                     caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
-                //                 ) {
-                //                     // Change Kubernetes service selector to route traffic to Green
-                //                     sh """kubectl apply -f ${env.service_name}-deployment.yml -n ${env.BRANCH_NAME}"""
-                //                 }
-                //             } catch (err) {
-                //                 echo "failed to deploy to the production ${err}"
-                //                 error("Stopping pipeline")
-                //             }
-                //         }
-                //     }
-                // }
-                // stage("Perform Smoke Testing and sanity testing and APi testing and integratio testing andlight ui test and regression testing feature flag and chaos and security After Dev Deploy") {
-                //     steps {
-                //         performSmokeTesting(env.DETECTED_LANG)
-                //         performSanityTesting(env.DETECTED_LANG)
-                //         performApiTesting(env.DETECTED_LANG)
-                //         performIntegrationTesting(env.DETECTED_LANG)
-                //         performDatabaseTesting()
-                //         // performLightUiTests(env.DETECTED_LANG)
-                //         // performRegressionTesting(env.DETECTED_LANG)
-                //         // performFeatureFlagChecks(env.DETECTED_LANG)
-                //         // performSecurityChecks(env.DETECTED_LANG)
-                //         // performChaosTestingAfterDeploy(env.DETECTED_LANG)
-                //         // performLoadPerformanceTesting(env.DETECTED_LANG)
-                //     }
-                // }                
-                // stage("Perform Logging and Monitoring Checks After Dev Deploy") {
-                //     steps {
-                //         performLoggingMonitoringChecks()
-                //     }
-                // }
+                stage("Deploy to Dev") {
+                    steps {
+                        script {
+                            try {
+                                withKubeConfig(
+                                    caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
+                                ) {
+                                    // Change Kubernetes service selector to route traffic to Green
+                                    sh """kubectl apply -f ${env.service_name}-deployment.yml -n ${env.BRANCH_NAME}"""
+                                }
+                            } catch (err) {
+                                echo "failed to deploy to the production ${err}"
+                                error("Stopping pipeline")
+                            }
+                        }
+                    }
+                }
+                stage("Perform Smoke Testing and sanity testing and APi testing and integratio testing andlight ui test and regression testing feature flag and chaos and security After Dev Deploy") {
+                    steps {
+                        performSmokeTesting(env.DETECTED_LANG)
+                        performSanityTesting(env.DETECTED_LANG)
+                        performApiTesting(env.DETECTED_LANG)
+                        performIntegrationTesting(env.DETECTED_LANG)
+                        performDatabaseTesting()
+                        // performLightUiTests(env.DETECTED_LANG)
+                        // performRegressionTesting(env.DETECTED_LANG)
+                        // performFeatureFlagChecks(env.DETECTED_LANG)
+                        // performSecurityChecks(env.DETECTED_LANG)
+                        // performChaosTestingAfterDeploy(env.DETECTED_LANG)
+                        // performLoadPerformanceTesting(env.DETECTED_LANG)
+                    }
+                }                
+                stage("Perform Logging and Monitoring Checks After Dev Deploy") {
+                    steps {
+                        performLoggingMonitoringChecks()
+                    }
+                }
                 stage("Generate Version File Dev Env") {
                     steps {
-                        generateVersionFile('gcp', "${env.bucket_name}/version-files", "${gcp_credid}")
+                        generateVersionFile('gcp', "${env.bucket_name}/version-files/", "${gcp_credid}")
                     }
                 }
             }
@@ -299,7 +298,7 @@ pipeline {
                         script {
                             try {
                                 createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
-                                pushToGCS("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts","gcp-credentials-id")
+                                pushArtifact("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts","gcp-credentials-id")
                             } catch (err) {
                                 echo "failed to push the artifact to specific repository ${err}"
                                 error("Stopping pipeline")
@@ -417,7 +416,7 @@ pipeline {
                 }
                 stage("Generate Version File Test Env") {
                     steps {
-                        generateVersionFile('gcp', "${env.bucket_name}/version-files", "${gcp_credid}")
+                        generateVersionFile('gcp', "${env.bucket_name}/version-files/", "${gcp_credid}")
                     }
                 }
                 stage("Need the manual approval to complete the test env"){
@@ -497,7 +496,7 @@ pipeline {
                         script {
                             try {
                                 createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
-                                pushArtifact("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts/${env.service_name}/${env.BRANCH_NAME}","gcp-credentials-id")
+                                pushArtifact("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts","gcp-credentials-id")
                             } catch (err) {
                                 echo "failed to push the artifact to specific repository ${err}"
                                 error("Stopping pipeline")
@@ -623,9 +622,8 @@ pipeline {
                     }
                 }
                 stage("Generate Version File preprod Env") {
-                     
                     steps {
-                        generateVersionFile('gcp', "${env.bucket_name}/version-files/${env.service_name}/${env.BRANCH_NAME}", "${gcp_credid}")
+                        generateVersionFile('gcp', "${env.bucket_name}/version-files/", "${gcp_credid}")
                     }
                 }
                 stage("prod deployment is successful"){

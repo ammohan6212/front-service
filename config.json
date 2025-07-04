@@ -2,18 +2,15 @@
     "github_repo": "https://github.com/ammohan6212/front-service.git",
     "serviceName": "frontend",
     "notificationRecipients": "mohan14242@gmail.com",
-    "docker_username": "dockeruser123",
+    "docker_username": "mohan14242ai",
     "docker_credentials": "docker-id",
-    "docker_registry": "docker.io/ammohan6212",
     "kubernetes_endpoint": "https://34.121.208.218",
     "bucket_name": "micro-service",
-    "bucket_path": "artifacts/builds/example-service",
     "kubernetesClusterName": "example-cluster",
     "kubernetesCredentialsId": "k8s-credentials-id",
     "kubernetesCaCertificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...==",
     "gcp_credid": "gcp-credentials-id",
     "aws_credid": "aws-credentials-id",
-    "service_port":"8080",
-    "project_name":"microservice"
+    "service_port":"8080"
 }
 
