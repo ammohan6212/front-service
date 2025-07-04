@@ -30,6 +30,7 @@ pipeline {
             }
         }
         stage("Development Workflow") {
+            agent { lable 'agent'}
             when {
                 branch 'dev'
             }
@@ -244,6 +245,7 @@ pipeline {
             }
         }
         stage("feature branch workflow Workflow") {
+            agent { lable 'agent'}
             when {
                 branch pattern: "feature/.*", comparator: "REGEXP"
             }
@@ -312,6 +314,7 @@ pipeline {
             }
         }
         stage("Test Environment Workflow") {
+            agent { lable 'agent'}
             when {
                 branch 'test'
             }
@@ -441,6 +444,7 @@ pipeline {
             }
         }
         stage("deploying the application into prod"){
+            agent { lable 'agent'}
             when {
                 branch 'main' // Or 'master'
             }
