@@ -112,7 +112,7 @@ pipeline {
                         scanContainerTrivy("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                         scanContainerSyftDockle("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                         scanContainerSnyk("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "Dockerfile")
-                        scanContainerDockerScout("${env.docker_cred_username}","${env.docker_cred_password}","${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                        scanContainerDockerScout("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "${env.docker_cred_username}", "${env.docker_cred_password}")
                         scanContainerGrype("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                     }
                 }
