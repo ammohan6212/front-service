@@ -43,12 +43,6 @@ pipeline {
                         script{
                             cloneRepoAndGetVersion(env.BRANCH_NAME, env.github_repo)
                             detectLanguage() 
-                            sh """
-                            rm -rf node_modules package-lock.json
-                            npm install
-                            export PATH=$PWD/node_modules/.bin:$PATH
-                            npm run build
-                            """
                         }
                     }
                 }
