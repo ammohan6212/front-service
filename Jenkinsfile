@@ -633,7 +633,7 @@ pipeline {
     }
     post {
         always {
-            cleanWs() 
+            echo "just"
         }
         success {
             sendEmailNotification('SUCCESS', env.notificationRecipients)
