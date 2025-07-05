@@ -9,29 +9,33 @@ const OrderDetails = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const response = await axios.get(`/order/order/${orderId}`);
-        setOrder(response.data);
-      } catch (err) {
-        console.error(err);
-        setError('❌ Failed to fetch order details.');
-      }
-    };
-
     fetchOrder();
-  }, [orderId]); // ✅ Only depend on orderId
+  }, []);
+
+  const fetchOrder = async () => {
+    try {
+      const response = await axios.get(`/order/order/${orderId}`);
+      setOrder(response.data);
+    } catch (err) {
+      console.error(err);
+      setError('❌ Failed to fetch order details.');
+    }
+  };
 
   const handleRemoveOrder = async () => {
     if (!order) return;
 
     try {
+      // ✅ Delete the order first
       await axios.delete(`/order/order/${orderId}`);
+
+      // ✅ Increase the product quantity using imageUrl
       await axios.put(`/product/increase-quantity?imageUrl=${encodeURIComponent(order.imageUrl)}`, {
         quantity: order.quantity
       });
+
       alert('✅ Order removed and stock updated successfully!');
-      navigate('/');
+      navigate('/'); // Go back to orders list page
     } catch (err) {
       console.error("❌ Failed to remove order or update stock:", err);
       setError("❌ Failed to remove order or update stock.");
