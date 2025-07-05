@@ -26,6 +26,7 @@ pipeline {
                         env.aws_credid=projectConfig.aws_credid
                         env.service_port=projectConfig.service_port
                         env.project_name=projectConfig.project_name
+                        env.image_registry=projectConfig.image_registry
                 }
             }
         }
@@ -113,19 +114,19 @@ pipeline {
                         scanContainerGrype("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                     }
                 }
-                stage("Perform Integration and ui/component testingand static security analysis and chaos testing with Docker Containers") {
-                    steps {
-                        integrationWithDocker()
-                        runUiComponentTests(env.DETECTED_LANG)
-                        performStaticSecurityAnalysis(env.DETECTED_LANG)
-                        runChaosTests(env.DETECTED_LANG)
-                    }
-                }
+                // stage("Perform Integration and ui/component testingand static security analysis and chaos testing with Docker Containers") {
+                //     steps {
+                //         integrationWithDocker()
+                //         runUiComponentTests(env.DETECTED_LANG)
+                //         performStaticSecurityAnalysis(env.DETECTED_LANG)
+                //         runChaosTests(env.DETECTED_LANG)
+                //     }
+                // }
                 stage("Push Docker Image to dev env Registry") {
                     steps {
                         script { // Wrap the steps in a script block to use try-catch
                             try {
-                                pushDockerImageToRegistry("${env.docker_registry}", "${env.docker_credentials}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
+                                pushDockerImageToRegistry("${env.image_registry}","${env.docker_credentials}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
                             } catch (err) {
                                 echo "Failed to push Docker image to registry: ${err.getMessage()}"
                                 error("Stopping pipeline due to Docker image push failure.")

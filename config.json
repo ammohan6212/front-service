@@ -11,6 +11,7 @@
     "kubernetesCaCertificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...==",
     "gcp_credid": "gcp-credentials-id",
     "aws_credid": "aws-credentials-id",
-    "service_port":"8080"
+    "service_port":"8080",
+    "image_registry":"https://index.docker.io/v1/"
 }
 
