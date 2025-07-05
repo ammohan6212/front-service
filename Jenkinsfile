@@ -45,6 +45,7 @@ pipeline {
                             detectLanguage() 
                             sh """
                             ls -l
+                            node -v
                             npm -v
                             rm -rf node_modules package-lock.json
                             npm install
