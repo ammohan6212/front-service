@@ -380,7 +380,7 @@ pipeline {
                     steps {
                         script { // Wrap the steps in a script block to use try-catch
                             try {
-                                pushDockerImageToRegistry("${env.docker_registry}", "${env.docker_credentials}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
+                                pushDockerImageToRegistry("${env.image_registry}","${env.docker_cred_username}","${env.docker_cred_password}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
                             } catch (err) {
                                 echo "Failed to push Docker image to registry: ${err.getMessage()}"
                                 error("Stopping pipeline due to Docker image push failure.")
@@ -529,7 +529,7 @@ pipeline {
                     steps {
                         script { // Wrap the steps in a script block to use try-catch
                             try {
-                                pushDockerImageToRegistry("${env.docker_registry}", "${env.docker_credentials}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
+                                pushDockerImageToRegistry("${env.image_registry}","${env.docker_cred_username}","${env.docker_cred_password}", "${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}") // Corrected DOCKER_USERNAME to docker_username 
                             } catch (err) {
                                 echo "Failed to push Docker image to registry: ${err.getMessage()}"
                                 error("Stopping pipeline due to Docker image push failure.")
