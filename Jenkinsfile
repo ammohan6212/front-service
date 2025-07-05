@@ -46,27 +46,27 @@ pipeline {
                         }
                     }
                 }
-                // stage("Linting the Code and terraform linting and kubernetes linting and  docker linting") {
-                //     steps {
-                //         runLinter(env.DETECTED_LANG)
-                //         runInfrastructureLinting('terraform/')
-                //         runKubernetesLinting('kubernetes/') 
-                //         validateDockerImage('Dockerfile')
-                //     }
-                // }
-                // stage("Secrets Detection") {
+                stage("Linting the Code and terraform linting and kubernetes linting and  docker linting") {
+                    steps {
+                        runLinter(env.DETECTED_LANG)
+                        runInfrastructureLinting('terraform/')
+                        runKubernetesLinting('kubernetes/') 
+                        validateDockerImage('Dockerfile')
+                    }
+                }
+                stage("Secrets Detection") {
                      
-                //     steps {
-                //         performSecretsDetection('.') // Scan the entire workspace
-                //     }
-                // }
+                    steps {
+                        performSecretsDetection('.') // Scan the entire workspace
+                    }
+                }
                 stage("Install Dependencies and dependency scanning and type checking and unit tests and code coverage calcualtion ") {
                     steps {
                         installAppDependencies(env.DETECTED_LANG)
-                        // performDependencyScan(env.DETECTED_LANG)
-                        // runTypeChecks(env.DETECTED_LANG)
-                        // runUnitTests(env.DETECTED_LANG)
-                        // calculateCodeCoverage(env.DETECTED_LANG)
+                        performDependencyScan(env.DETECTED_LANG)
+                        runTypeChecks(env.DETECTED_LANG)
+                        runUnitTests(env.DETECTED_LANG)
+                        calculateCodeCoverage(env.DETECTED_LANG)
                     }
                 }
                 // stage("perform sonarqube scans"){
@@ -80,31 +80,31 @@ pipeline {
                 //         waitForQualityGate abortPipeline: true
                 //     }
                 // }
-                // stage("Mutation Testing and snapshot and component testing at Dev") {
-                //     steps {
-                //         runMutationTests(env.DETECTED_LANG)
-                //         runSnapshotTests(env.DETECTED_LANG)
-                //         runComponentTests(env.DETECTED_LANG)
-                //     }
-                // }
+                stage("Mutation Testing and snapshot and component testing at Dev") {
+                    steps {
+                        runMutationTests(env.DETECTED_LANG)
+                        runSnapshotTests(env.DETECTED_LANG)
+                        runComponentTests(env.DETECTED_LANG)
+                    }
+                }
                 stage("Building the Application") {
                     steps {
                         buildApplication(env.DETECTED_LANG)
                     }
                 }
-                // stage("Create Archiving File and push the artifact ") {
-                //         steps {
-                //             script {
-                //                 try {
-                //                     createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
-                //                     pushArtifact("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts","gcp-credentials-id")
-                //                 } catch (err) {
-                //                     echo "failed to push the artifact to specific repository ${err}"
-                //                     error("Stopping pipeline")
-                //                 }
-                //             }
-                //         }
-                // }
+                stage("Create Archiving File and push the artifact ") {
+                        steps {
+                            script {
+                                try {
+                                    createArchive("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip", 'src/')
+                                    pushArtifact("${env.service_name}-${env.BRANCH_NAME}-${env.version}.zip","gs://${env.bucket_name}/artifacts","gcp-credentials-id")
+                                } catch (err) {
+                                    echo "failed to push the artifact to specific repository ${err}"
+                                    error("Stopping pipeline")
+                                }
+                            }
+                        }
+                }
                 stage("Perform building and  docker linting Container Scanning using trivy and syft and docker scout and Dockle and snyk at Test Env") {
                     steps {
                         buildDockerImage("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}", env.version, '.')
@@ -116,14 +116,14 @@ pipeline {
                         scanContainerGrype("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                     }
                 }
-                // stage("Perform Integration and ui/component testingand static security analysis and chaos testing with Docker Containers") {
-                //     steps {
-                //         integrationWithDocker()
-                //         runUiComponentTests(env.DETECTED_LANG)
-                //         performStaticSecurityAnalysis(env.DETECTED_LANG)
-                //         runChaosTests(env.DETECTED_LANG)
-                //     }
-                // }
+                stage("Perform Integration and ui/component testingand static security analysis and chaos testing with Docker Containers") {
+                    steps {
+                        integrationWithDocker()
+                        runUiComponentTests(env.DETECTED_LANG)
+                        performStaticSecurityAnalysis(env.DETECTED_LANG)
+                        runChaosTests(env.DETECTED_LANG)
+                    }
+                }
                 stage("Push Docker Image to dev env Registry") {
                     steps {
                         script { // Wrap the steps in a script block to use try-catch
@@ -136,23 +136,23 @@ pipeline {
                         }
                     }
                 }
-                stage("Deploy to Dev") {
-                    steps {
-                        script {
-                            try {
-                                withKubeConfig(
-                                    caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
-                                ) {
-                                    // Change Kubernetes service selector to route traffic to Green
-                                    sh """kubectl apply -f ${env.service_name}-deployment.yml -n ${env.BRANCH_NAME}"""
-                                }
-                            } catch (err) {
-                                echo "failed to deploy to the production ${err}"
-                                error("Stopping pipeline")
-                            }
-                        }
-                    }
-                }
+                // stage("Deploy to Dev") {
+                //     steps {
+                //         script {
+                //             try {
+                //                 withKubeConfig(
+                //                     caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
+                //                 ) {
+                //                     // Change Kubernetes service selector to route traffic to Green
+                //                     sh """kubectl apply -f ${env.service_name}-deployment.yml -n ${env.BRANCH_NAME}"""
+                //                 }
+                //             } catch (err) {
+                //                 echo "failed to deploy to the production ${err}"
+                //                 error("Stopping pipeline")
+                //             }
+                //         }
+                //     }
+                // }
                 stage("Perform Smoke Testing and sanity testing and APi testing and integratio testing andlight ui test and regression testing feature flag and chaos and security After Dev Deploy") {
                     steps {
                         performSmokeTesting(env.DETECTED_LANG)
@@ -239,13 +239,7 @@ pipeline {
                             }
                         }
                     }
-                }    
-                stage("Generate SBOM & License Scan") {
-                    steps {
-                        generateSBOM(env.DETECTED_LANG)
-                        runLicenseScan(env.DETECTED_LANG)
-                    }
-                }                      
+                }                    
             }
         }
         stage("feature branch workflow Workflow") {
@@ -273,16 +267,16 @@ pipeline {
                         calculateCodeCoverage(env.DETECTED_LANG)
                     }
                 }
-                stage("perform sonarqube scans"){
-                    steps{      
-                        runSonarQubeScan(env.SONAR_PROJECT_KEY)
-                    }
-                }
-                stage("Check SonarQube Quality Gate") {
-                    steps {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
+                // stage("perform sonarqube scans"){
+                //     steps{      
+                //         runSonarQubeScan(env.SONAR_PROJECT_KEY)
+                //     }
+                // }
+                // stage("Check SonarQube Quality Gate") {
+                //     steps {
+                //         waitForQualityGate abortPipeline: true
+                //     }
+                // }
                 stage("sonarqube and Mutation Testing and snapshot and component testing at Dev") {
                     steps {
                         runMutationTests(env.DETECTED_LANG)
@@ -308,13 +302,7 @@ pipeline {
                             }
                         }
                     }
-                }    
-                stage("Generate SBOM & License Scan") {
-                    steps {
-                        generateSBOM(env.DETECTED_LANG)
-                        runLicenseScan(env.DETECTED_LANG)
-                    }
-                }                      
+                }
             }
         }
         stage("Test Environment Workflow") {
@@ -342,16 +330,16 @@ pipeline {
                         calculateCodeCoverage(env.DETECTED_LANG)
                     }
                 }
-                stage("perform sonarqube scans"){
-                    steps{      
-                        runSonarQubeScan(env.SONAR_PROJECT_KEY)
-                    }
-                }
-                stage("Check SonarQube Quality Gate") {
-                    steps {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
+                // stage("perform sonarqube scans"){
+                //     steps{      
+                //         runSonarQubeScan(env.SONAR_PROJECT_KEY)
+                //     }
+                // }
+                // stage("Check SonarQube Quality Gate") {
+                //     steps {
+                //         waitForQualityGate abortPipeline: true
+                //     }
+                // }
                 stage("Create Archiving File and push the artifact ") {    
                     steps {
                         script {
@@ -372,7 +360,7 @@ pipeline {
                         scanContainerTrivy("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                         scanContainerSyftDockle("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                         scanContainerSnyk("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "Dockerfile")
-                        scanContainerDockerScout("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                        scanContainerDockerScout("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "${env.docker_cred_username}", "${env.docker_cred_password}")
                         scanContainerGrype("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                     }
                 }
@@ -388,23 +376,23 @@ pipeline {
                         }
                     }
                 }
-                stage("Deploy to test") {
-                    steps {
-                        script {
-                            try {
-                                withKubeConfig(
-                                    caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
-                                ) {
-                                    // Change Kubernetes service selector to route traffic to Green
-                                    sh """kubectl apply -f ${env.service_name}-deployment.yml -n ${env.BRANCH_NAME}"""
-                                }
-                            } catch (err) {
-                                echo "failed to deploy to the production ${err}"
-                                error("Stopping pipeline")
-                            }
-                        }
-                    }
-                }
+                // stage("Deploy to test") {
+                //     steps {
+                //         script {
+                //             try {
+                //                 withKubeConfig(
+                //                     caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
+                //                 ) {
+                //                     // Change Kubernetes service selector to route traffic to Green
+                //                     sh """kubectl apply -f ${env.service_name}-deployment.yml -n ${env.BRANCH_NAME}"""
+                //                 }
+                //             } catch (err) {
+                //                 echo "failed to deploy to the production ${err}"
+                //                 error("Stopping pipeline")
+                //             }
+                //         }
+                //     }
+                // }
                 stage("Smoke Test and sanity and integration and functional and api and regression in Test Env") {
                     steps {
                         performSmokeTesting(env.DETECTED_LANG)
@@ -484,16 +472,16 @@ pipeline {
                         calculateCodeCoverage(env.DETECTED_LANG)
                     }
                 }
-                stage("perform sonarqube scans"){
-                    steps{      
-                        runSonarQubeScan(env.SONAR_PROJECT_KEY)
-                    }
-                }
-                stage("Check SonarQube Quality Gate") {
-                    steps {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
+                // stage("perform sonarqube scans"){
+                //     steps{      
+                //         runSonarQubeScan(env.SONAR_PROJECT_KEY)
+                //     }
+                // }
+                // stage("Check SonarQube Quality Gate") {
+                //     steps {
+                //         waitForQualityGate abortPipeline: true
+                //     }
+                // }
                 stage("Create Archiving File and push the artifact ") {
                     steps {
                         script {
@@ -514,7 +502,7 @@ pipeline {
                         scanContainerTrivy("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                         scanContainerSyftDockle("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                         scanContainerSnyk("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "Dockerfile")
-                        scanContainerDockerScout("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
+                        scanContainerDockerScout("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}", "${env.docker_cred_username}", "${env.docker_cred_password}")
                         scanContainerGrype("${env.docker_username}/${env.service_name}-${env.BRANCH_NAME}:${env.version}")
                     }
                 }
@@ -537,75 +525,75 @@ pipeline {
                         }
                     }
                 }
-                stage("Deploy to prod at peak off-hours") {
-                    steps {
-                        script {
-                            try {
-                                withKubeConfig(
-                                    caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
-                                ) {
-                                    sh """
-                                    kubectl apply -f ${service_name}-deployment.yaml -n ${env.BRANCH_NAME}
-                                    kubectl rollout status deployment/${service_name} -n ${env.BRANCH_NAME}
-                                    """
-                                }
-                            } catch (err) {
-                                echo "failed to deploy to the production ${err}"
-                                error("Stopping pipeline")
-                            }
-                        }
-                    }
-                }
-                stage('Automated Post-Deployment Verification & Rollback') {
-                    steps {
-                        script {
-                            withKubeConfig(
-                                    caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
-                                ) {
-                                def maxRetries = 5
-                                def retryInterval = 30 // seconds
-                                def deploymentHealthy = false
+                // stage("Deploy to prod at peak off-hours") {
+                //     steps {
+                //         script {
+                //             try {
+                //                 withKubeConfig(
+                //                     caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
+                //                 ) {
+                //                     sh """
+                //                     kubectl apply -f ${service_name}-deployment.yaml -n ${env.BRANCH_NAME}
+                //                     kubectl rollout status deployment/${service_name} -n ${env.BRANCH_NAME}
+                //                     """
+                //                 }
+                //             } catch (err) {
+                //                 echo "failed to deploy to the production ${err}"
+                //                 error("Stopping pipeline")
+                //             }
+                //         }
+                //     }
+                // }
+                // stage('Automated Post-Deployment Verification & Rollback') {
+                //     steps {
+                //         script {
+                //             withKubeConfig(
+                //                     caCertificate: env.kubernetesCaCertificate,clusterName: env.kubernetesClusterName,contextName: '',credentialsId: env.kubernetesCredentialsId,namespace: "${env.BRANCH_NAME}",restrictKubeConfigAccess: false,serverUrl: env.kubernetes_endpoint
+                //                 ) {
+                //                 def maxRetries = 5
+                //                 def retryInterval = 30 // seconds
+                //                 def deploymentHealthy = false
 
-                                for (int i = 0; i < maxRetries; i++) {
-                                    try {
-                                        // Run health check inside cluster using ephemeral pod
-                                        def response = sh(
-                                            script: """
-                                            kubectl run tmp-shell --rm -i --tty --image=curlimages/curl --namespace ${env.BRANCH_NAME} -- /bin/sh -c "curl -o /dev/null -s -w '%{http_code}\\n' http://${env.service_name}.${env.BRANCH_NAME}.svc.cluster.local:${env.service_port}"
-                                            """,
-                                            returnStdout: true
-                                        ).trim()
+                //                 for (int i = 0; i < maxRetries; i++) {
+                //                     try {
+                //                         // Run health check inside cluster using ephemeral pod
+                //                         def response = sh(
+                //                             script: """
+                //                             kubectl run tmp-shell --rm -i --tty --image=curlimages/curl --namespace ${env.BRANCH_NAME} -- /bin/sh -c "curl -o /dev/null -s -w '%{http_code}\\n' http://${env.service_name}.${env.BRANCH_NAME}.svc.cluster.local:${env.service_port}"
+                //                             """,
+                //                             returnStdout: true
+                //                         ).trim()
 
-                                        if (response == '200') {
-                                            echo "✅ Application health check passed inside cluster."
-                                            deploymentHealthy = true
-                                            break
-                                        } else {
-                                            echo "⚠️ Application health check failed with status ${response}. Retrying in ${retryInterval} seconds..."
-                                        }
-                                    } catch (err) {
-                                        echo "⚠️ Health check command error: ${err.getMessage()}. Retrying in ${retryInterval} seconds..."
-                                    }
-                                    sleep retryInterval
-                                }
+                //                         if (response == '200') {
+                //                             echo "✅ Application health check passed inside cluster."
+                //                             deploymentHealthy = true
+                //                             break
+                //                         } else {
+                //                             echo "⚠️ Application health check failed with status ${response}. Retrying in ${retryInterval} seconds..."
+                //                         }
+                //                     } catch (err) {
+                //                         echo "⚠️ Health check command error: ${err.getMessage()}. Retrying in ${retryInterval} seconds..."
+                //                     }
+                //                     sleep retryInterval
+                //                 }
 
-                                if (!deploymentHealthy) {
-                                    echo "🔴 Automated health checks failed after multiple retries. Initiating rollback..."
-                                    try {
-                                        sh "kubectl rollout undo deployment/${env.service_name} -n ${env.BRANCH_NAME}"
-                                        echo "✅ Rollback command completed."
-                                    } catch (err) {
-                                        echo "❌ Rollback command failed: ${err.getMessage()}"
-                                    }
-                                    currentBuild.result = 'FAILURE'
-                                    error("🔴 Production deployment unhealthy. Automated rollback executed. Pipeline failed.")
-                                } else {
-                                    echo "✅ Automated post-deployment verification passed."
-                                }
-                            }
-                        }
-                    }
-                }
+                //                 if (!deploymentHealthy) {
+                //                     echo "🔴 Automated health checks failed after multiple retries. Initiating rollback..."
+                //                     try {
+                //                         sh "kubectl rollout undo deployment/${env.service_name} -n ${env.BRANCH_NAME}"
+                //                         echo "✅ Rollback command completed."
+                //                     } catch (err) {
+                //                         echo "❌ Rollback command failed: ${err.getMessage()}"
+                //                     }
+                //                     currentBuild.result = 'FAILURE'
+                //                     error("🔴 Production deployment unhealthy. Automated rollback executed. Pipeline failed.")
+                //                 } else {
+                //                     echo "✅ Automated post-deployment verification passed."
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
                 stage("Smoke Test and sanity test and synthatic test and  in preProduction") {
                     steps {
                         performSmokeTesting(env.DETECTED_LANG)
