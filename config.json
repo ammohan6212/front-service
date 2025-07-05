@@ -3,6 +3,8 @@
     "serviceName": "frontend",
     "notificationRecipients": "mohan14242@gmail.com",
     "docker_username": "mohan14242ai",
+    "docker_cred_username":"docker_username",
+    "docker_cred_password":"docker_password",
     "docker_credentials": "docker-id",
     "kubernetes_endpoint": "https://34.121.208.218",
     "bucket_name": "micro-service",
