@@ -10,7 +10,7 @@ const OrderDetails = () => {
 
   useEffect(() => {
     fetchOrder();
-  }, []);
+  }, [fetchOrder]);
 
   const fetchOrder = async () => {
     try {
