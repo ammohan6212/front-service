@@ -7,20 +7,26 @@
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "axios": "^1.6.0",
-    "lucide-react": "^0.400.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-dropzone": "^14.2.3",
+    "react-scripts": "^5.0.1",
+    "web-vitals": "^3.3.1",
     "react-router-dom": "^6.23.0",
-    "react-scripts": "^0.0.0",
     "react-select": "^5.7.3",
-    "web-vitals": "^3.3.1"
+    "react-dropzone": "^14.2.3",
+    "lucide-react": "^0.400.0"
   },
   "scripts": {
     "start": "react-scripts start --openssl-legacy-provider",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
