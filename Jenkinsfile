@@ -159,7 +159,7 @@ pipeline {
                         performSanityTesting(env.DETECTED_LANG)
                         performApiTesting(env.DETECTED_LANG)
                         performIntegrationTesting(env.DETECTED_LANG)
-                        performDatabaseTesting()
+                        performDatabaseTesting(env.DETECTED_LANG)
                         // performLightUiTests(env.DETECTED_LANG)
                         // performRegressionTesting(env.DETECTED_LANG)
                         // performFeatureFlagChecks(env.DETECTED_LANG)
