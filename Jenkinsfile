@@ -44,6 +44,7 @@ pipeline {
                             cloneRepoAndGetVersion(env.BRANCH_NAME, env.github_repo)
                             detectLanguage() 
                             sh """
+                            ls -l
                             node -v
                             npm -v
                             rm -rf node_modules package-lock.json
