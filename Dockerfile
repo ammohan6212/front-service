@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Step 2: Serve the built app using Nginx
-FROM nginx:stable-alpine
+FROM nginx:1.28.0-alpine3.21-slim
 
 # Copy the build output to Nginx's html directory
 COPY --from=build /app/build /usr/share/nginx/html
