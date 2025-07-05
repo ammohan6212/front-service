@@ -8,9 +8,6 @@ const OrderDetails = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchOrder();
-  }, [fetchOrder]);
 
   const fetchOrder = async () => {
     try {
@@ -21,6 +18,9 @@ const OrderDetails = () => {
       setError('❌ Failed to fetch order details.');
     }
   };
+  useEffect(() => {
+    fetchOrder();
+  }, [fetchOrder]);
 
   const handleRemoveOrder = async () => {
     if (!order) return;
