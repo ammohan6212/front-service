@@ -43,6 +43,9 @@ pipeline {
                         script{
                             cloneRepoAndGetVersion(env.BRANCH_NAME, env.github_repo)
                             detectLanguage() 
+                            sh """
+                            pwd
+                            """
                         }
                     }
                 }
