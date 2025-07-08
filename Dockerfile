@@ -5,7 +5,6 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json ./
-RUN npm install react-scripts --save
 RUN npm install 
 
 # Copy app source and build it
