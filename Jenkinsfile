@@ -60,11 +60,6 @@ pipeline {
                 //         performSecretsDetection('.') // Scan the entire workspace
                 //     }
                 // }
-                stage("Building the Application") {
-                    steps {
-                        buildApplication(env.DETECTED_LANG)
-                    }
-                }
                 stage("Install Dependencies and dependency scanning and type checking and unit tests and code coverage calcualtion ") {
                     steps {
                         installAppDependencies(env.DETECTED_LANG)
@@ -85,6 +80,11 @@ pipeline {
                 //         waitForQualityGate abortPipeline: true
                 //     }
                 // }
+                stage("Building the Application") {
+                    steps {
+                        buildApplication(env.DETECTED_LANG)
+                    }
+                }
                 stage("Mutation Testing and snapshot and component testing at Dev") {
                     steps {
                         runMutationTests(env.DETECTED_LANG)
