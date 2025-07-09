@@ -3,13 +3,14 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json  ./
-RUN npm install react-scripts --save
-RUN npm install 
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
 
-# Copy app source and build it
+# Copy the rest of the app source code
 COPY . .
+
+# Build the app
 RUN npm run build
 
 # Step 2: Serve the built app using Nginx
