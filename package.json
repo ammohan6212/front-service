@@ -16,7 +16,13 @@
     "react-dropzone": "^14.2.3",
     "lucide-react": "^0.400.0"
   },
+  "devDependencies": { 
+    "typescript": "^4.9.5",
+    "eslint-config-react-app": "^7.0.1"
+  },
   "scripts": {
+    "lint": "eslint 'src/**/*.{js,jsx}'",
+    "lint:fix": "eslint 'src/**/*.{js,jsx}' --fix",
     "start": "react-scripts start --openssl-legacy-provider",
     "build": "react-scripts build",
     "test": "react-scripts test",
