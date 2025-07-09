@@ -47,6 +47,13 @@ pipeline {
                         }
                     }
                 }
+                stage("install the dependencies first"){
+                    steps{
+                        script{
+                            installAppDependencies(env.DETECTED_LANG)
+                        }
+                    }
+                }
                 stage("Linting (App Code, Terraform, Kubernetes, Docker)") {
                     steps {
                         runLinter(env.DETECTED_LANG)
@@ -62,7 +69,6 @@ pipeline {
                 // }
                 stage("Install Dependencies and dependency scanning and type checking and unit tests and code coverage calcualtion ") {
                     steps {
-                        installAppDependencies(env.DETECTED_LANG)
                         // performDependencyScan(env.DETECTED_LANG)
                         runTypeChecks(env.DETECTED_LANG)
                         runUnitTests(env.DETECTED_LANG)
