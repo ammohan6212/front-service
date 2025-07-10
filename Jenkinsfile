@@ -483,7 +483,7 @@ pipeline {
                                     restrictKubeConfigAccess: false
                                 ) {
                                     dir("kubernetes") {  // 👈 Change this to your folder name
-                                        checkk8services(servicesToCheck, "${env.BRANCH_NAME}")
+                                        checknodeport(servicesToCheck, "${env.BRANCH_NAME}")
                                     }
                                 }
                             } catch (err) {
