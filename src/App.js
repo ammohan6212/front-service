@@ -17,7 +17,7 @@ import ProductHome from './components/ProductHome';
 import SellerDashboard from './components/Sellerdashboard';
 import SellerOrders  from './components/sellerorders';  
 import OrderDetails from './components/order-details';
-
+import HealthPage  from './components/HealthPage';    
 import './App.css';
 
 function AppRoutes() {
@@ -52,6 +52,7 @@ function AppRoutes() {
         <Route path="/forgot-password" element={<Forgot />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
         <Route path="/product-home/:id" element={<ProductHome />} />
+        <Route path="/health" element={<HealthPage/>} />
       </Routes>
     </div>
   );
