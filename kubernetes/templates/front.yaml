@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: front
-  namespace: {{ .Values.user.namespace }}
+  namespace: {{ .Values.front.namespace }}
 spec:
   replicas: 1
   selector:
