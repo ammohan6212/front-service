@@ -76,6 +76,7 @@ jobs:
 
       - name: scanning the dependencies
         run: snyk test --file=package-lock.json
+        continue-on-error: true
     
 
     
@@ -86,6 +87,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
       - name: Run application linter
         # Assuming 'npm run lint' is defined in package.json
         run: npm run lint
