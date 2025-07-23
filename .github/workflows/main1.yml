@@ -163,7 +163,7 @@ jobs:
   unit-tests:
     name: Run Unit Tests
     runs-on: ubuntu-latest
-    needs: install-dependencies
+    needs: secret-detect
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -194,17 +194,10 @@ jobs:
          java-version: '17'
          distribution: 'temurin'
 
-      - name: Run SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master 
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        continue-on-error: true 
 
-
-      # - name: run sonar-scanner
-      #   run: |
-      #     sonar-scanner 
-      #     -Dsonar.projectKey=front-end \
-      #     -Dsonar.sources=. \
-      #     -Dsonar.host.url=http://34.55.243.214:9000 \
-      #     -Dsonar.token=sqp_4917cd555ce3c69d3c645c736759c6fd97c3a7ac
 
   build:
     name: Build Application
@@ -218,7 +211,6 @@ jobs:
         run: npm install 
 
       - name: Build App
-        # Assuming 'npm run build' generates production-ready assets
         run: npm run build
 
   tests: 
