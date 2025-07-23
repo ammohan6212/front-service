@@ -135,7 +135,7 @@ jobs:
 
       - name: Run TruffleHog
         # Using a dedicated action is generally better for caching and maintenance
-        uses: trufflesecurity/trufflehog@add-actions-cli-switch  # Or a specific version like v1.0.0
+        uses: edplato/trufflehog-actions-scan@master  # Or a specific version like v1.0.0
         with:
           path: ./
           base: ${{ github.sha }} # Scan only changes from the current commit
