@@ -144,8 +144,7 @@ jobs:
       - name: Run detect-secrets
         run: |
           detect-secrets scan > .secrets.new.baseline
-          detect-secrets diff .secrets.baseline .secrets.new.baseline
-          
+
       - name: Run TruffleHog
         # Using a dedicated action is generally better for caching and maintenance
         uses: edplato/trufflehog-actions-scan@master  # Or a specific version like v1.0.0
