@@ -196,15 +196,15 @@ jobs:
 
       - name: Run SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master 
+        
 
-      - name: run sonar-scanner
-        run: |
-          echo "sonar scanner happens here"
-          # sonar-scanner 
-          # -Dsonar.projectKey=front-end \
-          # -Dsonar.sources=. \
-          # -Dsonar.host.url=http://34.55.243.214:9000 \
-          # -Dsonar.token=sqp_4917cd555ce3c69d3c645c736759c6fd97c3a7ac
+      # - name: run sonar-scanner
+      #   run: |
+      #     sonar-scanner 
+      #     -Dsonar.projectKey=front-end \
+      #     -Dsonar.sources=. \
+      #     -Dsonar.host.url=http://34.55.243.214:9000 \
+      #     -Dsonar.token=sqp_4917cd555ce3c69d3c645c736759c6fd97c3a7ac
 
   build:
     name: Build Application
