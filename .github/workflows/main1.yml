@@ -238,7 +238,7 @@ jobs:
   archive:
     name: Create Archive
     runs-on: ubuntu-latest
-    needs: [tests,clone-tag-and-config] # Depends on tests passing
+    needs: [clone-tag-and-config] # Depends on tests passing
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
