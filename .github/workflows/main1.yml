@@ -52,3 +52,104 @@ jobs:
           echo "Docker Username: ${{ steps.set-vars.outputs.docker_username }}"
           echo "Services: ${{ steps.set-vars.outputs.services }}"
           echo "version is ${{ steps.get_tag.outputs.version }} "
+
+
+  install-dependencies:
+    name: Install Dependencies
+    runs-on: ubuntu-latest
+    needs: clone-tag-and-config
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+
+      - name: install the dependencies here
+        run: npm ci
+      
+      - name: Scan with Trivy SBOM
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: sbom
+          # Ensure package-lock.json is in the root or specify correct path
+          scan-ref: ./package-lock.json
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-sbom-results.sarif'
+          severity: 'CRITICAL,HIGH' # You might want to adjust severity for SBOMs
+        continue-on-error: true
+
+      - name: Upload Trivy SBOM SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # Upload even if the scan had errors
+        with:
+          sarif_file: trivy-sbom-results.sarif
+    
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: d9141a36-1bc7-49bb-b541-bc2a1c31b3bf
+        continue-on-error: true
+
+    
+  lint:
+    name: Run Linter
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run application linter
+        # Assuming 'npm run lint' is defined in package.json
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Run hadolint
+        uses: hadolint/hadolint-action@master
+        with:
+          dockerfile: ./Dockerfile
+          format: sarif
+          output-file: hadolint-results.sarif
+          no-fail: true
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: hadolint-results.sarif
+          wait-for-processing: true
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v6
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true 
+
+  secret-detect:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for Gitleaks/TruffleHog to scan full history
+
+      - name: Run TruffleHog
+        # Using a dedicated action is generally better for caching and maintenance
+        uses: trufflesecurity/trufflehog-action@main # Or a specific version like v1.0.0
+        with:
+          path: ./
+          base: ${{ github.sha }} # Scan only changes from the current commit
+          extra_args: --only-verified
+        continue-on-error: true 
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: "--verbose --redact"
+
+      - name: Secret Scanner
+        uses: secret-scanner/action@0.0.2
+        continue-on-error: true
