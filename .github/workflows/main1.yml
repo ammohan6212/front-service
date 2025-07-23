@@ -45,3 +45,9 @@ jobs:
           echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
           echo "docker_username=$DOCKER_USERNAME" >> $GITHUB_OUTPUT
           echo "services=$SERVICES" >> $GITHUB_OUTPUT
+      - name: Print all config values
+        run: |
+          echo "✅ Debug Output:"
+          echo "Service Name: ${{ steps.set-vars.outputs.service_name }}"
+          echo "Docker Username: ${{ steps.set-vars.outputs.docker_username }}"
+          echo "Services: ${{ steps.set-vars.outputs.services }}"
