@@ -1,0 +1,47 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - dev
+      - test
+
+jobs:
+  clone-tag-and-config:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_tag.outputs.version }}
+      service_name: ${{ steps.set-vars.outputs.service_name }}
+      docker_username: ${{ steps.set-vars.outputs.docker_username }}
+      services: ${{ steps.set-vars.outputs.services }}
+    steps:
+      - name: Checkout the dev branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all tags
+        run: git fetch --tags
+
+      - id: get_tag
+        name: Get the latest tag
+        run: |
+          VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Print version for debug
+        run: echo "Version is ${{ steps.get_tag.outputs.version }}"
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - id: set-vars
+        name: Read config.json and set outputs
+        run: |
+          CONFIG_PATH=config.json
+          SERVICE_NAME=$(jq -r '.serviceName' "$CONFIG_PATH")
+          DOCKER_USERNAME=$(jq -r '.docker_username' "$CONFIG_PATH")
+          SERVICES=$(jq -c '.services' "$CONFIG_PATH")
+          echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
+          echo "docker_username=$DOCKER_USERNAME" >> $GITHUB_OUTPUT
+          echo "services=$SERVICES" >> $GITHUB_OUTPUT
