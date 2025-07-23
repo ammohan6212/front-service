@@ -51,3 +51,4 @@ jobs:
           echo "Service Name: ${{ steps.set-vars.outputs.service_name }}"
           echo "Docker Username: ${{ steps.set-vars.outputs.docker_username }}"
           echo "Services: ${{ steps.set-vars.outputs.services }}"
+          echo "version is ${{ steps.set-vars.outputs.version }} "
