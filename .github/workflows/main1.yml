@@ -236,29 +236,29 @@ jobs:
   #         echo "component testing happens here"
 
   archive:
-  name: Create Archive
-  runs-on: ubuntu-latest
-  needs: [clone-tag-and-config]
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    name: Create Archive
+    runs-on: ubuntu-latest
+    needs: [clone-tag-and-config]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Create Archive Name and Zip File
-      id: zipstep
-      run: |
-        service_name="${{ needs.clone-tag-and-config.outputs.service_name }}"
-        VERSION="${{ needs.clone-tag-and-config.outputs.version }}"
-        BRANCH_NAME="${GITHUB_REF##*/}"
-        ZIP_NAME="${service_name}-${BRANCH_NAME}-${VERSION}.zip"
-        echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_OUTPUT
-        zip -r "$ZIP_NAME" src/
+      - name: Create Archive Name and Zip File
+        id: zipstep
+        run: |
+          service_name="${{ needs.clone-tag-and-config.outputs.service_name }}"
+          VERSION="${{ needs.clone-tag-and-config.outputs.version }}"
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          ZIP_NAME="${service_name}-${BRANCH_NAME}-${VERSION}.zip"
+          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_OUTPUT
+          zip -r "$ZIP_NAME" src/
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ steps.zipstep.outputs.ZIP_NAME }}
-        path: ${{ steps.zipstep.outputs.ZIP_NAME }}
-        retention-days: 7
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.zipstep.outputs.ZIP_NAME }}
+          path: ${{ steps.zipstep.outputs.ZIP_NAME }}
+          retention-days: 7
 
 
   docker-build:
